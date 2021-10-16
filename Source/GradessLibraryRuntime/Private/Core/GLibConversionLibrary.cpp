@@ -5,7 +5,7 @@
 #include "UObject/UnrealType.h"
 #include "Templates/SubclassOf.h"
 
-FString UGLibConversionLibrary::ConvertToString(const int64& Integer)
+FString UGLibConversionLibrary::ConvertInt64ToString(const int64& Integer)
 {
 	return FString::Printf(TEXT("%lld"), Integer);
 }

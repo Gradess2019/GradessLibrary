@@ -30,7 +30,7 @@ public:
 			BlueprintAutocast
 		)
 	)
-	static FString ConvertToString(const int64& Integer);
+	static FString ConvertInt64ToString(const int64& Integer);
 
 	/**
 	* @brief Converts array of names to array of strings
@@ -48,7 +48,7 @@ public:
 		)
 	)
 	static TArray<FString> ConvertNameArrayToStringArray(
-		const TArray<FName>& InArray
+		UPARAM(DisplayName = "Array") const TArray<FName>& InArray
 	);
 
 	/**
@@ -66,7 +66,7 @@ public:
 		)
 	)
 	static TArray<FText> ConvertNameArrayToTextArray(
-		const TArray<FName>& InArray
+		UPARAM(DisplayName = "Array") const TArray<FName>& InArray
 	);
 
 	/**
@@ -84,7 +84,7 @@ public:
 		)
 	)
 	static TArray<FName> ConvertStringArrayToNameArray(
-		const TArray<FString>& InArray
+		UPARAM(DisplayName = "Array") const TArray<FString>& InArray
 	);
 
 	/**
@@ -102,7 +102,7 @@ public:
 		)
 	)
 	static TArray<FText> ConvertStringArrayToTextArray(
-		const TArray<FString>& InArray
+		UPARAM(DisplayName = "Array") const TArray<FString>& InArray
 	);
 
 	/**
@@ -120,7 +120,7 @@ public:
 		)
 	)
 	static TArray<int32> ConvertStringArrayToIntArray(
-		const TArray<FString>& InArray
+		UPARAM(DisplayName = "Array") const TArray<FString>& InArray
 	);
 
 	/**
@@ -138,7 +138,7 @@ public:
 		)
 	)
 	static TArray<int64> ConvertStringArrayToInt64Array(
-		const TArray<FString>& InArray
+		UPARAM(DisplayName = "Array") const TArray<FString>& InArray
 	);
 
 	/**
@@ -156,7 +156,7 @@ public:
 		)
 	)
 	static TArray<float> ConvertStringArrayToFloatArray(
-		const TArray<FString>& InArray
+		UPARAM(DisplayName = "Array") const TArray<FString>& InArray
 	);
 
 	/**
@@ -174,7 +174,7 @@ public:
 		)
 	)
 	static TArray<FName> ConvertTextArrayToNameArray(
-		const TArray<FText>& InArray
+		UPARAM(DisplayName = "Array") const TArray<FText>& InArray
 	);
 
 	/**
@@ -192,7 +192,7 @@ public:
 		)
 	)
 	static TArray<FString> ConvertTextArrayToStringArray(
-		const TArray<FText>& InArray
+		UPARAM(DisplayName = "Array") const TArray<FText>& InArray
 	);
 
 	/**

@@ -290,7 +290,7 @@ public:
 	);
 
 	/**
-	 * @brief Converts array of texts to array of strings
+	 * @brief Converts array of texts to array of names
 	 * @param InArray array of texts
 	 * @return converted array 
 	 */
@@ -413,6 +413,150 @@ public:
 	)
 	static TArray<bool> ConvertTextArrayToBoolArray(
 		UPARAM(DisplayName = "Array") const TArray<FText>& InArray
+	);
+	
+	/**
+	 * @brief Converts array of integers to array of names
+	 * @param InArray array of integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToName (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FName> ConvertIntArrayToNameArray(
+		UPARAM(DisplayName = "Array") const TArray<int32>& InArray
+	);
+
+	/**
+	 * @brief Converts array of integers to array of strings
+	 * @param InArray array of integer
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FString> ConvertIntArrayToStringArray(
+		UPARAM(DisplayName = "Array") const TArray<int32>& InArray
+	);
+
+	/**
+	 * @brief Converts array of integers to array of texts
+	 * @param InArray array of integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToText (string array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FText> ConvertIntArrayToTextArray(
+		UPARAM(DisplayName = "Array") const TArray<int32>& InArray
+	);
+
+	/**
+	 * @brief Converts array of integers to array of floats
+	 * @param InArray array of integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<float> ConvertIntArrayToFloatArray(
+		UPARAM(DisplayName = "Array") const TArray<int32>& InArray
+	);
+
+	/**
+	 * @brief Converts array of integers to array of integers
+	 * @param InArray array of integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<int32> ConvertIntArrayToIntArray(
+		UPARAM(DisplayName = "Array") const TArray<int32>& InArray
+	);
+
+	/**
+	 * @brief Converts array of integers to array of 64-bit integers
+	 * @param InArray array of integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<int64> ConvertIntArrayToInt64Array(
+		UPARAM(DisplayName = "Array") const TArray<int32>& InArray
+	);
+
+	/**
+	 * @brief Converts array of integers to array of bytes
+	 * @param InArray array of integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<uint8> ConvertIntArrayToByteArray(
+		UPARAM(DisplayName = "Array") const TArray<int32>& InArray
+	);
+
+	/**
+	 * @brief Converts array of integers to array of booleans
+	 * @param InArray array of integerss
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<bool> ConvertIntArrayToBoolArray(
+		UPARAM(DisplayName = "Array") const TArray<int32>& InArray
 	);
 
 	/**

@@ -34,7 +34,7 @@ public:
 
 	/**
 	* @brief Converts array of names to array of strings
-	* @param Names array of names
+	* @param InArray array of names
 	* @return converted array 
 	* @return converted array 
 	*/
@@ -48,12 +48,12 @@ public:
 		)
 	)
 	static TArray<FString> ConvertNameArrayToStringArray(
-		UPARAM(ref) TArray<FName>& Names
+		const TArray<FName>& InArray
 	);
 
 	/**
 	* @brief Converts array of names to array of texts
-	* @param Names array of names
+	* @param InArray array of names
 	* @return converted array 
 	*/
 	UFUNCTION(
@@ -66,12 +66,12 @@ public:
 		)
 	)
 	static TArray<FText> ConvertNameArrayToTextArray(
-		const TArray<FName>& Names
+		const TArray<FName>& InArray
 	);
 
 	/**
 	* @brief Converts array of strings to array of names
-	* @param Strings array of strings
+	* @param InArray array of strings
 	* @return converted array 
 	*/
 	UFUNCTION(
@@ -84,12 +84,12 @@ public:
 		)
 	)
 	static TArray<FName> ConvertStringArrayToNameArray(
-		UPARAM(ref) const TArray<FString>& Strings
+		const TArray<FString>& InArray
 	);
 
 	/**
 	 * @brief Converts array of strings to array of texts
-	 * @param Strings array of strings
+	 * @param InArray array of strings
 	 * @return converted array 
 	 */
 	UFUNCTION(
@@ -102,12 +102,12 @@ public:
 		)
 	)
 	static TArray<FText> ConvertStringArrayToTextArray(
-		UPARAM(ref) const TArray<FString>& Strings
+		const TArray<FString>& InArray
 	);
 
 	/**
 	 * @brief Converts array of strings to array of integers
-	 * @param Strings array of strings
+	 * @param InArray array of strings
 	 * @return converted array 
 	 */
 	UFUNCTION(
@@ -120,12 +120,12 @@ public:
 		)
 	)
 	static TArray<int32> ConvertStringArrayToIntArray(
-		UPARAM(ref) const TArray<FString>& Strings
+		const TArray<FString>& InArray
 	);
 
 	/**
 	 * @brief Converts array of strings to array of 64-bit integers
-	 * @param Strings array of strings
+	 * @param InArray array of strings
 	 * @return converted array 
 	 */
 	UFUNCTION(
@@ -138,12 +138,12 @@ public:
 		)
 	)
 	static TArray<int64> ConvertStringArrayToInt64Array(
-		UPARAM(ref) const TArray<FString>& Strings
+		const TArray<FString>& InArray
 	);
 
 	/**
 	 * @brief Converts array of strings to array of floats
-	 * @param Strings array of strings
+	 * @param InArray array of strings
 	 * @return converted array 
 	 */
 	UFUNCTION(
@@ -156,12 +156,12 @@ public:
 		)
 	)
 	static TArray<float> ConvertStringArrayToFloatArray(
-		UPARAM(ref) const TArray<FString>& Strings
+		const TArray<FString>& InArray
 	);
 
 	/**
 	 * @brief Converts array of texts to array of strings
-	 * @param Texts array of texts
+	 * @param InArray array of texts
 	 * @return converted array 
 	 */
 	UFUNCTION(
@@ -174,12 +174,12 @@ public:
 		)
 	)
 	static TArray<FName> ConvertTextArrayToNameArray(
-		UPARAM(ref) const TArray<FText>& Texts
+		const TArray<FText>& InArray
 	);
 
 	/**
 	 * @brief Converts array of texts to array of strings
-	 * @param Texts array of texts
+	 * @param InArray array of texts
 	 * @return converted array 
 	 */
 	UFUNCTION(
@@ -192,7 +192,7 @@ public:
 		)
 	)
 	static TArray<FString> ConvertTextArrayToStringArray(
-		UPARAM(ref) const TArray<FText>& Texts
+		const TArray<FText>& InArray
 	);
 
 	/**
@@ -222,7 +222,13 @@ public:
 	template <typename From, typename To>
 	static void ConvertArray(
 		const TArray<From>& SourceArray,
-		TArray<To>& ConvertedArray,
+		TArray<To>& OutArray,
+		std::function<To(const From&)> ConversionFunction
+	);
+
+	template <typename From, typename To>
+	static TArray<To> ConvertArray(
+		const TArray<From>& SourceArray,
 		std::function<To(const From&)> ConversionFunction
 	);
 

@@ -26,6 +26,46 @@ TArray<FText> UGLibConversionLibrary::ConvertNameArrayToTextArray(const TArray<F
 	return OutArray;
 }
 
+TArray<float> UGLibConversionLibrary::ConvertNameArrayToFloatArray(const TArray<FName>& InArray)
+{
+	TArray<float> OutArray;
+	ConvertArray<FName, float>(InArray, OutArray, [](const FName& Element) { return FCString::Atof(*Element.ToString()); });
+
+	return OutArray;
+}
+
+TArray<int32> UGLibConversionLibrary::ConvertNameArrayToIntArray(const TArray<FName>& InArray)
+{
+	TArray<int32> OutArray;
+	ConvertArray<FName, int32>(InArray, OutArray, [](const FName& Element)	{ return FCString::Atoi(*Element.ToString()); });
+
+	return OutArray;
+}
+
+TArray<int64> UGLibConversionLibrary::ConvertNameArrayToInt64Array(const TArray<FName>& InArray)
+{
+	TArray<int64> OutArray;
+	ConvertArray<FName, int64>(InArray, OutArray, [](const FName& Element)	{ return FCString::Atoi64(*Element.ToString());	});
+
+	return OutArray;
+}
+
+TArray<uint8> UGLibConversionLibrary::ConvertNameArrayToByteArray(const TArray<FName>& InArray)
+{
+	TArray<uint8> OutArray;
+	ConvertArray<FName, uint8>(InArray, OutArray, [](const FName& Element) { return static_cast<uint8>(FCString::Atoi(*Element.ToString())); });
+
+	return OutArray;
+}
+
+TArray<bool> UGLibConversionLibrary::ConvertNameArrayToBoolArray(const TArray<FName>& InArray)
+{
+	TArray<bool> OutArray;
+	ConvertArray<FName, bool>(InArray, OutArray, [](const FName& Element) { return Element.IsNone(); });
+
+	return OutArray;
+}
+
 TArray<FName> UGLibConversionLibrary::ConvertStringArrayToNameArray(const TArray<FString>& InArray)
 {
 	TArray<FName> OutArray;
@@ -58,6 +98,22 @@ TArray<int64> UGLibConversionLibrary::ConvertStringArrayToInt64Array(const TArra
 	return OutArray;
 }
 
+TArray<uint8> UGLibConversionLibrary::ConvertStringArrayToByteArray(const TArray<FString>& InArray)
+{
+	TArray<uint8> OutArray;
+	ConvertArray<FString, uint8>(InArray, OutArray, [](const FString& Element) { return static_cast<uint8>(FCString::Atoi(*Element)); });
+
+	return OutArray;
+}
+
+TArray<bool> UGLibConversionLibrary::ConvertStringArrayToBoolArray(const TArray<FString>& InArray)
+{
+	TArray<bool> OutArray;
+	ConvertArray<FString, bool>(InArray, OutArray, [](const FString& Element) { return Element.IsEmpty(); });
+
+	return OutArray;
+}
+
 TArray<float> UGLibConversionLibrary::ConvertStringArrayToFloatArray(const TArray<FString>& InArray)
 {
 	TArray<float> OutArray;
@@ -78,6 +134,46 @@ TArray<FString> UGLibConversionLibrary::ConvertTextArrayToStringArray(const TArr
 {
 	TArray<FString> OutArray;
 	ConvertArray<FText, FString>(InArray, [](const FText& Element) { return Element.ToString(); });
+
+	return OutArray;
+}
+
+TArray<float> UGLibConversionLibrary::ConvertTextArrayToFloatArray(const TArray<FText>& InArray)
+{
+	TArray<float> OutArray;
+	ConvertArray<FText, float>(InArray, [](const FText& Element) { return FCString::Atof(*Element.ToString()); });
+
+	return OutArray;
+}
+
+TArray<int32> UGLibConversionLibrary::ConvertTextArrayToIntArray(const TArray<FText>& InArray)
+{
+	TArray<int32> OutArray;
+	ConvertArray<FText, int32>(InArray, [](const FText& Element) { return FCString::Atoi(*Element.ToString()); });
+
+	return OutArray;
+}
+
+TArray<int64> UGLibConversionLibrary::ConvertTextArrayToInt64Array(const TArray<FText>& InArray)
+{
+	TArray<int64> OutArray;
+	ConvertArray<FText, int64>(InArray, [](const FText& Element) { return FCString::Atoi64(*Element.ToString()); });
+
+	return OutArray;
+}
+
+TArray<uint8> UGLibConversionLibrary::ConvertTextArrayToByteArray(const TArray<FText>& InArray)
+{
+	TArray<uint8> OutArray;
+	ConvertArray<FText, uint8>(InArray, [](const FText& Element) { return static_cast<uint8>(FCString::Atoi(*Element.ToString())); });
+
+	return OutArray;
+}
+
+TArray<bool> UGLibConversionLibrary::ConvertTextArrayToBoolArray(const TArray<FText>& InArray)
+{
+	TArray<bool> OutArray;
+	ConvertArray<FText, bool>(InArray, [](const FText& Element) { return Element.IsEmpty(); });
 
 	return OutArray;
 }
@@ -104,6 +200,18 @@ void UGLibConversionLibrary::ConvertArray(
 }
 
 template <typename From, typename To>
+TArray<To> UGLibConversionLibrary::ConvertArray(
+	const TArray<From>& SourceArray,
+	std::function<To(const From&)> ConversionFunction
+)
+{
+	TArray<To> OutArray;
+	ConvertArray<From, To>(SourceArray, OutArray, ConversionFunction);
+
+	return OutArray;
+}
+
+template <typename From, typename To>
 void UGLibConversionLibrary::ConvertArray(
 	const TArray<From*>& SourceArray,
 	TArray<To*>& OutArray,
@@ -114,23 +222,11 @@ void UGLibConversionLibrary::ConvertArray(
 
 	for (const auto Element : SourceArray)
 	{
-		const auto ElementToAdd = Cast<To>(Element);
+		const auto ElementToAdd = Element ? Cast<To>(Element) : nullptr;
 
 		if (bExcludeNullptr && !ElementToAdd) { continue; }
 		OutArray.Add(ElementToAdd);
 	}
-}
-
-template <typename From, typename To>
-TArray<To> UGLibConversionLibrary::ConvertArray(
-	const TArray<From>& SourceArray,
-	std::function<To(const From&)> ConversionFunction
-)
-{
-	TArray<To> OutArray;
-	ConvertArray<From, To>(SourceArray, OutArray, ConversionFunction);
-
-	return OutArray;
 }
 
 DEFINE_FUNCTION(UGLibConversionLibrary::execConvertObjectArray_Internal)

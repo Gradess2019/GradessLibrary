@@ -227,6 +227,13 @@ public:
 	);
 
 	template <typename From, typename To>
+	static void ConvertArray(
+		const TArray<From*>& SourceArray,
+		TArray<To*>& OutArray,
+		const bool bExcludeNullptr = false
+	);
+
+	template <typename From, typename To>
 	static TArray<To> ConvertArray(
 		const TArray<From>& SourceArray,
 		std::function<To(const From&)> ConversionFunction

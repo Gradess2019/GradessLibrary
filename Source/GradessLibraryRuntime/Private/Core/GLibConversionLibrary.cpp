@@ -78,7 +78,7 @@ TArray<FString> UGLibConversionLibrary::ConvertTextArrayToStringArray(const TArr
 {
 	TArray<FString> OutArray;
 	ConvertArray<FText, FString>(InArray, [](const FText& Element) { return Element.ToString(); });
-	
+
 	return OutArray;
 }
 
@@ -99,9 +99,26 @@ void UGLibConversionLibrary::ConvertArray(
 	std::function<To(const From&)> ConversionFunction
 )
 {
-	OutArray.Reset();
-	OutArray.Reserve(SourceArray.Num());
-	for (auto& element : SourceArray) { OutArray.Add(ConversionFunction(element)); }
+	OutArray.Reset(SourceArray.Num());
+	for (auto& Element : SourceArray) { OutArray.Add(ConversionFunction(Element)); }
+}
+
+template <typename From, typename To>
+void UGLibConversionLibrary::ConvertArray(
+	const TArray<From*>& SourceArray,
+	TArray<To*>& OutArray,
+	const bool bExcludeNullptr
+)
+{
+	OutArray.Reset(SourceArray.Num());
+
+	for (const auto Element : SourceArray)
+	{
+		const auto ElementToAdd = Cast<To>(Element);
+
+		if (bExcludeNullptr && !ElementToAdd) { continue; }
+		OutArray.Add(ElementToAdd);
+	}
 }
 
 template <typename From, typename To>
@@ -118,8 +135,8 @@ TArray<To> UGLibConversionLibrary::ConvertArray(
 
 DEFINE_FUNCTION(UGLibConversionLibrary::execConvertObjectArray_Internal)
 {
-	Stack.MostRecentPropertyAddress = NULL;
-	Stack.MostRecentProperty = NULL;
+	Stack.MostRecentPropertyAddress = nullptr;
+	Stack.MostRecentProperty = nullptr;
 
 	P_GET_TARRAY_REF(UObject*, Objects);
 	P_GET_OBJECT(UClass, ObjectClass);
@@ -140,7 +157,7 @@ DEFINE_FUNCTION(UGLibConversionLibrary::execConvertObjectArray_Internal)
 			OutArray.Add(ElementToAdd);
 		}
 
-		*(TArray<UObject*>*)RESULT_PARAM = OutArray;
+		*static_cast<TArray<UObject*>*>(RESULT_PARAM) = OutArray;
 
 	P_NATIVE_END;
 }

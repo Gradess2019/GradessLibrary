@@ -484,6 +484,33 @@ TArray<FVector2D> UGLibConversionLibrary::ConvertVectorArrayToVector2DArray(cons
 	return OutArray;
 }
 
+TArray<FString> UGLibConversionLibrary::ConvertVector2DArrayToStringArray(const TArray<FVector2D>& InArray)
+{
+	TArray<FString> OutArray;
+	ConvertArray<FVector2D, FString>(InArray, [](const FVector2D& Element) { return Element.ToString(); });
+
+	return OutArray;
+}
+
+TArray<FText> UGLibConversionLibrary::ConvertVector2DArrayToTextArray(const TArray<FVector2D>& InArray)
+{
+	TArray<FText> OutArray;
+	ConvertArray<FVector2D, FText>(InArray, [](const FVector2D& Element) { return UKismetTextLibrary::Conv_Vector2dToText(Element); });
+
+	return OutArray;
+}
+
+TArray<FVector> UGLibConversionLibrary::ConvertVector2DArrayToVectorArray(
+	const TArray<FVector2D>& InArray,
+	const float Z
+)
+{
+	TArray<FVector> OutArray;
+	ConvertArray<FVector2D, FVector>(InArray, [Z](const FVector2D& Element) { return FVector(Element, Z); });
+
+	return OutArray;
+}
+
 TArray<UObject*> UGLibConversionLibrary::ConvertObjectArray_Internal(
 	const TArray<UObject*>& Objects,
 	TSubclassOf<UObject> ObjectClass,

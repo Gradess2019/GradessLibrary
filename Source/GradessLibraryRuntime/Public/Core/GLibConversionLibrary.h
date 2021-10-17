@@ -1060,7 +1060,7 @@ public:
 	);
 	
 	/**
-	 * @brief Converts array of vectors to array of strings
+	 * @brief Converts array of vectors to array of texts
 	 * @param InArray array of vectors
 	 * @return converted array 
 	 */
@@ -1078,7 +1078,7 @@ public:
 	);
 
 	/**
-	* @brief Converts array of vectors to array of strings
+	* @brief Converts array of vectors to array of 2D vectors
 	* @param InArray array of vectors
 	* @return converted array 
 	*/
@@ -1093,6 +1093,62 @@ public:
 	)
 	static TArray<FVector2D> ConvertVectorArrayToVector2DArray(
 		UPARAM(DisplayName = "Array") const TArray<FVector>& InArray
+	);
+
+	/**
+	* @brief Converts array of 2D vectors to array of strings
+	* @param InArray array of 2D vectors
+	* @return converted array 
+	*/
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (Vector2D array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FString> ConvertVector2DArrayToStringArray(
+		UPARAM(DisplayName = "Array") const TArray<FVector2D>& InArray
+	);
+	
+	/**
+	* @brief Converts array of 2D vectors to array of texts
+	* @param InArray array of 2D vectors
+	* @return converted array 
+	*/
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToText (Vector2D array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FText> ConvertVector2DArrayToTextArray(
+		UPARAM(DisplayName = "Array") const TArray<FVector2D>& InArray
+	);
+
+	/**
+	* @brief Converts array of 2D vectors to array of 3D vectors
+	* @param InArray array of 2D vectors
+	* @param Z default Z value
+	* @return converted array 
+	*/
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToVector (Vector2D array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FVector> ConvertVector2DArrayToVectorArray(
+		UPARAM(DisplayName = "Array") const TArray<FVector2D>& InArray,
+		const float Z
 	);
 
 	/**

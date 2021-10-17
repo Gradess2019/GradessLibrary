@@ -346,6 +346,62 @@ TArray<bool> UGLibConversionLibrary::ConvertFloatArrayToBoolArray(const TArray<f
 	return OutArray;
 }
 
+TArray<FName> UGLibConversionLibrary::ConvertByteArrayToNameArray(const TArray<uint8>& InArray)
+{
+	TArray<FName> OutArray;
+	ConvertArray<uint8, FName>(InArray, [](const uint8& Element) { return FName(FString::FromInt(Element)); });
+
+	return OutArray;
+}
+
+TArray<FString> UGLibConversionLibrary::ConvertByteArrayToStringArray(const TArray<uint8>& InArray)
+{
+	TArray<FString> OutArray;
+	ConvertArray<uint8, FString>(InArray, [](const uint8& Element) { return FString::FromInt(Element); });
+
+	return OutArray;
+}
+
+TArray<FText> UGLibConversionLibrary::ConvertByteArrayToTextArray(const TArray<uint8>& InArray)
+{
+	TArray<FText> OutArray;
+	ConvertArray<uint8, FText>(InArray, [](const uint8& Element) { return FText::FromString(FString::FromInt(Element)); });
+
+	return OutArray;
+}
+
+TArray<float> UGLibConversionLibrary::ConvertByteArrayToFloatArray(const TArray<uint8>& InArray)
+{
+	TArray<float> OutArray;
+	ConvertArray<uint8, float>(InArray, [](const uint8& Element) { return static_cast<float>(Element) ; });
+
+	return OutArray;
+}
+
+TArray<int32> UGLibConversionLibrary::ConvertByteArrayToIntArray(const TArray<uint8>& InArray)
+{
+	TArray<int32> OutArray;
+	ConvertArray<uint8, int32>(InArray, [](const uint8& Element) { return static_cast<int32>(Element); });
+
+	return OutArray;
+}
+
+TArray<int64> UGLibConversionLibrary::ConvertByteArrayToInt64Array(const TArray<uint8>& InArray)
+{
+	TArray<int64> OutArray;
+	ConvertArray<uint8, int64>(InArray, [](const uint8& Element) { return static_cast<int64>(Element); });
+
+	return OutArray;
+}
+
+TArray<bool> UGLibConversionLibrary::ConvertByteArrayToBoolArray(const TArray<uint8>& InArray)
+{
+	TArray<bool> OutArray;
+	ConvertArray<uint8, bool>(InArray, [](const uint8& Element) { return Element != 0; });
+
+	return OutArray;
+}
+
 TArray<UObject*> UGLibConversionLibrary::ConvertObjectArray_Internal(
 	const TArray<UObject*>& Objects,
 	TSubclassOf<UObject> ObjectClass,

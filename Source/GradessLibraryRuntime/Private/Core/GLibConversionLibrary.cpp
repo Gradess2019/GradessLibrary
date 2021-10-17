@@ -402,6 +402,62 @@ TArray<bool> UGLibConversionLibrary::ConvertByteArrayToBoolArray(const TArray<ui
 	return OutArray;
 }
 
+TArray<FName> UGLibConversionLibrary::ConvertBoolArrayToNameArray(const TArray<bool>& InArray)
+{
+	TArray<FName> OutArray;
+	ConvertArray<bool, FName>(InArray, [](const bool& Element) { return FName(FString(Element ? "true" : "false")); });
+
+	return OutArray;
+}
+
+TArray<FString> UGLibConversionLibrary::ConvertBoolArrayToStringArray(const TArray<bool>& InArray)
+{
+	TArray<FString> OutArray;
+	ConvertArray<bool, FString>(InArray, [](const bool& Element) { return FString(Element ? "true" : "false"); });
+
+	return OutArray;
+}
+
+TArray<FText> UGLibConversionLibrary::ConvertBoolArrayToTextArray(const TArray<bool>& InArray)
+{
+	TArray<FText> OutArray;
+	ConvertArray<bool, FText>(InArray, [](const bool& Element) { return FText::FromString(FString(Element ? "true" : "false")); });
+
+	return OutArray;
+}
+
+TArray<float> UGLibConversionLibrary::ConvertBoolArrayToFloatArray(const TArray<bool>& InArray)
+{
+	TArray<float> OutArray;
+	ConvertArray<bool, float>(InArray, [](const bool& Element) { return static_cast<float>(Element); });
+
+	return OutArray;
+}
+
+TArray<int32> UGLibConversionLibrary::ConvertBoolArrayToIntArray(const TArray<bool>& InArray)
+{
+	TArray<int32> OutArray;
+	ConvertArray<bool, int32>(InArray, [](const bool& Element) { return static_cast<int32>(Element); });
+
+	return OutArray;
+}
+
+TArray<int64> UGLibConversionLibrary::ConvertBoolArrayToInt64Array(const TArray<bool>& InArray)
+{
+	TArray<int64> OutArray;
+	ConvertArray<bool, int64>(InArray, [](const bool& Element) { return static_cast<int64>(Element); });
+
+	return OutArray;
+}
+
+TArray<uint8> UGLibConversionLibrary::ConvertBoolArrayToByteArray(const TArray<bool>& InArray)
+{
+	TArray<uint8> OutArray;
+	ConvertArray<bool, uint8>(InArray, [](const bool& Element) { return static_cast<uint8>(Element); });
+
+	return OutArray;
+}
+
 TArray<UObject*> UGLibConversionLibrary::ConvertObjectArray_Internal(
 	const TArray<UObject*>& Objects,
 	TSubclassOf<UObject> ObjectClass,

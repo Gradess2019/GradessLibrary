@@ -12,6 +12,7 @@ float UGLibFirstPersonMovementComponent::GetMaxSpeed() const
 {
 	switch (MovementMode)
 	{
+	case MOVE_Walking:
 	case MOVE_NavWalking:
 		// TODO: Improve flexibility through State pattern
 		return IsCrouching() ? MaxWalkSpeedCrouched : bSprint ? MaxWalkSpeedSprinted : MaxWalkSpeed;

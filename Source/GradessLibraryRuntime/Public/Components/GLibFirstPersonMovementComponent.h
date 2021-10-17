@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SprintComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GLibFirstPersonMovementComponent.generated.h"
 
@@ -20,7 +21,7 @@ UCLASS(
 		BlueprintSpawnableComponent
 	)
 )
-class GRADESSLIBRARYRUNTIME_API UGLibFirstPersonMovementComponent : public UCharacterMovementComponent
+class GRADESSLIBRARYRUNTIME_API UGLibFirstPersonMovementComponent : public UCharacterMovementComponent, public ISprintComponent
 {
 	GENERATED_BODY()
 
@@ -29,19 +30,11 @@ public:
 
 	virtual float GetMaxSpeed() const override;
 
-	UFUNCTION(
-		BlueprintCallable,
-		BlueprintNativeEvent,
-		Category = "GLib|MovementComponent"
-	)
-	void Sprint();
+#pragma region ISprintComponent implementation
+	virtual void Sprint_Implementation() override;
+	virtual void UnSprint_Implementation() override;
+#pragma endregion ISprintComponent implementation
 
-	UFUNCTION(
-		BlueprintCallable,
-		BlueprintNativeEvent,
-		Category = "GLib|MovementComponent"
-	)
-	void UnSprint();
 
 	UPROPERTY(
 		BlueprintReadWrite,

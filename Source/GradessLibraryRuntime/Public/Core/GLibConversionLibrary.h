@@ -41,7 +41,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToString (name array)",
+			DisplayName = "ToString (Name array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -59,7 +59,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToText (name array)",
+			DisplayName = "ToText (Name array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -77,7 +77,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToFloat (name array)",
+			DisplayName = "ToFloat (Name array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -95,7 +95,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt (name array)",
+			DisplayName = "ToInt (Name array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -113,7 +113,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt64 (name array)",
+			DisplayName = "ToInt64 (Name array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -131,7 +131,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToByte (name array)",
+			DisplayName = "ToByte (Name array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -150,7 +150,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToBool (name array)",
+			DisplayName = "ToBool (Name array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -168,7 +168,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToName (string array)",
+			DisplayName = "ToName (String array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -186,7 +186,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToText (string array)",
+			DisplayName = "ToText (String array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -204,7 +204,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToFloat (string array)",
+			DisplayName = "ToFloat (String array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -222,7 +222,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt (string array)",
+			DisplayName = "ToInt (String array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -240,7 +240,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt64 (string array)",
+			DisplayName = "ToInt64 (String array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -258,7 +258,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToByte (string array)",
+			DisplayName = "ToByte (String array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -276,7 +276,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToBool (string array)",
+			DisplayName = "ToBool (String array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -294,7 +294,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToName (text array)",
+			DisplayName = "ToName (Text array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -312,7 +312,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToString (text array)",
+			DisplayName = "ToString (Text array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -330,7 +330,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToFloat (text array)",
+			DisplayName = "ToFloat (Text array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -348,7 +348,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt (text array)",
+			DisplayName = "ToInt (Text array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -366,7 +366,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt64 (text array)",
+			DisplayName = "ToInt64 (Text array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -384,7 +384,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToByte (text array)",
+			DisplayName = "ToByte (Text array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -402,7 +402,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToBool (text array)",
+			DisplayName = "ToBool (Text array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -420,7 +420,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToName (text array)",
+			DisplayName = "ToName (Int array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -438,7 +438,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToString (text array)",
+			DisplayName = "ToString (Int array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -456,7 +456,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToText (string array)",
+			DisplayName = "ToText (Int array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -474,7 +474,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToFloat (text array)",
+			DisplayName = "ToFloat (Int array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -492,7 +492,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt64 (text array)",
+			DisplayName = "ToInt64 (Int array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -510,7 +510,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToByte (text array)",
+			DisplayName = "ToByte (Int array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -528,7 +528,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToBool (text array)",
+			DisplayName = "ToBool (Int array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -546,7 +546,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToName (text array)",
+			DisplayName = "ToName (Int64 array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -564,7 +564,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToString (text array)",
+			DisplayName = "ToString (Int64 array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -582,7 +582,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToText (string array)",
+			DisplayName = "ToText (Int64 array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -600,7 +600,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToFloat (text array)",
+			DisplayName = "ToFloat (Int64 array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -618,7 +618,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt (text array)",
+			DisplayName = "ToInt (Int64 array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -636,7 +636,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToByte (text array)",
+			DisplayName = "ToByte (Int64 array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -654,7 +654,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToBool (text array)",
+			DisplayName = "ToBool (Int64 array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -672,7 +672,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToName (text array)",
+			DisplayName = "ToName (Float array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -690,7 +690,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToString (text array)",
+			DisplayName = "ToString (Float array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -708,7 +708,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToText (string array)",
+			DisplayName = "ToText (Float array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -726,7 +726,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt (text array)",
+			DisplayName = "ToInt (Float array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -744,7 +744,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt64 (text array)",
+			DisplayName = "ToInt64 (Float array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -762,7 +762,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToByte (text array)",
+			DisplayName = "ToByte (Float array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -780,7 +780,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToBool (text array)",
+			DisplayName = "ToBool (Float array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -798,7 +798,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToName (text array)",
+			DisplayName = "ToName (Byte array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -816,7 +816,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToString (text array)",
+			DisplayName = "ToString (Byte array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -834,7 +834,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToText (string array)",
+			DisplayName = "ToText (Byte array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -852,7 +852,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToFloat (text array)",
+			DisplayName = "ToFloat (Byte array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -870,7 +870,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt (text array)",
+			DisplayName = "ToInt (Byte array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -888,7 +888,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt64 (text array)",
+			DisplayName = "ToInt64 (Byte array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -906,7 +906,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToBool (text array)",
+			DisplayName = "ToBool (Byte array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -924,7 +924,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToName (text array)",
+			DisplayName = "ToName (Bool array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -942,7 +942,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToString (text array)",
+			DisplayName = "ToString (Bool array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -960,7 +960,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToText (string array)",
+			DisplayName = "ToText (Bool array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -978,7 +978,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToFloat (text array)",
+			DisplayName = "ToFloat (Bool array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -996,7 +996,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt (text array)",
+			DisplayName = "ToInt (Bool array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -1014,7 +1014,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToInt64 (text array)",
+			DisplayName = "ToInt64 (Bool array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -1032,7 +1032,7 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToByte (text array)",
+			DisplayName = "ToByte (Bool array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
@@ -1214,13 +1214,49 @@ public:
 		BlueprintPure,
 		Category="GLib|Conversions",
 		meta = (
-			DisplayName = "ToVector2D (Rotator array)",
+			DisplayName = "ToTransform (Rotator array)",
 			CompactNodeTitle = "->",
 			BlueprintAutocast
 		)
 	)
 	static TArray<FTransform> ConvertRotatorArrayToTransformArray(
 		UPARAM(DisplayName = "Array") const TArray<FRotator>& InArray
+	);
+
+	/**
+	* @brief Converts array of transforms to array of strings
+	* @param InArray array of transforms
+	* @return converted array 
+	*/
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (Transform array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FString> ConvertTransformArrayToStringArray(
+		UPARAM(DisplayName = "Array") const TArray<FTransform>& InArray
+	);
+	
+	/**
+	* @brief Converts array of transforms to array of texts
+	* @param InArray array of transforms
+	* @return converted array 
+	*/
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToText (Transform array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FText> ConvertTransformArrayToTextArray(
+		UPARAM(DisplayName = "Array") const TArray<FTransform>& InArray
 	);
 
 	/**

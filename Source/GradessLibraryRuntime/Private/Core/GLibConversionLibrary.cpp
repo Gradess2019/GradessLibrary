@@ -543,6 +543,22 @@ TArray<FTransform> UGLibConversionLibrary::ConvertRotatorArrayToTransformArray(c
 	return OutArray;
 }
 
+TArray<FString> UGLibConversionLibrary::ConvertTransformArrayToStringArray(const TArray<FTransform>& InArray)
+{
+	TArray<FString> OutArray;
+	ConvertArray<FTransform, FString>(InArray, [](const FTransform& Element) { return Element.ToString(); });
+
+	return OutArray;
+}
+
+TArray<FText> UGLibConversionLibrary::ConvertTransformArrayToTextArray(const TArray<FTransform>& InArray)
+{
+	TArray<FText> OutArray;
+	ConvertArray<FTransform, FText>(InArray, [](const FTransform& Element) { return UKismetTextLibrary::Conv_TransformToText(Element); });
+
+	return OutArray;
+}
+
 TArray<UObject*> UGLibConversionLibrary::ConvertObjectArray_Internal(
 	const TArray<UObject*>& Objects,
 	TSubclassOf<UObject> ObjectClass,

@@ -290,6 +290,62 @@ TArray<bool> UGLibConversionLibrary::ConvertInt64ArrayToBoolArray(const TArray<i
 	return OutArray;
 }
 
+TArray<FName> UGLibConversionLibrary::ConvertFloatArrayToNameArray(const TArray<float>& InArray)
+{
+	TArray<FName> OutArray;
+	ConvertArray<float, FName>(InArray, [](const float& Element) { return FName(FString::SanitizeFloat(Element)); });
+
+	return OutArray;
+}
+
+TArray<FString> UGLibConversionLibrary::ConvertFloatArrayToStringArray(const TArray<float>& InArray)
+{
+	TArray<FString> OutArray;
+	ConvertArray<float, FString>(InArray, [](const float& Element) { return FString::SanitizeFloat(Element); });
+
+	return OutArray;
+}
+
+TArray<FText> UGLibConversionLibrary::ConvertFloatArrayToTextArray(const TArray<float>& InArray)
+{
+	TArray<FText> OutArray;
+	ConvertArray<float, FText>(InArray, [](const float& Element) { return FText::FromString(FString::SanitizeFloat(Element)); });
+
+	return OutArray;
+}
+
+TArray<int32> UGLibConversionLibrary::ConvertFloatArrayToIntArray(const TArray<float>& InArray)
+{
+	TArray<int32> OutArray;
+	ConvertArray<float, int32>(InArray, [](const float& Element) { return FMath::RoundToInt(Element);; });
+
+	return OutArray;
+}
+
+TArray<int64> UGLibConversionLibrary::ConvertFloatArrayToInt64Array(const TArray<float>& InArray)
+{
+	TArray<int64> OutArray;
+	ConvertArray<float, int64>(InArray, [](const float& Element) { return FMath::RoundToInt(Element); });
+
+	return OutArray;
+}
+
+TArray<uint8> UGLibConversionLibrary::ConvertFloatArrayToByteArray(const TArray<float>& InArray)
+{
+	TArray<uint8> OutArray;
+	ConvertArray<float, uint8>(InArray, [](const float& Element) { return static_cast<float>(Element); });
+
+	return OutArray;
+}
+
+TArray<bool> UGLibConversionLibrary::ConvertFloatArrayToBoolArray(const TArray<float>& InArray)
+{
+	TArray<bool> OutArray;
+	ConvertArray<float, bool>(InArray, [](const float& Element) { return FMath::IsNearlyZero(Element); });
+
+	return OutArray;
+}
+
 TArray<UObject*> UGLibConversionLibrary::ConvertObjectArray_Internal(
 	const TArray<UObject*>& Objects,
 	TSubclassOf<UObject> ObjectClass,

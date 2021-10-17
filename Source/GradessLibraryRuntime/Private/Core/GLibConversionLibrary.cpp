@@ -484,6 +484,14 @@ TArray<FVector2D> UGLibConversionLibrary::ConvertVectorArrayToVector2DArray(cons
 	return OutArray;
 }
 
+TArray<FTransform> UGLibConversionLibrary::ConvertVectorArrayToTransformArray(const TArray<FVector>& InArray)
+{
+	TArray<FTransform> OutArray;
+	ConvertArray<FVector, FTransform>(InArray, [](const FVector& Element) { return FTransform(Element); });
+
+	return OutArray;
+}
+
 TArray<FString> UGLibConversionLibrary::ConvertVector2DArrayToStringArray(const TArray<FVector2D>& InArray)
 {
 	TArray<FString> OutArray;

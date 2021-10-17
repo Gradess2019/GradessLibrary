@@ -1096,6 +1096,24 @@ public:
 	);
 
 	/**
+	 * @brief Converts array of rotators to array of transforms
+	 * @param InArray array of rotators
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToTransform (Vector array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FTransform> ConvertVectorArrayToTransformArray(
+		UPARAM(DisplayName = "Array") const TArray<FVector>& InArray
+	);
+
+	/**
 	 * @brief Converts array of 2D vectors to array of strings
 	 * @param InArray array of 2D vectors
 	 * @return converted array 

@@ -22,7 +22,8 @@ class GRADESSLIBRARYRUNTIME_API AGLibFirstPersonCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	AGLibFirstPersonCharacter();
+	AGLibFirstPersonCharacter(const FObjectInitializer& ObjectInitializer);
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:

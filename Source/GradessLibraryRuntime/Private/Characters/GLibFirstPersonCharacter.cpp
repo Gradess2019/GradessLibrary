@@ -3,14 +3,20 @@
 
 #include "Characters/GLibFirstPersonCharacter.h"
 
+#include "Components/GLibFirstPersonMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerInput.h"
 
-
-AGLibFirstPersonCharacter::AGLibFirstPersonCharacter()
+AGLibFirstPersonCharacter::AGLibFirstPersonCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(
+		ObjectInitializer.SetDefaultSubobjectClass<UGLibFirstPersonMovementComponent>(CharacterMovementComponentName)
+	)
 {
 	PrimaryActorTick.bCanEverTick = true;
+
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	check(GetCharacterMovement()->Implements<USprintComponent>())
 }
 
 void AGLibFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -35,15 +41,17 @@ void AGLibFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("GLib_Crouch", EKeys::RightControl));
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("GLib_Sprint", EKeys::LeftShift));
 	UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("GLib_Sprint", EKeys::RightShift));
-	
+
 	PlayerInputComponent->BindAxis("GLib_MoveForward", this, &AGLibFirstPersonCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("GLib_MoveRight", this, &AGLibFirstPersonCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("GLib_Turn", this, &AGLibFirstPersonCharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("GLib_LookUp", this, &AGLibFirstPersonCharacter::AddControllerPitchInput);
-	
+
 	PlayerInputComponent->BindAction("GLib_Jump", IE_Pressed, this, &AGLibFirstPersonCharacter::Jump);
-	PlayerInputComponent->BindAction<FBoolDelegate>("GLib_Crouch", IE_Pressed, this, &AGLibFirstPersonCharacter::Crouch, false);
-	PlayerInputComponent->BindAction<FBoolDelegate>("GLib_Crouch", IE_Released, this, &AGLibFirstPersonCharacter::UnCrouch, false);
+	PlayerInputComponent->BindAction<FBoolDelegate>("GLib_Crouch", IE_Pressed, this, &AGLibFirstPersonCharacter::Crouch,
+	                                                false);
+	PlayerInputComponent->BindAction<FBoolDelegate>("GLib_Crouch", IE_Released, this,
+	                                                &AGLibFirstPersonCharacter::UnCrouch, false);
 	PlayerInputComponent->BindAction("GLib_Sprint", IE_Pressed, this, &AGLibFirstPersonCharacter::OnPressSprint);
 	PlayerInputComponent->BindAction("GLib_Sprint", IE_Released, this, &AGLibFirstPersonCharacter::OnReleaseSprint);
 }
@@ -56,7 +64,7 @@ void AGLibFirstPersonCharacter::MoveForward_Implementation(const float InputValu
 		{
 			FRotator const ControlSpaceRot = Controller->GetControlRotation();
 
-			AddMovementInput( GetActorForwardVector(), InputValue );
+			AddMovementInput(GetActorForwardVector(), InputValue);
 		}
 	}
 }
@@ -69,15 +77,17 @@ void AGLibFirstPersonCharacter::MoveRight_Implementation(const float InputValue)
 		{
 			FRotator const ControlSpaceRot = Controller->GetControlRotation();
 
-			AddMovementInput( GetActorRightVector(), InputValue );
+			AddMovementInput(GetActorRightVector(), InputValue);
 		}
 	}
 }
 
 void AGLibFirstPersonCharacter::OnPressSprint_Implementation()
 {
+	ISprintComponent::Execute_Sprint(GetCharacterMovement());
 }
 
 void AGLibFirstPersonCharacter::OnReleaseSprint_Implementation()
 {
+	ISprintComponent::Execute_UnSprint(GetCharacterMovement());
 }

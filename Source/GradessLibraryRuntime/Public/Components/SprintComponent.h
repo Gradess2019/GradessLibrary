@@ -23,6 +23,9 @@ class GRADESSLIBRARYRUNTIME_API ISprintComponent
 
 public:
 
+	/**
+	 * @brief Enable sprinting mode for owner
+	 */
 	UFUNCTION(
 		BlueprintCallable,
 		BlueprintNativeEvent,
@@ -30,6 +33,9 @@ public:
 	)
 	void Sprint();
 
+	/**
+	 * @brief Disable sprinting mode for owner
+	 */
 	UFUNCTION(
 		BlueprintCallable,
 		BlueprintNativeEvent,

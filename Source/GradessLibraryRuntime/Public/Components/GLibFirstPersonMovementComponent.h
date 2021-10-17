@@ -36,12 +36,19 @@ public:
 #pragma endregion ISprintComponent implementation
 
 
+	/**
+	 * @brief Max speed character can reach while sprinting
+	 */
 	UPROPERTY(
+		EditAnywhere,
 		BlueprintReadWrite,
 		Category = "GLib|MovementComponent"
 	)
 	float MaxWalkSpeedSprinted;
 
+	/**
+	 * @brief Whether sprinting or not
+	 */
 	UPROPERTY(
 		BlueprintReadWrite,
 		Category = "GLib|MovementComponent"

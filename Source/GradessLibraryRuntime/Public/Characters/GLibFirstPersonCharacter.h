@@ -26,6 +26,9 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+	void SetupMappings();
+
 protected:
 	UFUNCTION(
 		BlueprintNativeEvent,
@@ -50,4 +53,13 @@ protected:
 		Category = "GLib|Characters"
 	)
 	void OnReleaseSprint();
+
+	static const FName MoveForwardName;
+	static const FName MoveRightName;
+	static const FName TurnName;
+	static const FName LookUpName;
+	static const FName JumpName;
+	static const FName CrouchName;
+	static const FName SprintName;
+	
 };

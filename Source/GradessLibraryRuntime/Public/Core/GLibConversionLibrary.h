@@ -1263,7 +1263,7 @@ public:
 	 * @brief Cast array of objects from one type to another
 	 * @param Objects object array to cast
 	 * @param ObjectClass to which class cast
-	 * @param bExcludeNullptr if true, exclude all unsuccessful casted object, false otherwise
+	 * @param bExcludeNull if true, exclude all unsuccessful casted object, false otherwise
 	 * @return casted array 
 	 */
 	UFUNCTION(
@@ -1273,14 +1273,38 @@ public:
 		meta = (
 			DisplayName = "Convert Object Array",
 			DeterminesOutputType = "ObjectClass",
-			CustomStructureParam = "Objects",
+			ArrayParm = "Objects",
 			BlueprintInternalUseOnly
 		)
 	)
 	static TArray<UObject*> ConvertObjectArray_Internal(
 		const TArray<UObject*>& Objects,
 		TSubclassOf<UObject> ObjectClass,
-		const bool bExcludeNullptr
+		const bool bExcludeNull
+	);
+	
+	/**
+	* @brief Cast array of objects from one type to another exact type (exclude derived classes)
+	* @param Objects object array to cast
+	* @param ObjectClass to which class cast
+	* @param bExcludeNull if true, exclude all unsuccessful casted object, false otherwise
+	* @return casted array 
+	*/
+	UFUNCTION(
+		BlueprintPure,
+		CustomThunk,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "Convert Object Array Exact Type",
+			DeterminesOutputType = "ObjectClass",
+			ArrayParm = "Objects",
+			BlueprintInternalUseOnly
+		)
+	)
+	static TArray<UObject*> ConvertObjectArrayExactType_Internal(
+		const TArray<UObject*>& Objects,
+		TSubclassOf<UObject> ObjectClass,
+		const bool bExcludeNull
 	);
 
 	/**
@@ -1318,15 +1342,24 @@ public:
 	 * @tparam To target array element type
 	 * @param SourceArray array to convert
 	 * @param OutArray converted array
-	 * @param bExcludeNullptr if true, exclude all unsuccessful casted object, false otherwise
+	 * @param bExcludeNull if true, exclude all unsuccessful casted object, false otherwise
 	 */
 	template <typename From, typename To>
 	static void ConvertArray(
 		const TArray<From*>& SourceArray,
 		TArray<To*>& OutArray,
-		const bool bExcludeNullptr = false
+		const bool bExcludeNull = false
 	);
 
 private:
+	static void ConvertObjectArray(
+		const TArray<UObject*>& Objects,
+		TArray<UObject*>& OutArray,
+		TSubclassOf<UObject> ObjectClass,
+		const bool bExcludeNull,
+		std::function<bool(const UObject* Object, const UClass* CheckClass)> CheckFunction
+	);
+
 	DECLARE_FUNCTION(execConvertObjectArray_Internal);
+	DECLARE_FUNCTION(execConvertObjectArrayExactType_Internal);
 };

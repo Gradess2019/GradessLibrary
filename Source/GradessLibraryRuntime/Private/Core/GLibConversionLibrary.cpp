@@ -562,7 +562,16 @@ TArray<FText> UGLibConversionLibrary::ConvertTransformArrayToTextArray(const TAr
 TArray<UObject*> UGLibConversionLibrary::ConvertObjectArray_Internal(
 	const TArray<UObject*>& Objects,
 	TSubclassOf<UObject> ObjectClass,
-	const bool bExcludeNullptr
+	const bool bExcludeNull
+)
+{
+	check(0);
+	return TArray<UObject*>();
+}
+
+TArray<UObject*> UGLibConversionLibrary::ConvertObjectArrayExactType_Internal(
+	const TArray<UObject*>& Objects,
+	TSubclassOf<UObject> ObjectClass, const bool bExcludeNull
 )
 {
 	check(0);
@@ -596,7 +605,7 @@ template <typename From, typename To>
 void UGLibConversionLibrary::ConvertArray(
 	const TArray<From*>& SourceArray,
 	TArray<To*>& OutArray,
-	const bool bExcludeNullptr
+	const bool bExcludeNull
 )
 {
 	OutArray.Reset(SourceArray.Num());
@@ -605,7 +614,26 @@ void UGLibConversionLibrary::ConvertArray(
 	{
 		const auto ElementToAdd = Element ? Cast<To>(Element) : nullptr;
 
-		if (bExcludeNullptr && !ElementToAdd) { continue; }
+		if (bExcludeNull && !ElementToAdd) { continue; }
+		OutArray.Add(ElementToAdd);
+	}
+}
+
+void UGLibConversionLibrary::ConvertObjectArray(
+	const TArray<UObject*>& Objects,
+	TArray<UObject*>& OutArray,
+	TSubclassOf<UObject> ObjectClass,
+	const bool bExcludeNull,
+	std::function<bool(const UObject* Object, const UClass* CheckClass)> CheckFunction
+)
+{
+	OutArray.Reserve(Objects.Num());
+
+	for (const auto Element : Objects)
+	{
+		const auto ElementToAdd = Element && CheckFunction(Element, ObjectClass) ? Element : nullptr;
+
+		if (bExcludeNull && !ElementToAdd) { continue; }
 		OutArray.Add(ElementToAdd);
 	}
 }
@@ -617,24 +645,52 @@ DEFINE_FUNCTION(UGLibConversionLibrary::execConvertObjectArray_Internal)
 
 	P_GET_TARRAY_REF(UObject*, Objects);
 	P_GET_OBJECT(UClass, ObjectClass);
-	P_GET_UBOOL8(bExcludeNullptr)
+	P_GET_UBOOL(bExcludeNull);
 
 	P_FINISH;
 
 	P_NATIVE_BEGIN;
 
 		TArray<UObject*> OutArray;
-		OutArray.Reserve(Objects.Num());
 
-		for (const auto Element : Objects)
-		{
-			const auto ElementToAdd = Element && Element->IsA(ObjectClass) ? Element : nullptr;
-
-			if (bExcludeNullptr && !ElementToAdd) { continue; }
-			OutArray.Add(ElementToAdd);
-		}
+		ConvertObjectArray(
+			Objects,
+			OutArray,
+			ObjectClass,
+			bExcludeNull,
+			[](const UObject* Object, const UClass* Class) { return Object->IsA(Class); }
+		);
 
 		*static_cast<TArray<UObject*>*>(RESULT_PARAM) = OutArray;
 
 	P_NATIVE_END;
 }
+
+DEFINE_FUNCTION(UGLibConversionLibrary::execConvertObjectArrayExactType_Internal)
+{
+	Stack.MostRecentPropertyAddress = nullptr;
+	Stack.MostRecentProperty = nullptr;
+
+	P_GET_TARRAY_REF(UObject*, Objects);
+	P_GET_OBJECT(UClass, ObjectClass);
+	P_GET_UBOOL(bExcludeNull);
+
+	P_FINISH;
+
+	P_NATIVE_BEGIN;
+
+		TArray<UObject*> OutArray;
+	
+		ConvertObjectArray(
+			Objects,
+			OutArray,
+			ObjectClass,
+			bExcludeNull,
+			[](const UObject* Object, const UClass* Class) { return Object->GetClass() == Class; }
+		);
+
+		*static_cast<TArray<UObject*>*>(RESULT_PARAM) = OutArray;
+
+	P_NATIVE_END;
+}
+

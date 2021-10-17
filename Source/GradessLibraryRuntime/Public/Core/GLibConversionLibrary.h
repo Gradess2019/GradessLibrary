@@ -560,6 +560,150 @@ public:
 	);
 
 	/**
+	 * @brief Converts array of 64-bit integers to array of names
+	 * @param InArray array of 64-bit integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToName (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FName> ConvertInt64ArrayToNameArray(
+		UPARAM(DisplayName = "Array") const TArray<int64>& InArray
+	);
+
+	/**
+	 * @brief Converts array of 64-bit integers to array of strings
+	 * @param InArray array of 64-bit integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FString> ConvertInt64ArrayToStringArray(
+		UPARAM(DisplayName = "Array") const TArray<int64>& InArray
+	);
+
+	/**
+	 * @brief Converts array of 64-bit integers to array of texts
+	 * @param InArray array of 64-bit integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToText (string array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FText> ConvertInt64ArrayToTextArray(
+		UPARAM(DisplayName = "Array") const TArray<int64>& InArray
+	);
+
+	/**
+	 * @brief Converts array of 64-bit integers to array of floats
+	 * @param InArray array of 64-bit integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<float> ConvertInt64ArrayToFloatArray(
+		UPARAM(DisplayName = "Array") const TArray<int64>& InArray
+	);
+
+	/**
+	 * @brief Converts array of 64-bit integers to array of integers
+	 * @param InArray array of 64-bit integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<int32> ConvertInt64ArrayToIntArray(
+		UPARAM(DisplayName = "Array") const TArray<int64>& InArray
+	);
+
+	/**
+	 * @brief Converts array of 64-bit integers to array of 64-bit integers
+	 * @param InArray array of 64-bit integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<int64> ConvertInt64ArrayToInt64Array(
+		UPARAM(DisplayName = "Array") const TArray<int64>& InArray
+	);
+
+	/**
+	 * @brief Converts array of 64-bit integers to array of bytes
+	 * @param InArray array of 64-bit integers
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<uint8> ConvertInt64ArrayToByteArray(
+		UPARAM(DisplayName = "Array") const TArray<int64>& InArray
+	);
+
+	/**
+	 * @brief Converts array of 64-bit integers to array of booleans
+	 * @param InArray array of 64-bit integerss
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (text array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<bool> ConvertInt64ArrayToBoolArray(
+		UPARAM(DisplayName = "Array") const TArray<int64>& InArray
+	);
+
+	/**
 	 * @brief Cast array of objects from one type to another
 	 * @param Objects object array to cast
 	 * @param ObjectClass to which class cast

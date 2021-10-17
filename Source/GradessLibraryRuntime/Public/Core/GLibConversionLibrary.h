@@ -1042,6 +1042,60 @@ public:
 	);
 
 	/**
+	 * @brief Converts array of vectors to array of strings
+	 * @param InArray array of vectors
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (Vector array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FString> ConvertVectorArrayToStringArray(
+		UPARAM(DisplayName = "Array") const TArray<FVector>& InArray
+	);
+	
+	/**
+	 * @brief Converts array of vectors to array of strings
+	 * @param InArray array of vectors
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToText (Vector array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FText> ConvertVectorArrayToTextArray(
+		UPARAM(DisplayName = "Array") const TArray<FVector>& InArray
+	);
+
+	/**
+	* @brief Converts array of vectors to array of strings
+	* @param InArray array of vectors
+	* @return converted array 
+	*/
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToVector2D (Vector array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FVector2D> ConvertVectorArrayToVector2DArray(
+		UPARAM(DisplayName = "Array") const TArray<FVector>& InArray
+	);
+
+	/**
 	 * @brief Cast array of objects from one type to another
 	 * @param Objects object array to cast
 	 * @param ObjectClass to which class cast

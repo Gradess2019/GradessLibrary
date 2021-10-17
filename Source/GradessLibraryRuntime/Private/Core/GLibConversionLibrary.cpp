@@ -2,6 +2,8 @@
 
 
 #include "GradessLibraryRuntime/Public/Core/GLibConversionLibrary.h"
+
+#include "Kismet/KismetTextLibrary.h"
 #include "UObject/UnrealType.h"
 #include "Templates/SubclassOf.h"
 
@@ -454,6 +456,30 @@ TArray<uint8> UGLibConversionLibrary::ConvertBoolArrayToByteArray(const TArray<b
 {
 	TArray<uint8> OutArray;
 	ConvertArray<bool, uint8>(InArray, [](const bool& Element) { return static_cast<uint8>(Element); });
+
+	return OutArray;
+}
+
+TArray<FString> UGLibConversionLibrary::ConvertVectorArrayToStringArray(const TArray<FVector>& InArray)
+{
+	TArray<FString> OutArray;
+	ConvertArray<FVector, FString>(InArray, [](const FVector& Element) { return Element.ToString(); });
+
+	return OutArray;
+}
+
+TArray<FText> UGLibConversionLibrary::ConvertVectorArrayToTextArray(const TArray<FVector>& InArray)
+{
+	TArray<FText> OutArray;
+	ConvertArray<FVector, FText>(InArray, [](const FVector& Element) { return UKismetTextLibrary::Conv_VectorToText(Element); });
+
+	return OutArray;
+}
+
+TArray<FVector2D> UGLibConversionLibrary::ConvertVectorArrayToVector2DArray(const TArray<FVector>& InArray)
+{
+	TArray<FVector2D> OutArray;
+	ConvertArray<FVector, FVector2D>(InArray, [](const FVector& Element) { return FVector2D(Element); });
 
 	return OutArray;
 }

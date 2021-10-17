@@ -1078,10 +1078,10 @@ public:
 	);
 
 	/**
-	* @brief Converts array of vectors to array of 2D vectors
-	* @param InArray array of vectors
-	* @return converted array 
-	*/
+	 * @brief Converts array of vectors to array of 2D vectors
+	 * @param InArray array of vectors
+	 * @return converted array 
+	 */
 	UFUNCTION(
 		BlueprintPure,
 		Category="GLib|Conversions",
@@ -1096,10 +1096,10 @@ public:
 	);
 
 	/**
-	* @brief Converts array of 2D vectors to array of strings
-	* @param InArray array of 2D vectors
-	* @return converted array 
-	*/
+	 * @brief Converts array of 2D vectors to array of strings
+	 * @param InArray array of 2D vectors
+	 * @return converted array 
+	 */
 	UFUNCTION(
 		BlueprintPure,
 		Category="GLib|Conversions",
@@ -1114,10 +1114,10 @@ public:
 	);
 	
 	/**
-	* @brief Converts array of 2D vectors to array of texts
-	* @param InArray array of 2D vectors
-	* @return converted array 
-	*/
+	 * @brief Converts array of 2D vectors to array of texts
+	 * @param InArray array of 2D vectors
+	 * @return converted array 
+	 */
 	UFUNCTION(
 		BlueprintPure,
 		Category="GLib|Conversions",
@@ -1132,11 +1132,11 @@ public:
 	);
 
 	/**
-	* @brief Converts array of 2D vectors to array of 3D vectors
-	* @param InArray array of 2D vectors
-	* @param Z default Z value
-	* @return converted array 
-	*/
+	 * @brief Converts array of 2D vectors to array of 3D vectors
+	 * @param InArray array of 2D vectors
+	 * @param Z default Z value
+	 * @return converted array 
+	 */
 	UFUNCTION(
 		BlueprintPure,
 		Category="GLib|Conversions",
@@ -1149,6 +1149,60 @@ public:
 	static TArray<FVector> ConvertVector2DArrayToVectorArray(
 		UPARAM(DisplayName = "Array") const TArray<FVector2D>& InArray,
 		const float Z
+	);
+
+	/**
+	 * @brief Converts array of rotators to array of strings
+	 * @param InArray array of rotators
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToString (Rotator array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FString> ConvertRotatorArrayToStringArray(
+		UPARAM(DisplayName = "Array") const TArray<FRotator>& InArray
+	);
+	
+	/**
+	 * @brief Converts array of rotators to array of texts
+	 * @param InArray array of rotators
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToText (Rotator array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FText> ConvertRotatorArrayToTextArray(
+		UPARAM(DisplayName = "Array") const TArray<FRotator>& InArray
+	);
+
+	/**
+	 * @brief Converts array of rotators to array of transforms
+	 * @param InArray array of rotators
+	 * @return converted array 
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category="GLib|Conversions",
+		meta = (
+			DisplayName = "ToVector2D (Rotator array)",
+			CompactNodeTitle = "->",
+			BlueprintAutocast
+		)
+	)
+	static TArray<FTransform> ConvertRotatorArrayToTransformArray(
+		UPARAM(DisplayName = "Array") const TArray<FRotator>& InArray
 	);
 
 	/**

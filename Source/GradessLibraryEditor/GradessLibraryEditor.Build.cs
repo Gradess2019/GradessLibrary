@@ -38,6 +38,8 @@ public class GradessLibraryEditor : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"UnrealEd",
+				"AssetTools"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

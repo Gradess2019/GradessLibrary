@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GLibAdvancedCopyParams.h"
 #include "EditorAssetToolsBPLibrary.generated.h"
 
 /**
@@ -58,7 +59,7 @@ public:
 		Category = "GLib|EditorAssetToolsBPLibrary"
 	)
 	static bool UnloadDependencies(
-		UPARAM(ref) TSet<FName>& Dependencies,
+		const TSet<FName>& Dependencies,
 		UPARAM(DisplayName="ChildDependencies") TSet<FName>& OutChildDependencies
 	);
 
@@ -130,4 +131,57 @@ public:
 		Category = "GLib|EditorAssetToolsBPLibrary"
 	)
 	static bool IsAnybodyReferenced(const FName& PackagePath);
+
+	/**
+	* @brief Copies directory from source to destination with reference fixing
+	* @param Source directory that will be copied
+	* @param Destination directory where copied source will be placed
+	* @param Params advanced copy params
+	*/
+	UFUNCTION(
+		BlueprintCallable,
+		Category = "GLib|EditorAssetToolsBPLibrary",
+		meta = (AutoCreateRefTerm = "Params")
+	)
+	static void AdvancedCopyDirectory(
+		const FString Source,
+		const FString Destination,
+		const FGLibAdvancedCopyParams& Params
+	);
+
+	/**
+	* @brief Reloads asset provided by asset data
+	* @param AssetData asset to reload
+	*/
+	UFUNCTION(
+		BlueprintCallable,
+		Category = "GLib|EditorAssetToolsBPLibrary"
+	)
+	static void ReloadAsset(
+		const FAssetData& AssetData
+	);
+
+	/**
+	* @brief Reloads asset by exact path
+	* @param AssetPath path to asset to reload
+	*/
+	UFUNCTION(
+		BlueprintCallable,
+		Category = "GLib|EditorAssetToolsBPLibrary"
+	)
+	static void ReloadAssetByPath(
+		const FName& AssetPath
+	);
+
+	/**
+	* @brief Reloads bunch of assets by asset data
+	* @param AssetsData assets to reload
+	*/
+	UFUNCTION(
+		BlueprintCallable,
+		Category = "GLib|EditorAssetToolsBPLibrary"
+	)
+	static void ReloadAssets(
+		const TArray<FAssetData>& AssetsData
+	);
 };

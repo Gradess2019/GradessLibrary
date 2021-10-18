@@ -2,6 +2,9 @@
 
 
 #include "AssetTools/EditorAssetToolsBPLibrary.h"
+
+#include "AdvancedCopyCustomization.h"
+#include "AssetToolsModule.h"
 #include "PackageTools.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Misc/AssetRegistryInterface.h"
@@ -46,7 +49,7 @@ bool UEditorAssetToolsBPLibrary::UnloadPackageAndDependencies(const FName& Packa
 }
 
 bool UEditorAssetToolsBPLibrary::UnloadDependencies(
-	TSet<FName>& Dependencies,
+	const TSet<FName>& Dependencies,
 	TSet<FName>& OutChildDependencies
 )
 {
@@ -77,7 +80,8 @@ bool UEditorAssetToolsBPLibrary::UnloadDependencies(
 	return true;
 }
 
-void UEditorAssetToolsBPLibrary::GetUnreferencedPackages(const TArray<FName>& PackagePaths, TSet<FName>& OutUnreferencedPackagePaths)
+void UEditorAssetToolsBPLibrary::GetUnreferencedPackages(const TArray<FName>& PackagePaths,
+                                                         TSet<FName>& OutUnreferencedPackagePaths)
 {
 	for (auto& Package : PackagePaths)
 	{
@@ -138,4 +142,59 @@ bool UEditorAssetToolsBPLibrary::IsAnybodyReferenced(const FName& PackagePath)
 		}
 	}
 	return false;
+}
+
+void UEditorAssetToolsBPLibrary::AdvancedCopyDirectory(
+	const FString Source,
+	const FString Destination,
+	const FGLibAdvancedCopyParams& Params
+)
+{
+	const auto AssetTools = &FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	const auto SourceName = TArray<FName>({*Source});
+
+	auto NativeParams = FAdvancedCopyParams(SourceName, Destination);
+	Params.CopyToNative(NativeParams);
+
+	const auto CopyCustomization =
+		UAdvancedCopyCustomization::StaticClass()->GetDefaultObject<UAdvancedCopyCustomization>();
+
+	NativeParams.AddCustomization(CopyCustomization);
+	AssetTools->InitAdvancedCopyFromCopyParams(NativeParams);
+}
+
+void UEditorAssetToolsBPLibrary::ReloadAsset(const FAssetData& AssetData)
+{
+	if (!AssetData.IsValid()) { return; }
+	
+	const auto Package = AssetData.GetPackage();
+	const auto Packages = TArray<UPackage*>({Package});
+
+	UPackageTools::ReloadPackages(Packages);
+}
+
+void UEditorAssetToolsBPLibrary::ReloadAssetByPath(const FName& AssetPath)
+{
+	const auto& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
+	const auto Asset = AssetRegistry.GetAssetByObjectPath(AssetPath);
+
+	if (!Asset.IsValid()) { return; }
+
+	ReloadAsset(Asset);
+}
+
+void UEditorAssetToolsBPLibrary::ReloadAssets(const TArray<FAssetData>& AssetsData)
+{
+	auto Packages = TArray<UPackage*>();
+	Packages.Reserve(AssetsData.Num());
+
+	for (auto AssetData : AssetsData)
+	{
+		if (!AssetData.IsValid()) { continue; }
+
+		const auto NewPackage = AssetData.GetPackage();
+		Packages.Add(NewPackage);
+	}
+
+	UPackageTools::ReloadPackages(Packages);
 }

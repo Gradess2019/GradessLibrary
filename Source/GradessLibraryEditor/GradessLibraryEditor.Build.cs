@@ -25,7 +25,9 @@ public class GradessLibraryEditor : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
+				"Core", 
+				"UMG",
+				"UMGEditor"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -41,9 +43,8 @@ public class GradessLibraryEditor : ModuleRules
 				"UnrealEd",
 				"AssetTools",
 				"Blutility",
-				"UMG",
-				"UMGEditor",
-				"GradessLibraryRuntime"
+				"GradessLibraryRuntime",
+				"PropertyEditor"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

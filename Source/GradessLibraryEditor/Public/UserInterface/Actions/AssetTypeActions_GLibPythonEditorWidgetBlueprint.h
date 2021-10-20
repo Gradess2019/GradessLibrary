@@ -6,7 +6,8 @@
 #include "AssetTypeActions_Base.h"
 
 /**
- * 
+ * @brief Python editor widget asset actions
+ * Used for registering asset to editor menu
  */
 class GRADESSLIBRARYEDITOR_API FAssetTypeActions_GLibPythonEditorWidgetBlueprint : public FAssetTypeActions_Base
 {

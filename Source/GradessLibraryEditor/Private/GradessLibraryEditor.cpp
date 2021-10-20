@@ -20,6 +20,7 @@ void FGradessLibraryEditorModule::ShutdownModule()
 void FGradessLibraryEditorModule::RegisterPythonEditorWidgetActions()
 {
 	auto& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	
 	Actions = MakeShareable(new FAssetTypeActions_GLibPythonEditorWidgetBlueprint());
 	AssetTools.RegisterAssetTypeActions(Actions.ToSharedRef());
 }

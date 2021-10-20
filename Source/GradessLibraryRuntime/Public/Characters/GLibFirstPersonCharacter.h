@@ -26,31 +26,34 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/**
+	 * @brief Add temporary action and axis mappings to engine
+	 */
 	UFUNCTION()
 	void SetupMappings();
 
 protected:
 	UFUNCTION(
 		BlueprintNativeEvent,
-		Category = "GLib|Characters"
+		Category = "GLib|FirstPersonCharacter"
 	)
 	void MoveForward(const float InputValue);
 
 	UFUNCTION(
 		BlueprintNativeEvent,
-		Category = "GLib|Characters"
+		Category = "GLib|FirstPersonCharacter"
 	)
 	void MoveRight(const float InputValue);
 
 	UFUNCTION(
 		BlueprintNativeEvent,
-		Category = "GLib|Characters"
+		Category = "GLib|FirstPersonCharacter"
 	)
 	void OnPressSprint();
 
 	UFUNCTION(
 		BlueprintNativeEvent,
-		Category = "GLib|Characters"
+		Category = "GLib|FirstPersonCharacter"
 	)
 	void OnReleaseSprint();
 

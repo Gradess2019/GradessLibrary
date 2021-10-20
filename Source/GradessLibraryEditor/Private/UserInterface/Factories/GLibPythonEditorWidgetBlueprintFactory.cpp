@@ -21,29 +21,41 @@
 class FEditorUtilityWidgetBlueprintFactoryFilter : public IClassViewerFilter
 {
 public:
-	/** All children of these classes will be included unless filtered out by another setting. */
-	TSet< const UClass* > AllowedChildrenOfClasses;
-
-	/** Disallowed class flags. */
+	
+	/**
+	 * @brief All children of these classes will be included unless filtered out by another setting.
+	 */
+	TSet<const UClass*> AllowedChildrenOfClasses;
+	
+	/**
+	 * @brief Disallowed class flags.
+	 */
 	EClassFlags DisallowedClassFlags;
 
-	bool IsClassAllowed(const FClassViewerInitializationOptions& InInitOptions, const UClass* InClass, TSharedRef< FClassViewerFilterFuncs > InFilterFuncs ) override
+	bool IsClassAllowed(
+		const FClassViewerInitializationOptions& InInitOptions,
+		const UClass* InClass,
+		TSharedRef<FClassViewerFilterFuncs> InFilterFuncs
+	) override
 	{
 		return !InClass->HasAnyClassFlags(DisallowedClassFlags)
 			&& InFilterFuncs->IfInChildOfClassesSet(AllowedChildrenOfClasses, InClass) != EFilterReturn::Failed;
 	}
 
-	virtual bool IsUnloadedClassAllowed(const FClassViewerInitializationOptions& InInitOptions, const TSharedRef< const IUnloadedBlueprintData > InUnloadedClassData, TSharedRef< FClassViewerFilterFuncs > InFilterFuncs) override
+	virtual bool IsUnloadedClassAllowed(
+		const FClassViewerInitializationOptions& InInitOptions,
+		const TSharedRef<const IUnloadedBlueprintData> InUnloadedClassData,
+		TSharedRef<FClassViewerFilterFuncs> InFilterFuncs
+	) override
 	{
 		return !InUnloadedClassData->HasAnyClassFlags(DisallowedClassFlags)
-			&& InFilterFuncs->IfInChildOfClassesSet(AllowedChildrenOfClasses, InUnloadedClassData) != EFilterReturn::Failed;
+			&& InFilterFuncs->IfInChildOfClassesSet(AllowedChildrenOfClasses, InUnloadedClassData) !=
+			EFilterReturn::Failed;
 	}
 };
 
-/////////////////////////////////////////////////////
-// UGLibPythonEditorWidgetBlueprintFactory
-
-UGLibPythonEditorWidgetBlueprintFactory::UGLibPythonEditorWidgetBlueprintFactory(const FObjectInitializer& ObjectInitializer)
+UGLibPythonEditorWidgetBlueprintFactory::UGLibPythonEditorWidgetBlueprintFactory(
+	const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	bCreateNew = true;
@@ -69,52 +81,98 @@ bool UGLibPythonEditorWidgetBlueprintFactory::ConfigureProperties()
 		Options.ExtraPickerCommonClasses.Add(UGridPanel::StaticClass());
 		Options.ExtraPickerCommonClasses.Add(UCanvasPanel::StaticClass());
 
-		TSharedPtr<FEditorUtilityWidgetBlueprintFactoryFilter> Filter = MakeShareable(new FEditorUtilityWidgetBlueprintFactoryFilter);
+		TSharedPtr<FEditorUtilityWidgetBlueprintFactoryFilter> Filter = MakeShareable(
+			new FEditorUtilityWidgetBlueprintFactoryFilter);
 		Options.ClassFilter = Filter;
 
 		Filter->DisallowedClassFlags = CLASS_Abstract | CLASS_Deprecated | CLASS_NewerVersionExists;
 		Filter->AllowedChildrenOfClasses.Add(UPanelWidget::StaticClass());
 
-		const FText TitleText = LOCTEXT("CreateWidgetBlueprint", "Pick Root Widget for New Python Editor Utility Widget");
+		const FText TitleText = LOCTEXT(
+			"CreateWidgetBlueprint",
+			"Pick Root Widget for New Python Editor Utility Widget"
+		);
+		
 		return SClassPickerDialog::PickClass(TitleText, Options, RootWidgetClass, UPanelWidget::StaticClass());
-
 	}
 	return true;
 }
 
-UObject* UGLibPythonEditorWidgetBlueprintFactory::FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn)
+UEditorUtilityWidgetBlueprint* UGLibPythonEditorWidgetBlueprintFactory::CreateEditorWidget(UObject* InParent, FName Name) const
+{
+	const auto CreatedBlueprint = FKismetEditorUtilities::CreateBlueprint(
+		ParentClass,
+		InParent,
+		Name,
+		BlueprintType,
+		UEditorUtilityWidgetBlueprint::StaticClass(),
+		UWidgetBlueprintGeneratedClass::StaticClass(),
+		NAME_None
+	);
+
+	return CastChecked<UEditorUtilityWidgetBlueprint>(CreatedBlueprint);
+}
+
+UObject* UGLibPythonEditorWidgetBlueprintFactory::FactoryCreateNew(
+	UClass* Class,
+	UObject* InParent,
+	FName Name,
+	EObjectFlags Flags,
+	UObject* Context,
+	FFeedbackContext* Warn
+)
 {
 	// Make sure we are trying to factory a blueprint, then create and init one
 	check(Class->IsChildOf(UGLibPythonEditorWidgetBlueprint::StaticClass()));
 
-	FString ParentPath = InParent->GetPathName();
-
-	if ((ParentClass == nullptr) || !FKismetEditorUtilities::CanCreateBlueprintOfClass(ParentClass))
-	{
-		FFormatNamedArguments Args;
-		Args.Add(TEXT("ClassName"), (ParentClass != nullptr) ? FText::FromString(ParentClass->GetName()) : NSLOCTEXT("UnrealEd", "Null", "(null)"));
-		FMessageDialog::Open(EAppMsgType::Ok, FText::Format(NSLOCTEXT("UnrealEd", "CannotCreateBlueprintFromClass", "Cannot create a blueprint based on the class '{0}'."), Args));
-		return nullptr;
-	}
+	if (!IsValidParentClass()) { return nullptr; };
 
 	// If the root widget selection dialog is not enabled, use a canvas panel as the root by default
 	if (!GetDefault<UUMGEditorProjectSettings>()->bUseWidgetTemplateSelector)
 	{
 		RootWidgetClass = UCanvasPanel::StaticClass();
 	}
-	UEditorUtilityWidgetBlueprint* NewBP = CastChecked<UEditorUtilityWidgetBlueprint>(FKismetEditorUtilities::CreateBlueprint(ParentClass, InParent, Name, BlueprintType, UEditorUtilityWidgetBlueprint::StaticClass(), UWidgetBlueprintGeneratedClass::StaticClass(), NAME_None));
 
+	UEditorUtilityWidgetBlueprint* CreatedEditorWidget = CreateEditorWidget(InParent, Name);
+	
 	// Create the selected root widget
-	if (NewBP->WidgetTree->RootWidget == nullptr)
+	if (CreatedEditorWidget->WidgetTree->RootWidget == nullptr)
 	{
 		if (TSubclassOf<UPanelWidget> RootWidgetPanel = RootWidgetClass)
 		{
-			UWidget* Root = NewBP->WidgetTree->ConstructWidget<UWidget>(RootWidgetPanel);
-			NewBP->WidgetTree->RootWidget = Root;
+			UWidget* Root = CreatedEditorWidget->WidgetTree->ConstructWidget<UWidget>(RootWidgetPanel);
+			CreatedEditorWidget->WidgetTree->RootWidget = Root;
 		}
 	}
 
-	return NewBP;
+	return CreatedEditorWidget;
+}
+
+bool UGLibPythonEditorWidgetBlueprintFactory::IsValidParentClass() const
+{
+	if (ParentClass == nullptr || !FKismetEditorUtilities::CanCreateBlueprintOfClass(ParentClass))
+	{
+		FFormatNamedArguments Args;
+		const auto ClassName = ParentClass != nullptr ? FText::FromString(ParentClass->GetName()) : NSLOCTEXT("UnrealEd", "Null", "(null)");
+		Args.Add(TEXT("ClassName"), ClassName);
+
+		const auto Message = FText::Format(
+			NSLOCTEXT(
+				"UnrealEd",
+				"CannotCreateBlueprintFromClass",
+				"Cannot create a blueprint based on the class '{0}'."
+			),
+			Args
+		);
+		
+		FMessageDialog::Open(
+			EAppMsgType::Ok,
+			Message
+		);
+		
+		return false;
+	}
+	return true;
 }
 
 bool UGLibPythonEditorWidgetBlueprintFactory::CanCreateNew() const

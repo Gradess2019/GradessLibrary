@@ -3,21 +3,33 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Modules/ModuleManager.h"
 
-class FAssetTypeActions_GLibPythonEditorWidgetBlueprint;
+class FAssetTypeActions_Base;
 
+/**
+ * @brief GLib editor module
+ */
 class FGradessLibraryEditorModule : public IModuleInterface
 {
 public:
-	/** IModuleInterface implementation */
+#pragma region IModuleInterface implementation
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+#pragma endregion IModuleInterface implementation
 
 private:
-	TSharedPtr<FAssetTypeActions_GLibPythonEditorWidgetBlueprint> Actions;
+	/**
+	 * @brief Asset type actions. Currently used to add python editor widget asset to editor context menu
+	 */
+	TSharedPtr<FAssetTypeActions_Base> Actions;
 
+	/**
+	 * @brief Registers python editor widget asset to editor
+	 */
 	void RegisterPythonEditorWidgetActions();
-
+	
+	/**
+	 * @brief Unregister python editor widget asset from editor
+	 */
 	void UnregisterPythonEditorWidgetActions();
 };

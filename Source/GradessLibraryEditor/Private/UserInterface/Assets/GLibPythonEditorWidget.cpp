@@ -8,7 +8,8 @@
 void UGLibPythonEditorWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
+
+	// BUG: It doesn't work for nested python widgets
 	UGLibEditorUserInterfaceLibrary::RegisterEditorWidget(this);
 }
 

@@ -29,7 +29,7 @@ public:
 	UFUNCTION(
 		BlueprintCallable,
 		BlueprintNativeEvent,
-		Category = "GLib|MovementComponent"
+		Category = "GLib|SprintComponent"
 	)
 	void Sprint();
 
@@ -39,7 +39,7 @@ public:
 	UFUNCTION(
 		BlueprintCallable,
 		BlueprintNativeEvent,
-		Category = "GLib|MovementComponent"
+		Category = "GLib|SprintComponent"
 	)
 	void UnSprint();
 };

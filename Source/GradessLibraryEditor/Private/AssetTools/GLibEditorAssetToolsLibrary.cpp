@@ -1,7 +1,7 @@
 ﻿// Copyright Gradess. All Rights Reserved.
 
 
-#include "AssetTools/EditorAssetToolsBPLibrary.h"
+#include "AssetTools/GLibEditorAssetToolsLibrary.h"
 
 #include "AdvancedCopyCustomization.h"
 #include "AssetToolsModule.h"
@@ -10,18 +10,18 @@
 #include "Misc/AssetRegistryInterface.h"
 
 
-UPackage* UEditorAssetToolsBPLibrary::GetPackage(const FName& PackagePath)
+UPackage* UGLibEditorAssetToolsLibrary::GetPackage(const FName& PackagePath)
 {
 	return FindPackage(nullptr, *PackagePath.ToString());
 }
 
-bool UEditorAssetToolsBPLibrary::UnloadPackage(const FName& PackagePath)
+bool UGLibEditorAssetToolsLibrary::UnloadPackage(const FName& PackagePath)
 {
 	const auto Package = FindPackage(nullptr, *PackagePath.ToString());
 	return UPackageTools::UnloadPackages({Package});
 }
 
-bool UEditorAssetToolsBPLibrary::UnloadPackageAndDependencies(const FName& PackagePath)
+bool UGLibEditorAssetToolsLibrary::UnloadPackageAndDependencies(const FName& PackagePath)
 {
 	if (!UnloadPackage(PackagePath))
 	{
@@ -48,7 +48,7 @@ bool UEditorAssetToolsBPLibrary::UnloadPackageAndDependencies(const FName& Packa
 	return bSuccess;
 }
 
-bool UEditorAssetToolsBPLibrary::UnloadDependencies(
+bool UGLibEditorAssetToolsLibrary::UnloadDependencies(
 	const TSet<FName>& Dependencies,
 	TSet<FName>& OutChildDependencies
 )
@@ -80,7 +80,7 @@ bool UEditorAssetToolsBPLibrary::UnloadDependencies(
 	return true;
 }
 
-void UEditorAssetToolsBPLibrary::GetUnreferencedPackages(const TArray<FName>& PackagePaths,
+void UGLibEditorAssetToolsLibrary::GetUnreferencedPackages(const TArray<FName>& PackagePaths,
                                                          TSet<FName>& OutUnreferencedPackagePaths)
 {
 	for (auto& Package : PackagePaths)
@@ -95,7 +95,7 @@ void UEditorAssetToolsBPLibrary::GetUnreferencedPackages(const TArray<FName>& Pa
 	}
 }
 
-void UEditorAssetToolsBPLibrary::GetHardDependencies(const FName& PackagePath, TArray<FName>& OutDependencies)
+void UGLibEditorAssetToolsLibrary::GetHardDependencies(const FName& PackagePath, TArray<FName>& OutDependencies)
 {
 	const auto& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
 	AssetRegistry.Get().GetDependencies(
@@ -108,7 +108,7 @@ void UEditorAssetToolsBPLibrary::GetHardDependencies(const FName& PackagePath, T
 	);
 }
 
-void UEditorAssetToolsBPLibrary::GetHardReferencers(const FName& PackagePath, TArray<FName>& OutReferencers)
+void UGLibEditorAssetToolsLibrary::GetHardReferencers(const FName& PackagePath, TArray<FName>& OutReferencers)
 {
 	const auto& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
 	AssetRegistry.GetReferencers(
@@ -121,12 +121,12 @@ void UEditorAssetToolsBPLibrary::GetHardReferencers(const FName& PackagePath, TA
 	);
 }
 
-bool UEditorAssetToolsBPLibrary::IsProjectPackage(const FName& Package)
+bool UGLibEditorAssetToolsLibrary::IsProjectPackage(const FName& Package)
 {
 	return Package.ToString().StartsWith("/Game");
 }
 
-bool UEditorAssetToolsBPLibrary::IsAnybodyReferenced(const FName& PackagePath)
+bool UGLibEditorAssetToolsLibrary::IsAnybodyReferenced(const FName& PackagePath)
 {
 	const auto& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
 
@@ -144,7 +144,7 @@ bool UEditorAssetToolsBPLibrary::IsAnybodyReferenced(const FName& PackagePath)
 	return false;
 }
 
-void UEditorAssetToolsBPLibrary::AdvancedCopyDirectory(
+void UGLibEditorAssetToolsLibrary::AdvancedCopyDirectory(
 	const FString Source,
 	const FString Destination,
 	const FGLibAdvancedCopyParams& Params
@@ -163,7 +163,7 @@ void UEditorAssetToolsBPLibrary::AdvancedCopyDirectory(
 	AssetTools->InitAdvancedCopyFromCopyParams(NativeParams);
 }
 
-void UEditorAssetToolsBPLibrary::ReloadAsset(const FAssetData& AssetData)
+void UGLibEditorAssetToolsLibrary::ReloadAsset(const FAssetData& AssetData)
 {
 	if (!AssetData.IsValid()) { return; }
 	
@@ -173,7 +173,7 @@ void UEditorAssetToolsBPLibrary::ReloadAsset(const FAssetData& AssetData)
 	UPackageTools::ReloadPackages(Packages);
 }
 
-void UEditorAssetToolsBPLibrary::ReloadAssetByPath(const FName& AssetPath)
+void UGLibEditorAssetToolsLibrary::ReloadAssetByPath(const FName& AssetPath)
 {
 	const auto& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
 	const auto Asset = AssetRegistry.GetAssetByObjectPath(AssetPath);
@@ -183,7 +183,7 @@ void UEditorAssetToolsBPLibrary::ReloadAssetByPath(const FName& AssetPath)
 	ReloadAsset(Asset);
 }
 
-void UEditorAssetToolsBPLibrary::ReloadAssets(const TArray<FAssetData>& AssetsData)
+void UGLibEditorAssetToolsLibrary::ReloadAssets(const TArray<FAssetData>& AssetsData)
 {
 	auto Packages = TArray<UPackage*>();
 	Packages.Reserve(AssetsData.Num());

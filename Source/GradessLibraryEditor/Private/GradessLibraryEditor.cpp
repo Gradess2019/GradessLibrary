@@ -2,17 +2,38 @@
 
 #include "GradessLibraryEditor.h"
 
+#include "AssetToolsModule.h"
+#include "UserInterface/Actions/AssetTypeActions_GLibPythonEditorWidgetBlueprint.h"
+
 #define LOCTEXT_NAMESPACE "FGradessLibraryEditorModule"
 
 void FGradessLibraryEditorModule::StartupModule()
 {
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	RegisterPythonEditorWidgetActions();
 }
 
 void FGradessLibraryEditorModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
+	UnregisterPythonEditorWidgetActions();
+}
+
+void FGradessLibraryEditorModule::RegisterPythonEditorWidgetActions()
+{
+	auto& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	
+	Actions = MakeShareable(new FAssetTypeActions_GLibPythonEditorWidgetBlueprint());
+	AssetTools.RegisterAssetTypeActions(Actions.ToSharedRef());
+}
+
+void FGradessLibraryEditorModule::UnregisterPythonEditorWidgetActions()
+{
+	if (FModuleManager::Get().IsModuleLoaded("AssetTools"))
+	{
+		auto& AssetTools = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools").Get();
+		AssetTools.UnregisterAssetTypeActions(Actions.ToSharedRef());
+	}
+
+	Actions.Reset();
 }
 
 #undef LOCTEXT_NAMESPACE

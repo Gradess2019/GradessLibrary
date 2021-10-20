@@ -6,13 +6,13 @@
 #include "Components/ActorComponent.h"
 #include "GLibHealthComponent.generated.h"
 
-#pragma region LogDeclarations
+#pragma region Log declarations
 DECLARE_LOG_CATEGORY_EXTERN(LogHealthComponent, Log, All);
-#pragma endregion LogDeclarations
+#pragma endregion Log declarations
 
-#pragma region DelegateDeclarations
+#pragma region Delegate declarations
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOutOfHealth);
-#pragma endregion DelegateDeclarations
+#pragma endregion Delegate declarations
 
 /**
  * @brief Component that is responsible for health of the object. Track when someone damage owning actor.
@@ -39,7 +39,7 @@ public:
 protected:
 	UFUNCTION(
 		BlueprintNativeEvent,
-		Category = "JoyWay|HealthComponent"
+		Category = "GLib|HealthComponent"
 	)
 	void OnTakeAnyDamage(
 		AActor* DamagedActor,
@@ -51,7 +51,7 @@ protected:
 
 	UFUNCTION(
 		BlueprintNativeEvent,
-		Category = "JoyWay|HealthComponent"
+		Category = "GLib|HealthComponent"
 	)
 	void OnTakePointDamage(
 		AActor* DamagedActor,
@@ -67,7 +67,7 @@ protected:
 
 	UFUNCTION(
 		BlueprintNativeEvent,
-		Category = "JoyWay|HealthComponent"
+		Category = "GLib|HealthComponent"
 	)
 	void OnTakeRadialDamage(
 		AActor* DamagedActor,
@@ -86,7 +86,7 @@ protected:
 	UFUNCTION(
 		BlueprintNativeEvent,
 		BlueprintAuthorityOnly,
-		Category = "JoyWay|HealthComponent"
+		Category = "GLib|HealthComponent"
 	)
 	void DecreaseHealth(
 		float Amount
@@ -98,7 +98,7 @@ protected:
 	*/
 	UFUNCTION(
 		BlueprintGetter,
-		Category = "JoyWay|HealthComponent"
+		Category = "GLib|HealthComponent"
 	)
 	float GetHealth() const;
 
@@ -108,14 +108,14 @@ protected:
 
 	UFUNCTION(
 		BlueprintNativeEvent,
-		Category = "JoyWay|HealthComponent"
+		Category = "GLib|HealthComponent"
 	)
 	void OnRep_Health();
 
 public:
 	UPROPERTY(
 		BlueprintAssignable,
-		Category = "JoyWay|HealthComponent"
+		Category = "GLib|HealthComponent"
 	)
 	FOutOfHealth OnOutOfHealth;
 
@@ -127,7 +127,7 @@ private:
 		EditAnywhere,
 		BlueprintGetter = GetHealth,
 		ReplicatedUsing = OnRep_Health,
-		Category = "JoyWay|HealthComponent"
+		Category = "GLib|HealthComponent"
 	)
 	float Health;
 };

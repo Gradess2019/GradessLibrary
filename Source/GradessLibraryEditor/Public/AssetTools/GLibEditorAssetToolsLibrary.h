@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GLibAdvancedCopyParams.h"
-#include "EditorAssetToolsBPLibrary.generated.h"
+#include "GLibEditorAssetToolsLibrary.generated.h"
 
 /**
  * @brief A function library that provides additional useful functions such as unloading assets in editor
  */
 UCLASS()
-class GRADESSLIBRARYEDITOR_API UEditorAssetToolsBPLibrary : public UBlueprintFunctionLibrary
+class GRADESSLIBRARYEDITOR_API UGLibEditorAssetToolsLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 

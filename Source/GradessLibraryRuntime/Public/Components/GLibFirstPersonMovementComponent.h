@@ -42,7 +42,7 @@ public:
 	UPROPERTY(
 		EditAnywhere,
 		BlueprintReadWrite,
-		Category = "GLib|MovementComponent"
+		Category = "GLib|FirstPersonMovementComponent"
 	)
 	float MaxWalkSpeedSprinted;
 
@@ -51,7 +51,7 @@ public:
 	 */
 	UPROPERTY(
 		BlueprintReadWrite,
-		Category = "GLib|MovementComponent"
+		Category = "GLib|FirstPersonMovementComponent"
 	)
 	bool bSprint;
 };

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SprintComponent.h"
+#include "GLibSprintComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GLibFirstPersonMovementComponent.generated.h"
 
@@ -21,7 +21,7 @@ UCLASS(
 		BlueprintSpawnableComponent
 	)
 )
-class GRADESSLIBRARYRUNTIME_API UGLibFirstPersonMovementComponent : public UCharacterMovementComponent, public ISprintComponent
+class GRADESSLIBRARYRUNTIME_API UGLibFirstPersonMovementComponent : public UCharacterMovementComponent, public IGLibSprintComponent
 {
 	GENERATED_BODY()
 

@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "SprintComponent.generated.h"
+#include "GLibSprintComponent.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE()
-class USprintComponent : public UInterface
+class UGLibSprintComponent : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,7 +17,7 @@ class USprintComponent : public UInterface
 /**
  * @brief Represent an object that is responsible for player sprint movement
  */
-class GRADESSLIBRARYRUNTIME_API ISprintComponent
+class GRADESSLIBRARYRUNTIME_API IGLibSprintComponent
 {
 	GENERATED_BODY()
 

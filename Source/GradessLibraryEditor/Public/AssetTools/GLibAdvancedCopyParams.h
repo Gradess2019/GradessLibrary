@@ -9,8 +9,10 @@
 /**
  * @brief A proxy blueprint struct that is used for advanced copy 
  */
-USTRUCT(BlueprintType)
-struct FGLibAdvancedCopyParams
+USTRUCT(
+	BlueprintType
+)
+struct GRADESSLIBRARYEDITOR_API FGLibAdvancedCopyParams
 {
 	GENERATED_BODY()
 

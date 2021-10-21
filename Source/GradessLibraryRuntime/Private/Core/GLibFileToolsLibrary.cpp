@@ -2,6 +2,7 @@
 
 
 #include "Core/GLibFileToolsLibrary.h"
+#include "HAL/PlatformFilemanager.h"
 
 
 void UGLibFileToolsLibrary::ValidateConfigFile(const FString& FileName)

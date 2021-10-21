@@ -12,7 +12,10 @@
  */
 UCLASS(
 	Blueprintable,
-	BlueprintType
+	BlueprintType,
+	ClassGroup = (
+		GLib
+	)
 )
 class GRADESSLIBRARYEDITOR_API UGLibPythonEditorWidget : public UEditorUtilityWidget
 {

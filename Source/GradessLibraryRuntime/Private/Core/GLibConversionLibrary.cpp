@@ -561,7 +561,7 @@ TArray<FText> UGLibConversionLibrary::ConvertTransformArrayToTextArray(const TAr
 
 TArray<UObject*> UGLibConversionLibrary::ConvertObjectArray_Internal(
 	const TArray<UObject*>& Objects,
-	TSubclassOf<UObject> ObjectClass,
+	UClass* ObjectClass,
 	const bool bExcludeNull
 )
 {
@@ -571,7 +571,8 @@ TArray<UObject*> UGLibConversionLibrary::ConvertObjectArray_Internal(
 
 TArray<UObject*> UGLibConversionLibrary::ConvertObjectArrayExactType_Internal(
 	const TArray<UObject*>& Objects,
-	TSubclassOf<UObject> ObjectClass, const bool bExcludeNull
+	UClass* ObjectClass,
+	const bool bExcludeNull
 )
 {
 	check(0);

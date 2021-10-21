@@ -4,8 +4,10 @@
 #include "Characters/GLibFirstPersonCharacter.h"
 
 #include "Components/GLibFirstPersonMovementComponent.h"
+#include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerInput.h"
+#include "GameFramework/Controller.h"
 
 const FName AGLibFirstPersonCharacter::MoveForwardName = FName("GLib_MoveForward");
 const FName AGLibFirstPersonCharacter::MoveRightName = FName("GLib_MoveRight");
@@ -24,7 +26,7 @@ AGLibFirstPersonCharacter::AGLibFirstPersonCharacter(const FObjectInitializer& O
 
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
-	check(GetCharacterMovement()->Implements<USprintComponent>())
+	check(GetCharacterMovement()->Implements<UGLibSprintComponent>())
 }
 
 void AGLibFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -95,10 +97,10 @@ void AGLibFirstPersonCharacter::MoveRight_Implementation(const float InputValue)
 
 void AGLibFirstPersonCharacter::OnPressSprint_Implementation()
 {
-	ISprintComponent::Execute_Sprint(GetCharacterMovement());
+	IGLibSprintComponent::Execute_Sprint(GetCharacterMovement());
 }
 
 void AGLibFirstPersonCharacter::OnReleaseSprint_Implementation()
 {
-	ISprintComponent::Execute_UnSprint(GetCharacterMovement());
+	IGLibSprintComponent::Execute_UnSprint(GetCharacterMovement());
 }

@@ -23,7 +23,7 @@ public:
 	UFUNCTION(
 		BlueprintPure,
 		BlueprintCallable,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static UPackage* GetPackage(const FName& PackagePath);
 
@@ -34,7 +34,7 @@ public:
 	 */
 	UFUNCTION(
 		BlueprintCallable,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static bool UnloadPackage(const FName& PackagePath);
 
@@ -45,7 +45,7 @@ public:
 	 */
 	UFUNCTION(
 		BlueprintCallable,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static bool UnloadPackageAndDependencies(const FName& PackagePath);
 
@@ -56,7 +56,7 @@ public:
 	 */
 	UFUNCTION(
 		BlueprintCallable,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static bool UnloadDependencies(
 		const TSet<FName>& Dependencies,
@@ -71,7 +71,7 @@ public:
 	UFUNCTION(
 		BlueprintCallable,
 		BlueprintPure,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static void GetUnreferencedPackages(
 		const TArray<FName>& PackagePaths,
@@ -86,7 +86,7 @@ public:
 	UFUNCTION(
 		BlueprintCallable,
 		BlueprintPure,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static void GetHardDependencies(
 		const FName& PackagePath,
@@ -101,7 +101,7 @@ public:
 	UFUNCTION(
 		BlueprintCallable,
 		BlueprintPure,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static void GetHardReferencers(
 		const FName& PackagePath,
@@ -116,7 +116,7 @@ public:
 	UFUNCTION(
 		BlueprintCallable,
 		BlueprintPure,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static bool IsProjectPackage(const FName& Package);
 
@@ -128,7 +128,7 @@ public:
 	UFUNCTION(
 		BlueprintCallable,
 		BlueprintPure,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static bool IsAnybodyReferenced(const FName& PackagePath);
 
@@ -140,7 +140,7 @@ public:
 	*/
 	UFUNCTION(
 		BlueprintCallable,
-		Category = "GLib|EditorAssetToolsBPLibrary",
+		Category = "GLib|EditorAssetToolsLibrary",
 		meta = (AutoCreateRefTerm = "Params")
 	)
 	static void AdvancedCopyDirectory(
@@ -155,7 +155,7 @@ public:
 	*/
 	UFUNCTION(
 		BlueprintCallable,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static void ReloadAsset(
 		const FAssetData& AssetData
@@ -167,7 +167,7 @@ public:
 	*/
 	UFUNCTION(
 		BlueprintCallable,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static void ReloadAssetByPath(
 		const FName& AssetPath
@@ -179,7 +179,7 @@ public:
 	*/
 	UFUNCTION(
 		BlueprintCallable,
-		Category = "GLib|EditorAssetToolsBPLibrary"
+		Category = "GLib|EditorAssetToolsLibrary"
 	)
 	static void ReloadAssets(
 		const TArray<FAssetData>& AssetsData

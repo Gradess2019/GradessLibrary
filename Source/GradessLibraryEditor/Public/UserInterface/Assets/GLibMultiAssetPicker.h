@@ -174,7 +174,8 @@ struct FGLibMultiAssetPickerConfig
 	bool bForceShowPluginContent;
 
 	/** 
-	 * @brief Indicates if the context menu is going to load the assets, and if so to preload before the context menu is shown, and warn about the pending load. 
+	 * @brief Indicates if the context menu is going to load the assets, and if so to preload before the context menu
+	 * is shown, and warn about the pending load. 
 	 */
 	UPROPERTY(
 		EditAnywhere,
@@ -248,8 +249,9 @@ struct FGLibMultiAssetPickerConfig
 	)
 	TArray<FName> ObjectPaths;
 
-	/** T
-	 * @brief he filter component for class names. Instances of the specified classes, but not subclasses (by default), will be included. Derived classes will be included only if bRecursiveClasses is true. 
+	/** 
+	 * @brief The filter component for class names. Instances of the specified classes, but not subclasses (by default),
+	 * will be included. Derived classes will be included only if bRecursiveClasses is true. 
 	 */
 	UPROPERTY(
 		EditAnywhere,
@@ -285,7 +287,8 @@ struct FGLibMultiAssetPickerConfig
 	bool bRecursiveClasses;
 
 	/** 
-	 * @brief If true, only on-disk assets will be returned. Be warned that this is rarely what you want and should only be used for performance reasons 
+	 * @brief If true, only on-disk assets will be returned. Be warned that this is rarely what you want and
+	 * should only be used for performance reasons 
 	 */
 	UPROPERTY(
 		EditAnywhere,

@@ -28,7 +28,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGLibOnAssetToolTipClosing);
 USTRUCT(
 	BlueprintType
 )
-struct FGLibMultiAssetPickerConfig
+struct GRADESSLIBRARYEDITOR_API FGLibMultiAssetPickerConfig
 {
 	GENERATED_BODY()
 

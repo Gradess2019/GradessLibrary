@@ -16,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGLibOnSetObject, const FAssetData&,
 USTRUCT(
 	BlueprintType
 )
-struct FGLibSingleAssetPickerConfig
+struct GRADESSLIBRARYEDITOR_API FGLibSingleAssetPickerConfig
 {
 	GENERATED_BODY()
 

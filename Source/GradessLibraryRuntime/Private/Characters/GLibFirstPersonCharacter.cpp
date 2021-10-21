@@ -26,7 +26,7 @@ AGLibFirstPersonCharacter::AGLibFirstPersonCharacter(const FObjectInitializer& O
 
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
-	check(GetCharacterMovement()->Implements<USprintComponent>())
+	check(GetCharacterMovement()->Implements<UGLibSprintComponent>())
 }
 
 void AGLibFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -97,10 +97,10 @@ void AGLibFirstPersonCharacter::MoveRight_Implementation(const float InputValue)
 
 void AGLibFirstPersonCharacter::OnPressSprint_Implementation()
 {
-	ISprintComponent::Execute_Sprint(GetCharacterMovement());
+	IGLibSprintComponent::Execute_Sprint(GetCharacterMovement());
 }
 
 void AGLibFirstPersonCharacter::OnReleaseSprint_Implementation()
 {
-	ISprintComponent::Execute_UnSprint(GetCharacterMovement());
+	IGLibSprintComponent::Execute_UnSprint(GetCharacterMovement());
 }

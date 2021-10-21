@@ -112,6 +112,9 @@ struct FGLibSingleAssetPickerConfig
 		ThumbnailSizeOverride(ThumbnailSizeOverride) {}
 };
 
+/**
+ * @brief Widget for picking asset or actor 
+ */
 UCLASS(
 	Blueprintable,
 	BlueprintType,

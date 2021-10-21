@@ -5,12 +5,11 @@
 #include "CoreMinimal.h"
 #include "GLibEditorUserInterfaceLibrary.generated.h"
 
-#pragma region Forward declaractions
+#pragma region Forward declarations
 class UEditorUtilitySubsystem;
 class UEditorUtilityWidgetBlueprint;
 class UEditorUtilityWidget;
-#pragma endregion Forward declaractions
-
+#pragma endregion Forward declarations
 
 /**
  * @brief A library that is used for working with editor user widgets

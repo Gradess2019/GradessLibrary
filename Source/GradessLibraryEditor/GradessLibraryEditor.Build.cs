@@ -27,7 +27,8 @@ public class GradessLibraryEditor : ModuleRules
 			{
 				"Core", 
 				"UMG",
-				"UMGEditor"
+				"UMGEditor",
+				"ContentBrowser",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

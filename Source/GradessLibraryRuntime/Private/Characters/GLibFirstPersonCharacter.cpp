@@ -4,8 +4,10 @@
 #include "Characters/GLibFirstPersonCharacter.h"
 
 #include "Components/GLibFirstPersonMovementComponent.h"
+#include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerInput.h"
+#include "GameFramework/Controller.h"
 
 const FName AGLibFirstPersonCharacter::MoveForwardName = FName("GLib_MoveForward");
 const FName AGLibFirstPersonCharacter::MoveRightName = FName("GLib_MoveRight");

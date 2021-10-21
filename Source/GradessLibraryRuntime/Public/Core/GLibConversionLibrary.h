@@ -4,7 +4,7 @@
 
 #include <functional>
 #include "CoreMinimal.h"
-#include "UObject/Object.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
 #include "GLibConversionLibrary.generated.h"
 
 /**
@@ -1279,7 +1279,7 @@ public:
 	)
 	static TArray<UObject*> ConvertObjectArray_Internal(
 		const TArray<UObject*>& Objects,
-		TSubclassOf<UObject> ObjectClass,
+		UClass* ObjectClass,
 		const bool bExcludeNull
 	);
 	
@@ -1303,7 +1303,7 @@ public:
 	)
 	static TArray<UObject*> ConvertObjectArrayExactType_Internal(
 		const TArray<UObject*>& Objects,
-		TSubclassOf<UObject> ObjectClass,
+		UClass* ObjectClass,
 		const bool bExcludeNull
 	);
 

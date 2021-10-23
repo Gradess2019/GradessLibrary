@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "GLibGASCharacter.generated.h"
 
+class UGameplayEffect;
 struct FGameplayTagContainer;
 class UAbilitySystemComponent;
 class UGameplayAbility;
@@ -50,6 +51,16 @@ protected:
 		Category = "Abilities"
 	)
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
+
+	/**
+	* @brief Available abilities
+	*/
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadOnly,
+		Category = "Abilities"
+	)
+	TArray<TSubclassOf<UGameplayEffect>> PassiveEffects;
 	
 	/**
 	 * @brief Character attributes such as health, strength, etc.

@@ -40,6 +40,15 @@ void AGLibGASCharacter::BeginPlay()
 	{
 		GrantAbility(Ability, CurrentLevel, INDEX_NONE);
 	}
+
+	for (const auto EffectClass : PassiveEffects)
+	{
+		auto EffectContext = AbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+		
+		auto EffectHandle = AbilitySystemComponent->MakeOutgoingSpec(EffectClass, CurrentLevel, EffectContext);
+		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectHandle.Data.Get());
+	}
 }
 
 UAbilitySystemComponent* AGLibGASCharacter::GetAbilitySystemComponent() const

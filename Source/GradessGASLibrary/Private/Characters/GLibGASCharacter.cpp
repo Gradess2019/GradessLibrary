@@ -13,7 +13,7 @@ AGLibGASCharacter::AGLibGASCharacter()
 
 	bReplicates = true;
 	SetReplicatingMovement(true);
-	
+
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
@@ -33,6 +33,11 @@ void AGLibGASCharacter::BeginPlay()
 	check(AbilitySystemComponent);
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+	for (const auto Ability : Abilities)
+	{
+		GrantAbility(Ability.Class, Ability.Level, Ability.InputCode);
+	}
 }
 
 UAbilitySystemComponent* AGLibGASCharacter::GetAbilitySystemComponent() const
@@ -40,23 +45,21 @@ UAbilitySystemComponent* AGLibGASCharacter::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-bool AGLibGASCharacter::GrantAbility(
+FGameplayAbilitySpecHandle AGLibGASCharacter::GrantAbility(
 	const TSubclassOf<UGameplayAbility> AbilityClass,
-	int32 Level,
-	int32 InputCode,
-	FGameplayAbilitySpecHandle& OutAbilitySpecHandle
+	const int32 Level,
+	const int32 InputCode
 )
 {
 	check(AbilitySystemComponent);
-	if (!HasAuthority() || !IsValid(AbilityClass)) { return false; }
+	if (!HasAuthority() || !IsValid(AbilityClass)) { return FGameplayAbilitySpecHandle(); }
 
 	const auto NewAbility = AbilityClass.GetDefaultObject();
-	if (!IsValid(NewAbility)) { return false; }
+	if (!IsValid(NewAbility)) { return FGameplayAbilitySpecHandle(); }
 
 	const auto AbilitySpec = FGameplayAbilitySpec(AbilityClass, Level, InputCode);
 
-	OutAbilitySpecHandle = AbilitySystemComponent->GiveAbility(AbilitySpec);
-	return true;
+	return AbilitySystemComponent->GiveAbility(AbilitySpec);;
 }
 
 void AGLibGASCharacter::ActivateAbility(const int32 InputCode)

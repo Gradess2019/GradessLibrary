@@ -14,6 +14,44 @@ class UAbilitySystemComponent;
 class UGameplayAbility;
 
 /**
+ * @brief A struct that holds information about ability such as a class, level, and an input code
+ */
+USTRUCT(
+	BlueprintType
+)
+struct FAbilityInfo
+{
+	GENERATED_BODY()
+
+	/**
+	* @brief Ability class
+	*/
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadWrite
+	)
+	TSubclassOf<UGameplayAbility> Class;
+
+	/**
+	* @brief Ability level
+	*/
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadWrite
+	)
+	int32 Level;
+
+	/**
+	* @brief Input code that trigger the ability
+	*/
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadWrite
+	)
+	int32 InputCode;
+};
+
+/**
  * @brief Base GAS character
  */
 UCLASS(
@@ -41,6 +79,19 @@ public:
 	UAbilitySystemComponent* AbilitySystemComponent;
 	
 protected:
+	/**
+	 * @brief Available abilities
+	 */
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadOnly,
+		Category = "Abilities"
+	)
+	TArray<FAbilityInfo> Abilities;
+	
+	/**
+	 * @brief Character attributes such as health, strength, etc.
+	 */
 	UPROPERTY(
 		EditAnywhere,
 		BlueprintReadOnly,
@@ -60,18 +111,16 @@ public:
 	 * @param AbilityClass Ability to create
 	 * @param Level level of ability
 	 * @param InputCode input code to trigger ability
-	 * @param OutAbilitySpecHandle created ability spec handle
-	 * @return true if success, false otherwise
+	 * @return created ability spec handle
 	 */
 	UFUNCTION(
 		BlueprintCallable,
 		Category = "GLib|GASCharacter"
 	)
-	bool GrantAbility(
+	FGameplayAbilitySpecHandle GrantAbility(
 		const TSubclassOf<UGameplayAbility> AbilityClass,
-		int32 Level,
-		int32 InputCode,
-		UPARAM(DisplayName = "AbilitySpecHandle") FGameplayAbilitySpecHandle& OutAbilitySpecHandle
+		const int32 Level,
+		const int32 InputCode
 	);
 
 	/**

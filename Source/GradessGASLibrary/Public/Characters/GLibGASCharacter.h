@@ -39,7 +39,16 @@ public:
 		Category = "Abilities"
 	)
 	UAbilitySystemComponent* AbilitySystemComponent;
+	
+protected:
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadOnly,
+		Category = "Attributes"
+	)
+	const class UGLibBaseAttributeSet* Attributes;
 
+public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void BeginPlay() override;

@@ -26,6 +26,7 @@ public class GradessGASLibrary : ModuleRules
 			new string[]
 			{
 				"Core",
+				"GameplayAbilities",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -39,7 +40,6 @@ public class GradessGASLibrary : ModuleRules
 				"Slate",
 				"SlateCore",
 				"InputCore",
-				"GameplayAbilities",
 				"GameplayTags",
 				"GameplayTasks",
 				// ... add private dependencies that you statically link with here ...	

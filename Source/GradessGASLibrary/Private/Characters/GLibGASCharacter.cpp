@@ -3,6 +3,7 @@
 
 #include "Characters/GLibGASCharacter.h"
 #include "AbilitySystemComponent.h"
+#include "Attributes/GLibBaseAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 
@@ -16,6 +17,8 @@ AGLibGASCharacter::AGLibGASCharacter()
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
+
+	Attributes = CreateDefaultSubobject<UGLibBaseAttributeSet>(TEXT("Attributes"));
 }
 
 void AGLibGASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

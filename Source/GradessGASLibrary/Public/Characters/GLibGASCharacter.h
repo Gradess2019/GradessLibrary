@@ -14,44 +14,6 @@ class UAbilitySystemComponent;
 class UGameplayAbility;
 
 /**
- * @brief A struct that holds information about ability such as a class, level, and an input code
- */
-USTRUCT(
-	BlueprintType
-)
-struct FAbilityInfo
-{
-	GENERATED_BODY()
-
-	/**
-	* @brief Ability class
-	*/
-	UPROPERTY(
-		EditAnywhere,
-		BlueprintReadWrite
-	)
-	TSubclassOf<UGameplayAbility> Class;
-
-	/**
-	* @brief Ability level
-	*/
-	UPROPERTY(
-		EditAnywhere,
-		BlueprintReadWrite
-	)
-	int32 Level;
-
-	/**
-	* @brief Input code that trigger the ability
-	*/
-	UPROPERTY(
-		EditAnywhere,
-		BlueprintReadWrite
-	)
-	int32 InputCode;
-};
-
-/**
  * @brief Base GAS character
  */
 UCLASS(
@@ -87,7 +49,7 @@ protected:
 		BlueprintReadOnly,
 		Category = "Abilities"
 	)
-	TArray<FAbilityInfo> Abilities;
+	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 	
 	/**
 	 * @brief Character attributes such as health, strength, etc.
@@ -99,6 +61,12 @@ protected:
 	)
 	const class UGLibBaseAttributeSet* Attributes;
 
+	/**
+	 * @brief Current entity level
+	 */
+	UPROPERTY()
+	int32 CurrentLevel;
+
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -108,8 +76,8 @@ public:
 
 	/**
 	 * @brief Grants an ability at the given level, with an input code used to pick and choose which ability should be triggered.
-	 * @param AbilityClass Ability to create
-	 * @param Level level of ability
+	 * @param AbilityClass ability to create
+	 * @param Level level of ability. If equals -1 then uses character level
 	 * @param InputCode input code to trigger ability
 	 * @return created ability spec handle
 	 */
@@ -119,8 +87,8 @@ public:
 	)
 	FGameplayAbilitySpecHandle GrantAbility(
 		const TSubclassOf<UGameplayAbility> AbilityClass,
-		const int32 Level,
-		const int32 InputCode
+		int32 Level = -1,
+		const int32 InputCode = -1
 	);
 
 	/**

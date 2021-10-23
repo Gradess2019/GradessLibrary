@@ -19,6 +19,8 @@ AGLibGASCharacter::AGLibGASCharacter()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
 
 	Attributes = CreateDefaultSubobject<UGLibBaseAttributeSet>(TEXT("Attributes"));
+
+	CurrentLevel = 1;
 }
 
 void AGLibGASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -36,7 +38,7 @@ void AGLibGASCharacter::BeginPlay()
 
 	for (const auto Ability : Abilities)
 	{
-		GrantAbility(Ability.Class, Ability.Level, Ability.InputCode);
+		GrantAbility(Ability, CurrentLevel, INDEX_NONE);
 	}
 }
 
@@ -47,7 +49,7 @@ UAbilitySystemComponent* AGLibGASCharacter::GetAbilitySystemComponent() const
 
 FGameplayAbilitySpecHandle AGLibGASCharacter::GrantAbility(
 	const TSubclassOf<UGameplayAbility> AbilityClass,
-	const int32 Level,
+	int32 Level,
 	const int32 InputCode
 )
 {
@@ -57,9 +59,10 @@ FGameplayAbilitySpecHandle AGLibGASCharacter::GrantAbility(
 	const auto NewAbility = AbilityClass.GetDefaultObject();
 	if (!IsValid(NewAbility)) { return FGameplayAbilitySpecHandle(); }
 
+	Level = Level == INDEX_NONE ? CurrentLevel : Level;
 	const auto AbilitySpec = FGameplayAbilitySpec(AbilityClass, Level, InputCode);
 
-	return AbilitySystemComponent->GiveAbility(AbilitySpec);;
+	return AbilitySystemComponent->GiveAbility(AbilitySpec);
 }
 
 void AGLibGASCharacter::ActivateAbility(const int32 InputCode)

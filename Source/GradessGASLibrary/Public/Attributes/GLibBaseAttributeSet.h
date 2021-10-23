@@ -23,8 +23,7 @@ class GRADESSGASLIBRARY_API UGLibBaseAttributeSet : public UAttributeSet
 
 public:
 	UPROPERTY(
-		EditAnywhere,
-		BlueprintReadWrite,
+		BlueprintReadOnly,
 		ReplicatedUsing = OnRep_Health,
 		Category = "Attributes"
 	)
@@ -32,8 +31,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UGLibBaseAttributeSet, Health);
 
 	UPROPERTY(
-		EditAnywhere,
-		BlueprintReadWrite,
+		BlueprintReadOnly,
 		ReplicatedUsing = OnRep_MaxHealth,
 		Category = "Attributes"
 	)

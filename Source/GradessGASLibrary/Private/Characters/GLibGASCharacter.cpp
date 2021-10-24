@@ -16,7 +16,8 @@ AGLibGASCharacter::AGLibGASCharacter(const FObjectInitializer& ObjectInitializer
 
 	ReplicationMode = EGameplayEffectReplicationMode::Minimal;
 
-	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UAbilitySystemComponent>(this, TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UAbilitySystemComponent>(
+		this, TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(ReplicationMode);
 
@@ -90,4 +91,10 @@ void AGLibGASCharacter::CancelAbilityWithTags(
 {
 	check(AbilitySystemComponent);
 	AbilitySystemComponent->CancelAbilities(&WithTags, &WithoutTags, Ignore);
+}
+
+TArray<FActiveGameplayEffectHandle> AGLibGASCharacter::GetActiveEffectsWithTags(
+	const FGameplayTagContainer& InTags) const
+{
+	return AbilitySystemComponent->GetActiveEffectsWithAllTags(InTags);
 }

@@ -32,7 +32,7 @@ class GRADESSGASLIBRARY_API AGLibGASCharacter : public ACharacter, public IAbili
 
 public:
 	AGLibGASCharacter(const FObjectInitializer& ObjectInitializer);
-	
+
 	/**
 	 * @brief Ability System Component. Required to use Gameplay Attributes and Gameplay Abilities.
 	 */
@@ -145,4 +145,20 @@ public:
 		const FGameplayTagContainer& WithoutTags,
 		UGameplayAbility* Ignore = nullptr
 	);
+
+	/**
+	 * @brief Returns list of active effects that have all of the passed in tags 
+	 * @param InTags tags to search
+	 * @return list of active effects
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category = "GLib|GASCharacter",
+		meta = (
+			AutoCreateRefTerm = "InTags"
+		)
+	)
+	TArray<FActiveGameplayEffectHandle> GetActiveEffectsWithTags(
+		UPARAM(DisplayName = "Tags") const FGameplayTagContainer& InTags
+	) const;
 };

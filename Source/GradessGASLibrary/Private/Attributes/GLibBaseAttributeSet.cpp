@@ -20,8 +20,8 @@ void UGLibBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(UGLibBaseAttributeSet, Health);
-	DOREPLIFETIME(UGLibBaseAttributeSet, MaxHealth);
+	DOREPLIFETIME_CONDITION_NOTIFY(UGLibBaseAttributeSet, Health, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UGLibBaseAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 }
 
 void UGLibBaseAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)

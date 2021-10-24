@@ -27,6 +27,7 @@ public class GradessGASLibrary : ModuleRules
 			{
 				"Core",
 				"GameplayAbilities",
+				"GradessLibraryRuntime"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

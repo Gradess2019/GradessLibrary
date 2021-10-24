@@ -94,7 +94,7 @@ protected:
 		BlueprintReadOnly,
 		Category = "Attributes"
 	)
-	const UAttributeSet* Attributes;
+	UAttributeSet* Attributes;
 
 	/**
 	 * @brief Current entity level
@@ -109,6 +109,28 @@ protected:
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	/**
+	 * @brief Return attribute set of specific class
+	 * @param AttributeClass attributes set to get
+	 * @return attribute set
+	 */
+	UFUNCTION(
+		BlueprintPure,
+		Category = "Attributes",
+		meta = (
+			DeterminesOutputType = "AttributeClass"
+		)
+	)
+	UAttributeSet* GetAttributes(TSubclassOf<UAttributeSet> AttributeClass) const;
+
+	/**
+	 * @brief Return attribute set of specific class
+	 * @tparam T attribute set class
+	 * @return attribute set
+	 */
+	template<typename T>
+	T* GenericGetAttributes() const;
+	
 	virtual void BeginPlay() override;
 
 protected:

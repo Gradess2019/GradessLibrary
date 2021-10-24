@@ -31,6 +31,17 @@ void AGLibGASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
+UAttributeSet* AGLibGASCharacter::GetAttributes(TSubclassOf<UAttributeSet> AttributeClass) const
+{
+	return Attributes;
+}
+
+template <typename T>
+T* AGLibGASCharacter::GenericGetAttributes() const
+{
+	return Cast<T>(Attributes);
+}
+
 void AGLibGASCharacter::BeginPlay()
 {
 	Super::BeginPlay();

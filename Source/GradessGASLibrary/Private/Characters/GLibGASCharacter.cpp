@@ -7,18 +7,20 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 
-AGLibGASCharacter::AGLibGASCharacter()
+AGLibGASCharacter::AGLibGASCharacter(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
 	SetReplicatingMovement(true);
 
-	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
+	ReplicationMode = EGameplayEffectReplicationMode::Minimal;
 
-	Attributes = CreateDefaultSubobject<UGLibBaseAttributeSet>(TEXT("Attributes"));
+	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UAbilitySystemComponent>(this, TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(ReplicationMode);
+
+	Attributes = ObjectInitializer.CreateDefaultSubobject<UGLibBaseAttributeSet>(this, TEXT("AttributeSet"));
 
 	CurrentLevel = 1;
 }
@@ -45,7 +47,7 @@ void AGLibGASCharacter::BeginPlay()
 	{
 		auto EffectContext = AbilitySystemComponent->MakeEffectContext();
 		EffectContext.AddSourceObject(this);
-		
+
 		auto EffectHandle = AbilitySystemComponent->MakeOutgoingSpec(EffectClass, CurrentLevel, EffectContext);
 		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectHandle.Data.Get());
 	}

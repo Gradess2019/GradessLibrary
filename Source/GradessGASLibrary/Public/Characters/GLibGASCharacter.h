@@ -9,10 +9,12 @@
 #include "GameFramework/Character.h"
 #include "GLibGASCharacter.generated.h"
 
+enum class EGameplayEffectReplicationMode : uint8;
 class UGameplayEffect;
 struct FGameplayTagContainer;
 class UAbilitySystemComponent;
 class UGameplayAbility;
+class UGLibBaseAttributeSet;
 
 /**
  * @brief Base GAS character
@@ -29,8 +31,8 @@ class GRADESSGASLIBRARY_API AGLibGASCharacter : public ACharacter, public IAbili
 	GENERATED_BODY()
 
 public:
-	AGLibGASCharacter();
-
+	AGLibGASCharacter(const FObjectInitializer& ObjectInitializer);
+	
 	/**
 	 * @brief Ability System Component. Required to use Gameplay Attributes and Gameplay Abilities.
 	 */
@@ -40,7 +42,7 @@ public:
 		Category = "Abilities"
 	)
 	UAbilitySystemComponent* AbilitySystemComponent;
-	
+
 protected:
 	/**
 	 * @brief Available abilities
@@ -61,7 +63,17 @@ protected:
 		Category = "Abilities"
 	)
 	TArray<TSubclassOf<UGameplayEffect>> PassiveEffects;
-	
+
+	/**
+	 * @brief Ability system component replication mode
+	 */
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadOnly,
+		Category = "Abilities"
+	)
+	EGameplayEffectReplicationMode ReplicationMode;
+
 	/**
 	 * @brief Character attributes such as health, strength, etc.
 	 */
@@ -70,12 +82,15 @@ protected:
 		BlueprintReadOnly,
 		Category = "Attributes"
 	)
-	const class UGLibBaseAttributeSet* Attributes;
+	const UAttributeSet* Attributes;
 
 	/**
 	 * @brief Current entity level
 	 */
-	UPROPERTY()
+	UPROPERTY(
+		BlueprintReadOnly,
+		Category = "Attributes"
+	)
 	int32 CurrentLevel;
 
 public:

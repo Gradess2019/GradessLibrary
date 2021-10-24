@@ -39,12 +39,31 @@ void AGLibGASCharacter::BeginPlay()
 
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
-	for (const auto Ability : Abilities)
-	{
-		GrantAbility(Ability, CurrentLevel, INDEX_NONE);
-	}
+	GrantAbilities();
+	ApplyPassiveAbilities();
+	ApplyPassiveEffects();
+}
 
-	for (const auto EffectClass : PassiveEffects)
+void AGLibGASCharacter::GrantAbilities_Implementation()
+{
+	for (const auto& AbilityClass : Abilities)
+	{
+		GrantAbility(AbilityClass, CurrentLevel, INDEX_NONE);
+	}
+}
+
+void AGLibGASCharacter::ApplyPassiveAbilities_Implementation()
+{
+	for (const auto& AbilityClass : PassiveAbilities)
+	{
+		GrantAbility(AbilityClass, CurrentLevel, INDEX_NONE);
+		AbilitySystemComponent->TryActivateAbilityByClass(AbilityClass);
+	}
+}
+
+void AGLibGASCharacter::ApplyPassiveEffects_Implementation()
+{
+	for (const auto& EffectClass : PassiveEffects)
 	{
 		auto EffectContext = AbilitySystemComponent->MakeEffectContext();
 		EffectContext.AddSourceObject(this);

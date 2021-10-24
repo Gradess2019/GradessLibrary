@@ -9,12 +9,14 @@
 #include "GameFramework/Character.h"
 #include "GLibGASCharacter.generated.h"
 
+#pragma region Forward declarations
 enum class EGameplayEffectReplicationMode : uint8;
 class UGameplayEffect;
 struct FGameplayTagContainer;
 class UAbilitySystemComponent;
 class UGameplayAbility;
 class UGLibBaseAttributeSet;
+#pragma endregion Forward declarations
 
 /**
  * @brief Base GAS character
@@ -55,7 +57,17 @@ protected:
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 
 	/**
-	* @brief Available abilities
+	* @brief Passive abilities that applies automatically on BeginPlay()
+	*/
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadOnly,
+		Category = "Abilities"
+	)
+	TArray<TSubclassOf<UGameplayAbility>> PassiveAbilities;
+
+	/**
+	* @brief Passive effects that applies automatically on BeginPlay()
 	*/
 	UPROPERTY(
 		EditAnywhere,
@@ -78,7 +90,7 @@ protected:
 	 * @brief Character attributes such as health, strength, etc.
 	 */
 	UPROPERTY(
-		EditAnywhere,
+		VisibleAnywhere,
 		BlueprintReadOnly,
 		Category = "Attributes"
 	)
@@ -88,6 +100,7 @@ protected:
 	 * @brief Current entity level
 	 */
 	UPROPERTY(
+		EditAnywhere,
 		BlueprintReadOnly,
 		Category = "Attributes"
 	)
@@ -98,6 +111,26 @@ public:
 
 	virtual void BeginPlay() override;
 
+protected:
+	UFUNCTION(
+		BlueprintNativeEvent,
+		Category = "Abilities"
+	)
+	void ApplyPassiveEffects();
+
+	UFUNCTION(
+		BlueprintNativeEvent,
+		Category = "Abilities"
+	)
+	void ApplyPassiveAbilities();
+
+	UFUNCTION(
+		BlueprintNativeEvent,
+		Category = "Abilities"
+	)
+	void GrantAbilities();
+
+public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	/**

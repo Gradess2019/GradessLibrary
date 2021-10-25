@@ -4,10 +4,12 @@
 #include "Tasks/GLibAbilityTask_WaitForKeyInput.h"
 
 #include "GameFramework/Character.h"
+#include "GameFramework/PlayerInput.h"
 
 UGLibAbilityTask_WaitForKeyInput* UGLibAbilityTask_WaitForKeyInput::WaitForKeyInput(
 	UGameplayAbility* OwningAbility,
-	const TArray<FKey>& Keys
+	const TArray<FKey>& Keys,
+	const bool bInTriggerAlreadyPressed
 )
 {
 	const auto NewTask = NewAbilityTask<UGLibAbilityTask_WaitForKeyInput>(OwningAbility);
@@ -16,7 +18,9 @@ UGLibAbilityTask_WaitForKeyInput* UGLibAbilityTask_WaitForKeyInput::WaitForKeyIn
 	{
 		NewTask->ListenKeys.Add(Key.GetFName(), Key);
 	}
-	
+
+	NewTask->bTriggerAlreadyPressed = bInTriggerAlreadyPressed;
+
 	return NewTask;
 }
 
@@ -42,8 +46,18 @@ void UGLibAbilityTask_WaitForKeyInput::Activate()
 	const auto Controller = Cast<AGLibPlayerController>(Character->GetController());
 	check(Controller);
 
+	if (bTriggerAlreadyPressed)
+	{
+		for (const auto& KeyPair : ListenKeys)
+		{
+			auto& Key = KeyPair.Value;
+			if (!Controller->PlayerInput->IsPressed(Key)) { continue; }
+			Pressed.Broadcast(Key);
+		}
+	}
+
 	Controller->OnKeyPressed.AddDynamic(this, &UGLibAbilityTask_WaitForKeyInput::OnPressed);
 	Controller->OnKeyReleased.AddDynamic(this, &UGLibAbilityTask_WaitForKeyInput::OnReleased);
-	
+
 	Super::Activate();
 }

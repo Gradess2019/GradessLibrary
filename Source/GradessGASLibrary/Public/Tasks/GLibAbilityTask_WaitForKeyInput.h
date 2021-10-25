@@ -36,6 +36,7 @@ public:
 	 * @brief Creates task for key listening 
 	 * @param OwningAbility current ability
 	 * @param Keys keys to listen
+	 * @param bInTriggerAlreadyPressed fires delegates after activation for currently pressed keys
 	 * @return created task
 	 */
 	UFUNCTION(
@@ -50,7 +51,8 @@ public:
 	)
 	static UGLibAbilityTask_WaitForKeyInput* WaitForKeyInput(
 		UGameplayAbility* OwningAbility,
-		const TArray<FKey>& Keys
+		const TArray<FKey>& Keys,
+		UPARAM(DisplayName = "TriggerAlreadyPressed") const bool bInTriggerAlreadyPressed
 	);
 
 	/**
@@ -75,4 +77,7 @@ protected:
 	 */
 	UPROPERTY()
 	TMap<FName, FKey> ListenKeys;
+
+	UPROPERTY()
+	bool bTriggerAlreadyPressed;
 };

@@ -11,8 +11,8 @@
 
 #pragma region Forward declarations
 enum class EGameplayEffectReplicationMode : uint8;
-class UGameplayEffect;
 struct FGameplayTagContainer;
+class UGameplayEffect;
 class UAbilitySystemComponent;
 class UGameplayAbility;
 class UGLibBaseAttributeSet;
@@ -77,6 +77,11 @@ protected:
 	TArray<TSubclassOf<UGameplayEffect>> PassiveEffects;
 
 	/**
+	 * @brief All granted abilities
+	 */
+	TMap<FString, TArray<FGameplayAbilitySpec>> GrantedAbilities;
+
+	/**
 	 * @brief Ability system component replication mode
 	 */
 	UPROPERTY(
@@ -109,28 +114,6 @@ protected:
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	/**
-	 * @brief Return attribute set of specific class
-	 * @param AttributeClass attributes set to get
-	 * @return attribute set
-	 */
-	UFUNCTION(
-		BlueprintPure,
-		Category = "Attributes",
-		meta = (
-			DeterminesOutputType = "AttributeClass"
-		)
-	)
-	UAttributeSet* GetAttributes(TSubclassOf<UAttributeSet> AttributeClass) const;
-
-	/**
-	 * @brief Return attribute set of specific class
-	 * @tparam T attribute set class
-	 * @return attribute set
-	 */
-	template<typename T>
-	T* GenericGetAttributes() const;
-	
 	virtual void BeginPlay() override;
 
 protected:
@@ -138,7 +121,7 @@ protected:
 		BlueprintNativeEvent,
 		Category = "Abilities"
 	)
-	void ApplyPassiveEffects();
+	void GrantAbilities();
 
 	UFUNCTION(
 		BlueprintNativeEvent,
@@ -150,7 +133,7 @@ protected:
 		BlueprintNativeEvent,
 		Category = "Abilities"
 	)
-	void GrantAbilities();
+	void ApplyPassiveEffects();
 
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -171,16 +154,6 @@ public:
 		int32 Level = -1,
 		const int32 InputCode = -1
 	);
-
-	/**
-	 * @brief Activates an ability with a matching input code
-	 * @param InputCode input code to trigger ability
-	 */
-	UFUNCTION(
-		BlueprintCallable,
-		Category = "GLib|GASCharacter"
-	)
-	void ActivateAbility(const int32 InputCode);
 
 	/**
 	 * @brief Cancel all abilities with the specified tags. Will not cancel the Ignore instance
@@ -216,4 +189,50 @@ public:
 	TArray<FActiveGameplayEffectHandle> GetActiveEffectsWithTags(
 		UPARAM(DisplayName = "Tags") const FGameplayTagContainer& InTags
 	) const;
+
+	/**
+	 * @brief Activates ability by tag
+	 * @param Tag ability tag
+	 * @return true if successful, false otherwise
+	 */
+	UFUNCTION(
+		BlueprintCallable,
+		Category = "Abilities",
+		meta = (
+			AutoCreateRefTerm = "Tag"
+		)
+	)
+	bool ActivateAbility(
+		const FGameplayTagContainer& Tag
+	);
+
+	/**
+	* @brief Return attribute set of specific class
+	* @param AttributeClass attributes set to get
+	* @return attribute set
+	*/
+	UFUNCTION(
+		BlueprintPure,
+		Category = "Attributes",
+		meta = (
+			DeterminesOutputType = "AttributeClass"
+		)
+	)
+	UAttributeSet* GetAttributes(TSubclassOf<UAttributeSet> AttributeClass) const;
+
+	/**
+	* @brief Return attribute set of specific class
+	* @tparam T attribute set class
+	* @return attribute set
+	*/
+	template <typename T>
+	T* GenericGetAttributes() const;
+
+protected:
+	/**
+	 * @brief Adds ability to GrantedAbilities map
+	 * @param AbilitySpec ability to add
+	 */
+	UFUNCTION()
+	void AddAbilityToContainer(const FGameplayAbilitySpec& AbilitySpec);
 };

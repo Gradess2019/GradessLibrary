@@ -5,7 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "Attributes/GLibBaseAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "GameplayAbilitySpec.h"
 
 AGLibGASCharacter::AGLibGASCharacter(const FObjectInitializer& ObjectInitializer)
 {
@@ -102,15 +102,24 @@ FGameplayAbilitySpecHandle AGLibGASCharacter::GrantAbility(
 	if (!IsValid(NewAbility)) { return FGameplayAbilitySpecHandle(); }
 
 	Level = Level == INDEX_NONE ? CurrentLevel : Level;
+	
 	const auto AbilitySpec = FGameplayAbilitySpec(AbilityClass, Level, InputCode);
 
+	AddAbilityToContainer(AbilitySpec);
+	
 	return AbilitySystemComponent->GiveAbility(AbilitySpec);
 }
 
-void AGLibGASCharacter::ActivateAbility(const int32 InputCode)
+void AGLibGASCharacter::AddAbilityToContainer(const FGameplayAbilitySpec& AbilitySpec)
 {
-	check(AbilitySystemComponent);
-	AbilitySystemComponent->AbilityLocalInputPressed(InputCode);
+	const auto& StringTag = AbilitySpec.Ability->AbilityTags.ToStringSimple();
+	if (!GrantedAbilities.Contains(StringTag))
+	{
+		GrantedAbilities.Add(StringTag, TArray<FGameplayAbilitySpec>());
+	}
+
+	// BUG: Possible to add more than one spec with same ability!
+	GrantedAbilities[StringTag].Add(AbilitySpec);
 }
 
 void AGLibGASCharacter::CancelAbilityWithTags(
@@ -127,4 +136,19 @@ TArray<FActiveGameplayEffectHandle> AGLibGASCharacter::GetActiveEffectsWithTags(
 	const FGameplayTagContainer& InTags) const
 {
 	return AbilitySystemComponent->GetActiveEffectsWithAllTags(InTags);
+}
+
+bool AGLibGASCharacter::ActivateAbility(const FGameplayTagContainer& Tag)
+{
+	const auto StringTag = Tag.ToStringSimple();
+	if (!GrantedAbilities.Contains(StringTag)) { return false; }
+	
+	auto bSuccessful = true;
+	auto& GrantedAbilitySpecs = GrantedAbilities[StringTag];
+	for (const auto& Ability : GrantedAbilitySpecs)
+	{
+		bSuccessful = bSuccessful && AbilitySystemComponent->TryActivateAbility(Ability.Handle);
+	}
+
+	return bSuccessful;
 }

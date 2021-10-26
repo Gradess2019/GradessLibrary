@@ -80,8 +80,10 @@ bool UGLibEditorAssetToolsLibrary::UnloadDependencies(
 	return true;
 }
 
-void UGLibEditorAssetToolsLibrary::GetUnreferencedPackages(const TArray<FName>& PackagePaths,
-                                                         TSet<FName>& OutUnreferencedPackagePaths)
+void UGLibEditorAssetToolsLibrary::GetUnreferencedPackages(
+	const TArray<FName>& PackagePaths,
+	TSet<FName>& OutUnreferencedPackagePaths
+)
 {
 	for (auto& Package : PackagePaths)
 	{
@@ -90,7 +92,6 @@ void UGLibEditorAssetToolsLibrary::GetUnreferencedPackages(const TArray<FName>& 
 			continue;
 		}
 
-		GLog->Logf(TEXT("Unreferenced package: %s"), *Package.ToString());
 		OutUnreferencedPackagePaths.Add(Package);
 	}
 }

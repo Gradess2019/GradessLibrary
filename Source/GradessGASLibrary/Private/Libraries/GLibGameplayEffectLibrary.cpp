@@ -27,7 +27,6 @@ void UGLibGameplayEffectLibrary::AddGameplayEffectLevelByHandle(
 {
 	const auto AbilitySystem = Handle.GetOwningAbilitySystemComponent();
 	const auto CurrentLevel = GetGameplayEffectLevelByHandle(Handle);
-	GLog->Logf(TEXT("%d"), Delta);
 	AbilitySystem->SetActiveGameplayEffectLevel(Handle, CurrentLevel + Delta);
 }
 

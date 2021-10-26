@@ -36,12 +36,6 @@ UAttributeSet* AGLibGASCharacter::GetAttributes(TSubclassOf<UAttributeSet> Attri
 	return Attributes;
 }
 
-template <typename T>
-T* AGLibGASCharacter::GenericGetAttributes() const
-{
-	return Cast<T>(Attributes);
-}
-
 void AGLibGASCharacter::BeginPlay()
 {
 	Super::BeginPlay();

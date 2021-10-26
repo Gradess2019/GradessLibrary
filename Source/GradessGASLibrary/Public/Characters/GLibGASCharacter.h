@@ -226,7 +226,10 @@ public:
 	* @return attribute set
 	*/
 	template <typename T>
-	T* GenericGetAttributes() const;
+	T* GenericGetAttributes() const
+	{
+		return Cast<T>(Attributes);
+	}
 
 protected:
 	/**

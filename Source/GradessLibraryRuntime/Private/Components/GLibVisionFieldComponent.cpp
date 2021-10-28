@@ -38,7 +38,7 @@ void UGLibVisionFieldComponent::TickComponent(
 )
 {
 	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
-	
+
 	UKismetMaterialLibrary::SetVectorParameterValue(
 		this,
 		RenderData,
@@ -73,10 +73,10 @@ void UGLibVisionFieldComponent::TickComponent(
 
 		Hit.TraceEnd = Hit.TraceEnd + Direction * 10.f;
 	}
-	
+
 	const auto Center = Size / 2.f;
 	const auto TextureBorderMargin = TraceDistance * 0.1;
-	const auto VectorToTextureSpaceScale = Center.X / (TraceDistance + TextureBorderMargin); 
+	const auto VectorToTextureSpaceScale = Center.X / (TraceDistance + TextureBorderMargin);
 	const auto ActorLocation = FVector2D(GetOwner()->GetActorLocation()) * VectorToTextureSpaceScale;
 	const auto Color = FColor(255, 255, 255, 0.f);
 	for (int32 Id = 0; Id < Hits.Num() - 1; Id++)
@@ -87,7 +87,7 @@ void UGLibVisionFieldComponent::TickComponent(
 		const auto SecondHit = Hits[Id + 1];
 
 		const auto FirstHitLocation =
-			FirstHit.bBlockingHit? FVector2D(FirstHit.Location) : FVector2D(FirstHit.TraceEnd);
+			FirstHit.bBlockingHit ? FVector2D(FirstHit.Location) : FVector2D(FirstHit.TraceEnd);
 		const auto SecondHitLocation =
 			SecondHit.bBlockingHit ? FVector2D(SecondHit.Location) : FVector2D(SecondHit.TraceEnd);
 
@@ -290,9 +290,8 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethod(
 			NormalizedLeftDirection.Normalize();
 			NormalizedRightDirection.Normalize();
 
-			// TODO: can we just divide it by 2?
-			auto MidDirection = (LeftDirection + RightDirection) / 2.f;
-			// MidDirection.Normalize();
+			auto MidDirection = LeftDirection + RightDirection;
+			MidDirection.Normalize();
 			auto MidEndPoint = MidDirection * TraceDistance + StartPoint;
 
 			FHitResult Hit;

@@ -76,6 +76,26 @@ public:
 	UMaterialInterface* DebugMeshMaterial;
 
 	/**
+	 * @brief Render target to draw vision field
+	 */
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadWrite,
+		Category = "GLib|VisionFieldComponent"
+	)
+	UTextureRenderTarget2D* RenderTarget;
+
+	/**
+	 * @brief Parameters that is used in postprocess material
+	 */
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadWrite,
+		Category = "GLib|VisionFieldComponent"
+	)
+	UMaterialParameterCollection* RenderData;
+	
+	/**
 	 * @brief Filed of view in degrees
 	 */
 	UPROPERTY(

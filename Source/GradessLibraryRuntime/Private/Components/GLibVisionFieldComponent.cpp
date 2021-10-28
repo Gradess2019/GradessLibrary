@@ -4,7 +4,10 @@
 #include "Components/GLibVisionFieldComponent.h"
 
 #include "ProceduralMeshComponent.h"
+#include "Engine/Canvas.h"
+#include "Kismet/KismetMaterialLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetRenderingLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -35,24 +38,88 @@ void UGLibVisionFieldComponent::TickComponent(
 )
 {
 	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
-	SCOPE_LOG_TIME_FUNC();
+	
+	UKismetMaterialLibrary::SetVectorParameterValue(
+		this,
+		RenderData,
+		"PlayerLocation",
+		GetOwner()->GetActorLocation()
+	);
+
+	UKismetMaterialLibrary::SetScalarParameterValue(
+		this,
+		RenderData,
+		"Size",
+		TraceDistance * 2.f
+	);
 
 	TArray<FHitResult> Hits;
 	Execute(Hits);
+
+	UKismetRenderingLibrary::ClearRenderTarget2D(this, RenderTarget);
+
+	UCanvas* Canvas;
+	FVector2D Size;
+	FDrawToRenderTargetContext Context;
+	UKismetRenderingLibrary::BeginDrawCanvasToRenderTarget(this, RenderTarget, Canvas, Size, Context);
+
+	TArray<FCanvasUVTri> Triangles;
+
+	for (auto& Hit : Hits)
+	{
+		auto Direction = Hit.TraceEnd - Hit.TraceEnd;
+
+		Direction.Normalize();
+
+		Hit.TraceEnd = Hit.TraceEnd + Direction * 10.f;
+	}
+	
+	const auto Center = Size / 2.f;
+	const auto TextureBorderMargin = TraceDistance * 0.1;
+	const auto VectorToTextureSpaceScale = Center.X / (TraceDistance + TextureBorderMargin); 
+	const auto ActorLocation = FVector2D(GetOwner()->GetActorLocation()) * VectorToTextureSpaceScale;
+	const auto Color = FColor(255, 255, 255, 0.f);
+	for (int32 Id = 0; Id < Hits.Num() - 1; Id++)
+	{
+		FCanvasUVTri NewTriangle;
+
+		const auto FirstHit = Hits[Id];
+		const auto SecondHit = Hits[Id + 1];
+
+		const auto FirstHitLocation =
+			FirstHit.bBlockingHit? FVector2D(FirstHit.Location) : FVector2D(FirstHit.TraceEnd);
+		const auto SecondHitLocation =
+			SecondHit.bBlockingHit ? FVector2D(SecondHit.Location) : FVector2D(SecondHit.TraceEnd);
+
+		NewTriangle.V0_Pos = Center;
+		NewTriangle.V1_Pos = FirstHitLocation * VectorToTextureSpaceScale - ActorLocation + Center;
+		NewTriangle.V2_Pos = SecondHitLocation * VectorToTextureSpaceScale - ActorLocation + Center;
+
+		NewTriangle.V0_Color = Color;
+		NewTriangle.V1_Color = Color;
+		NewTriangle.V2_Color = Color;
+
+		Triangles.Add(NewTriangle);
+	}
+	Canvas->K2_DrawTriangle(nullptr, Triangles);
+	UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(this, Context);
 }
 
 void UGLibVisionFieldComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	DebugMesh = NewObject<UProceduralMeshComponent>(GetOwner());
-	DebugMesh->RegisterComponent();
-	DebugMesh->AttachToComponent(
-		GetOwner()->GetRootComponent(),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale
-	);
+	if (DrawDebugType != EDrawDebugTrace::None)
+	{
+		DebugMesh = NewObject<UProceduralMeshComponent>(GetOwner());
+		DebugMesh->RegisterComponent();
+		DebugMesh->AttachToComponent(
+			GetOwner()->GetRootComponent(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale
+		);
 
-	DebugMesh->CastShadow = false;
+		DebugMesh->CastShadow = false;
+	}
 }
 
 void UGLibVisionFieldComponent::Execute(TArray<FHitResult>& OutHits)
@@ -65,38 +132,42 @@ void UGLibVisionFieldComponent::Execute(TArray<FHitResult>& OutHits)
 	TArray<FHitResult> PrecisedHits;
 	PreciseObjectBorders(Hits, PrecisedHits);
 
-	const auto StartPoint = GetOwner()->GetActorLocation();
-	for (int32 Id = 0; Id < PrecisedHits.Num() - 1; Id++)
+	if (DebugMesh)
 	{
-		auto& FirstHit = PrecisedHits[Id];
-		auto& SecondHit = PrecisedHits[Id + 1];
+		DebugMesh->ClearAllMeshSections();
 
-		auto LeftPoint = FirstHit.bBlockingHit ? FirstHit.Location : FirstHit.TraceEnd;
-		auto RightPoint = SecondHit.bBlockingHit ? SecondHit.Location : SecondHit.TraceEnd;
-
-		DebugMesh->CreateMeshSection(
-			Id,
-			TArray<FVector>({FVector::ZeroVector, LeftPoint - StartPoint, RightPoint - StartPoint}),
-			TArray<int32>({0, 2, 1}),
-			TArray<FVector>(),
-			TArray<FVector2D>(),
-			TArray<FColor>(),
-			TArray<FProcMeshTangent>(),
-			false
-		);
-	}
-
-	const auto DebugMeshRotation = UKismetMathLibrary::MakeRotFromX(GetOwner()->GetActorForwardVector()) * -1;
-	DebugMesh->SetRelativeRotation(DebugMeshRotation);
-
-	if (DebugMeshMaterial)
-	{
-		for (int32 Id = 0; Id < PrecisedHits.Num(); Id++)
+		const auto StartPoint = GetOwner()->GetActorLocation();
+		for (int32 Id = 0; Id < PrecisedHits.Num() - 1; Id++)
 		{
-			DebugMesh->SetMaterial(Id, DebugMeshMaterial);
+			auto& FirstHit = PrecisedHits[Id];
+			auto& SecondHit = PrecisedHits[Id + 1];
+
+			auto LeftPoint = FirstHit.bBlockingHit ? FirstHit.Location : FirstHit.TraceEnd;
+			auto RightPoint = SecondHit.bBlockingHit ? SecondHit.Location : SecondHit.TraceEnd;
+
+			DebugMesh->CreateMeshSection(
+				Id,
+				TArray<FVector>({FVector::ZeroVector, LeftPoint - StartPoint, RightPoint - StartPoint}),
+				TArray<int32>({0, 2, 1}),
+				TArray<FVector>(),
+				TArray<FVector2D>(),
+				TArray<FColor>(),
+				TArray<FProcMeshTangent>(),
+				false
+			);
+		}
+
+		const auto DebugMeshRotation = UKismetMathLibrary::MakeRotFromX(GetOwner()->GetActorForwardVector()) * -1;
+		DebugMesh->SetRelativeRotation(DebugMeshRotation);
+
+		if (DebugMeshMaterial)
+		{
+			for (int32 Id = 0; Id < PrecisedHits.Num(); Id++)
+			{
+				DebugMesh->SetMaterial(Id, DebugMeshMaterial);
+			}
 		}
 	}
-
 	OutHits = PrecisedHits;
 }
 
@@ -113,8 +184,6 @@ UProceduralMeshComponent* UGLibVisionFieldComponent::GetDebugMesh() const
 void UGLibVisionFieldComponent::Setup()
 {
 	AnglePerTrace = FieldOfView / SectionsNumber;
-	
-	DebugMesh->ClearAllMeshSections();
 }
 
 void UGLibVisionFieldComponent::LaunchLineTraces(TArray<FHitResult>& Hits)

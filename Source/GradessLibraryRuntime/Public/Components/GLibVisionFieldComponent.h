@@ -94,7 +94,7 @@ public:
 		Category = "GLib|VisionFieldComponent"
 	)
 	UMaterialParameterCollection* RenderData;
-	
+
 	/**
 	 * @brief Filed of view in degrees
 	 */
@@ -120,6 +120,26 @@ public:
 		Category = "GLib|VisionFieldComponent"
 	)
 	float TraceDistance;
+
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadWrite
+	)
+	TArray<FHitResult> TestHits;
+
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadWrite,
+		Category = "GLib|VisionFieldComponent|Debug"
+	)
+	bool bSnapshot;
+	
+	UPROPERTY(
+		EditAnywhere,
+		BlueprintReadWrite,
+		Category = "GLib|VisionFieldComponent|Debug"
+	)
+	int32 CountToDraw;
 
 	/**
 	 * @brief Target minim angle that we have to get after precise execution
@@ -179,7 +199,7 @@ protected:
 
 public:
 	virtual void InitializeComponent() override;
-	
+
 	/**
 	 * @brief Calculates "vision field" and return precised hits
 	 * @param OutHits precised result hits

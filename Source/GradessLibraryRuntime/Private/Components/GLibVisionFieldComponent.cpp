@@ -103,6 +103,8 @@ void UGLibVisionFieldComponent::TickComponent(
 	}
 	Canvas->K2_DrawTriangle(nullptr, Triangles);
 	UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(this, Context);
+
+	bSnapshot = false;
 }
 
 void UGLibVisionFieldComponent::InitializeComponent()
@@ -270,7 +272,7 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethod(
 	auto RightDirection = RightPoint - StartPoint;
 
 	TArray<AActor*> MidActors;
-
+	int32 DebugCount = 0;
 	do
 	{
 		auto CurrentAngle = PreciseAngle;
@@ -278,6 +280,7 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethod(
 
 		while (PreciseAngle <= CurrentAngle && Count < MaxPreciseCount)
 		{
+			DebugCount++;
 			Count++;
 
 			auto LeftRotation = UKismetMathLibrary::MakeRotFromX(LeftDirection);
@@ -290,13 +293,26 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethod(
 			NormalizedLeftDirection.Normalize();
 			NormalizedRightDirection.Normalize();
 
-			auto MidDirection = LeftDirection + RightDirection;
+			auto MidDirection = NormalizedLeftDirection + NormalizedRightDirection;
 			MidDirection.Normalize();
-			auto MidEndPoint = MidDirection * TraceDistance + StartPoint;
+			auto MidEndPoint = MidDirection * TraceDistance;
 
 			FHitResult Hit;
-			LaunchTrace(StartPoint, MidEndPoint, Hit);
+			LaunchTrace(StartPoint, StartPoint + MidEndPoint, Hit);
 
+			if (DebugCount == CountToDraw)
+			{
+				FHitResult HitAAAA;
+				LaunchTrace(StartPoint, StartPoint + NormalizedLeftDirection * TraceDistance, HitAAAA,  DrawDebugType, FColor::White);
+				LaunchTrace(StartPoint, StartPoint + NormalizedRightDirection * TraceDistance, HitAAAA,  DrawDebugType, FColor::White);
+				LaunchTrace(StartPoint, StartPoint + MidEndPoint, HitAAAA,  DrawDebugType, FColor::Blue);
+			}
+
+			if (bSnapshot)
+			{
+				TestHits.Add(Hit);
+			}
+			
 			if (LeftActor == Hit.GetActor())
 			{
 				LeftDirection = MidDirection;
@@ -315,16 +331,16 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethod(
 		LaunchTrace(
 			StartPoint,
 			StartPoint + LeftDirection * TraceDistance,
-			LeftHit,
-			DrawDebugType
+			LeftHit
+			// DrawDebugType
 		);
 
 		FHitResult RightHit;
 		LaunchTrace(
 			StartPoint,
 			StartPoint + RightDirection * TraceDistance,
-			RightHit,
-			DrawDebugType
+			RightHit
+			// DrawDebugType
 		);
 
 		PrecisedHits.Add(LeftHit);

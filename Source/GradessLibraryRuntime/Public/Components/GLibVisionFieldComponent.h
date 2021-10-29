@@ -5,6 +5,10 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Programs/UnrealLightmass/Private/ImportExport/3DVisualizer.h"
+#include "Programs/UnrealLightmass/Private/ImportExport/3DVisualizer.h"
+#include "Programs/UnrealLightmass/Private/ImportExport/3DVisualizer.h"
+#include "Programs/UnrealLightmass/Private/ImportExport/3DVisualizer.h"
 #include "GLibVisionFieldComponent.generated.h"
 
 #pragma region Forward declarations
@@ -251,7 +255,7 @@ protected:
 	 */
 	UFUNCTION()
 	void PreciseObjectBorders(
-		const TArray<FHitResult>& Hits,
+		TArray<FHitResult> Hits,
 		TArray<FHitResult>& PrecisedHits
 	);
 
@@ -283,5 +287,14 @@ protected:
 		const AActor* LeftActor,
 		const AActor* RightActor,
 		TArray<FHitResult>& PrecisedHits
+	);
+	FVector_NetQuantize GetEndLocation(const FHitResult& LeftHit);
+
+	void ExecuteBisectionMethodAdvanced(
+		const FVector& StartLocation,
+		const FHitResult& LeftHit,
+		const FHitResult& RightHit,
+		TArray<FHitResult>& PrecisedHits,
+		FHitResult*& Corner
 	);
 };

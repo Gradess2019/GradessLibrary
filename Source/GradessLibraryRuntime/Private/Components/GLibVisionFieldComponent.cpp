@@ -4,6 +4,7 @@
 #include "Components/GLibVisionFieldComponent.h"
 
 #include "ProceduralMeshComponent.h"
+#include "Core/GLibMathLibrary.h"
 #include "Engine/Canvas.h"
 #include "Kismet/KismetMaterialLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -222,7 +223,7 @@ void UGLibVisionFieldComponent::LaunchLineTraces(TArray<FHitResult>& Hits)
 }
 
 void UGLibVisionFieldComponent::PreciseObjectBorders(
-	const TArray<FHitResult>& Hits,
+	TArray<FHitResult> Hits,
 	TArray<FHitResult>& PrecisedHits
 )
 {
@@ -230,29 +231,29 @@ void UGLibVisionFieldComponent::PreciseObjectBorders(
 
 	const auto StartPoint = GetOwner()->GetActorLocation();
 
-	for (int32 Id = 0; Id < Hits.Num() - 1; Id++)
+	for (int32 Id = 0; Id < Hits.Num() - 1 && Id < 100; Id++)
 	{
-		auto& FirstHit = Hits[Id];
-		auto& SecondHit = Hits[Id + 1];
+		auto& LeftHit = Hits[Id];
+		auto& RightHit = Hits[Id + 1];
 
-		PrecisedHits.Add(FirstHit);
+		PrecisedHits.Add(LeftHit);
 
-		if (FirstHit.GetActor() != SecondHit.GetActor())
+		if (!LeftHit.Normal.Equals(RightHit.Normal) || LeftHit.GetActor() != RightHit.GetActor())
 		{
-			auto LeftPoint = FirstHit.bBlockingHit ? FirstHit.Location : FirstHit.TraceEnd;
-			auto RightPoint = SecondHit.bBlockingHit ? SecondHit.Location : SecondHit.TraceEnd;
-
 			TArray<FHitResult> NewHits;
-			ExecuteBisectionMethod(
+			FHitResult* CornerPtr = nullptr;
+			ExecuteBisectionMethodAdvanced(
 				StartPoint,
-				LeftPoint,
-				RightPoint,
-				FirstHit.GetActor(),
-				SecondHit.GetActor(),
-				NewHits
+				LeftHit,
+				RightHit,
+				NewHits,
+				CornerPtr
 			);
 
-			PrecisedHits.Append(NewHits);
+			if (CornerPtr)
+			{
+				Hits.Insert(FHitResult(*CornerPtr), Id + 1);
+			}
 		}
 	}
 
@@ -303,16 +304,18 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethod(
 			if (DebugCount == CountToDraw)
 			{
 				FHitResult HitAAAA;
-				LaunchTrace(StartPoint, StartPoint + NormalizedLeftDirection * TraceDistance, HitAAAA,  DrawDebugType, FColor::White);
-				LaunchTrace(StartPoint, StartPoint + NormalizedRightDirection * TraceDistance, HitAAAA,  DrawDebugType, FColor::White);
-				LaunchTrace(StartPoint, StartPoint + MidEndPoint, HitAAAA,  DrawDebugType, FColor::Blue);
+				LaunchTrace(StartPoint, StartPoint + NormalizedLeftDirection * TraceDistance, HitAAAA, DrawDebugType,
+				            FColor::White);
+				LaunchTrace(StartPoint, StartPoint + NormalizedRightDirection * TraceDistance, HitAAAA, DrawDebugType,
+				            FColor::White);
+				LaunchTrace(StartPoint, StartPoint + MidEndPoint, HitAAAA, DrawDebugType, FColor::Blue);
 			}
 
 			if (bSnapshot)
 			{
 				TestHits.Add(Hit);
 			}
-			
+
 			if (LeftActor == Hit.GetActor())
 			{
 				LeftDirection = MidDirection;
@@ -354,6 +357,81 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethod(
 		RightDirection = RightPoint - StartPoint;
 	}
 	while (MidActors.Num() > 0);
+}
+
+void UGLibVisionFieldComponent::ExecuteBisectionMethodAdvanced(
+	const FVector& StartLocation,
+	const FHitResult& LeftHit,
+	const FHitResult& RightHit,
+	TArray<FHitResult>& PrecisedHits,
+	FHitResult*& Corner
+)
+{
+	auto LeftActor = LeftHit.GetActor();
+	auto RightActor = RightHit.GetActor();
+	
+	auto LeftLocation = GetEndLocation(LeftHit);
+	auto RightLocation = GetEndLocation(RightHit);
+	
+	auto LeftNormal = LeftHit.Normal;
+	auto RightNormal = RightHit.Normal;
+
+	auto MiddleHit = FHitResult();
+	auto bCorner = false;
+	
+	auto CurrentAngle = PreciseAngle;
+	
+	for (int32 Count = 0; Count < MaxPreciseCount && PreciseAngle <= CurrentAngle; Count++)
+	{
+		auto LeftDirection = LeftLocation - StartLocation;
+		auto RightDirection = RightLocation - StartLocation;
+		LeftDirection.Normalize();
+		RightDirection.Normalize();
+
+		CurrentAngle = UGLibMathLibrary::ShortestAngleBetweenVectorsInDegrees(LeftDirection, RightDirection);
+		
+		auto MiddleDirection = LeftDirection + RightDirection;
+		MiddleDirection.Normalize();
+
+		auto MiddleEndLocation = MiddleDirection * TraceDistance + StartLocation;
+
+		LaunchTrace(StartLocation, MiddleEndLocation, MiddleHit);
+
+		const auto& MiddleNormal = MiddleHit.Normal;
+
+#pragma region Debug
+		if (Count == CountToDraw)
+		{
+			auto TempHit = FHitResult();
+			LaunchTrace(StartLocation, MiddleEndLocation, TempHit, EDrawDebugTrace::ForOneFrame, FColor::Blue);
+			LaunchTrace(StartLocation, LeftDirection * TraceDistance + StartLocation, TempHit, EDrawDebugTrace::ForOneFrame, FColor::White);
+			LaunchTrace(StartLocation, RightDirection * TraceDistance + StartLocation, TempHit, EDrawDebugTrace::ForOneFrame, FColor::White);
+		}
+#pragma endregion Debug
+
+		if (!LeftNormal.Equals(RightNormal) && LeftActor == RightActor)
+		{
+			if (LeftNormal.Equals(MiddleNormal))
+			{
+				LeftNormal = MiddleNormal;
+				LeftLocation = GetEndLocation(MiddleHit);
+			} else 
+			{
+				RightNormal = MiddleNormal;
+				RightLocation = GetEndLocation(MiddleHit);
+			}
+			bCorner = true;
+		}
+	}
+	if (bCorner)
+	{
+		Move(Corner, &MiddleHit);
+	}
+}
+
+FVector_NetQuantize UGLibVisionFieldComponent::GetEndLocation(const FHitResult& LeftHit)
+{
+	return LeftHit.bBlockingHit ? LeftHit.Location : LeftHit.TraceEnd;
 }
 
 void UGLibVisionFieldComponent::LaunchTrace(

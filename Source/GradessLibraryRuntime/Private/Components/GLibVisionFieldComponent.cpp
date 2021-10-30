@@ -39,7 +39,8 @@ void UGLibVisionFieldComponent::TickComponent(
 )
 {
 	Super::TickComponent(DeltaTime, Tick, ThisTickFunction);
-
+	// SCOPE_LOG_TIME_FUNC();
+	
 	UKismetMaterialLibrary::SetVectorParameterValue(
 		this,
 		RenderData,
@@ -235,25 +236,24 @@ void UGLibVisionFieldComponent::PreciseObjectBorders(
 	{
 		auto& LeftHit = Hits[Id];
 		auto& RightHit = Hits[Id + 1];
-
-		PrecisedHits.Add(LeftHit);
-
+		
 		if (!LeftHit.Normal.Equals(RightHit.Normal) || LeftHit.GetActor() != RightHit.GetActor())
 		{
 			TArray<FHitResult> NewHits;
-			FHitResult* CornerPtr = nullptr;
 			ExecuteBisectionMethodAdvanced(
 				StartPoint,
 				LeftHit,
 				RightHit,
 				NewHits,
-				CornerPtr
+				Hits,
+				Id
 			);
 
-			if (CornerPtr)
-			{
-				Hits.Insert(FHitResult(*CornerPtr), Id + 1);
-			}
+			PrecisedHits.Add(LeftHit);
+			PrecisedHits.Append(NewHits);
+		} else
+		{
+			PrecisedHits.Add(LeftHit);
 		}
 	}
 
@@ -364,69 +364,134 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethodAdvanced(
 	const FHitResult& LeftHit,
 	const FHitResult& RightHit,
 	TArray<FHitResult>& PrecisedHits,
-	FHitResult*& Corner
+	TArray<FHitResult>& HitsToInsertCorners,
+	const int32 CurrentHitId
 )
 {
 	auto LeftActor = LeftHit.GetActor();
 	auto RightActor = RightHit.GetActor();
-	
+
 	auto LeftLocation = GetEndLocation(LeftHit);
 	auto RightLocation = GetEndLocation(RightHit);
-	
+
 	auto LeftNormal = LeftHit.Normal;
 	auto RightNormal = RightHit.Normal;
 
 	auto MiddleHit = FHitResult();
-	auto bCorner = false;
-	
+
 	auto CurrentAngle = PreciseAngle;
+
+	auto MiddleActors = TArray<AActor*>();
 	
-	for (int32 Count = 0; Count < MaxPreciseCount && PreciseAngle <= CurrentAngle; Count++)
+	do
 	{
-		auto LeftDirection = LeftLocation - StartLocation;
-		auto RightDirection = RightLocation - StartLocation;
-		LeftDirection.Normalize();
-		RightDirection.Normalize();
+		auto bCorner = false;
+		for (int32 Count = 0; Count < MaxPreciseCount && PreciseAngle <= CurrentAngle; Count++)
+		{
+			auto LeftDirection = LeftLocation - StartLocation;
+			auto RightDirection = RightLocation - StartLocation;
+			LeftDirection.Normalize();
+			RightDirection.Normalize();
 
-		CurrentAngle = UGLibMathLibrary::ShortestAngleBetweenVectorsInDegrees(LeftDirection, RightDirection);
-		
-		auto MiddleDirection = LeftDirection + RightDirection;
-		MiddleDirection.Normalize();
+			CurrentAngle = UGLibMathLibrary::ShortestAngleBetweenVectorsInDegrees(LeftDirection, RightDirection);
 
-		auto MiddleEndLocation = MiddleDirection * TraceDistance + StartLocation;
+			auto MiddleDirection = LeftDirection + RightDirection;
+			MiddleDirection.Normalize();
 
-		LaunchTrace(StartLocation, MiddleEndLocation, MiddleHit);
+			auto MiddleEndLocation = MiddleDirection * TraceDistance + StartLocation;
 
-		const auto& MiddleNormal = MiddleHit.Normal;
+			LaunchTrace(StartLocation, MiddleEndLocation, MiddleHit);
+
+			const auto& MiddleNormal = MiddleHit.Normal;
 
 #pragma region Debug
-		if (Count == CountToDraw)
-		{
-			auto TempHit = FHitResult();
-			LaunchTrace(StartLocation, MiddleEndLocation, TempHit, EDrawDebugTrace::ForOneFrame, FColor::Blue);
-			LaunchTrace(StartLocation, LeftDirection * TraceDistance + StartLocation, TempHit, EDrawDebugTrace::ForOneFrame, FColor::White);
-			LaunchTrace(StartLocation, RightDirection * TraceDistance + StartLocation, TempHit, EDrawDebugTrace::ForOneFrame, FColor::White);
-		}
+			if (Count == CountToDraw)
+			{
+				auto TempHit = FHitResult();
+				LaunchTrace(StartLocation, MiddleEndLocation, TempHit, EDrawDebugTrace::ForOneFrame, FColor::Blue);
+				LaunchTrace(StartLocation, LeftDirection * TraceDistance + StartLocation, TempHit,
+				            EDrawDebugTrace::ForOneFrame, FColor::White);
+				LaunchTrace(StartLocation, RightDirection * TraceDistance + StartLocation, TempHit,
+				            EDrawDebugTrace::ForOneFrame, FColor::White);
+			}
 #pragma endregion Debug
 
-		if (!LeftNormal.Equals(RightNormal) && LeftActor == RightActor)
-		{
-			if (LeftNormal.Equals(MiddleNormal))
+			if (!LeftNormal.Equals(RightNormal) && LeftActor == RightActor)
 			{
-				LeftNormal = MiddleNormal;
-				LeftLocation = GetEndLocation(MiddleHit);
-			} else 
-			{
-				RightNormal = MiddleNormal;
-				RightLocation = GetEndLocation(MiddleHit);
+				if (LeftNormal.Equals(MiddleNormal))
+				{
+					LeftNormal = MiddleNormal;
+					LeftLocation = GetEndLocation(MiddleHit);
+				}
+				else
+				{
+					RightNormal = MiddleNormal;
+					RightLocation = GetEndLocation(MiddleHit);
+				}
+				bCorner = true;
 			}
-			bCorner = true;
+			else if (LeftActor != RightActor)
+			{
+				if (LeftActor == MiddleHit.GetActor())
+				{
+					LeftNormal = MiddleNormal;
+					LeftLocation = GetEndLocation(MiddleHit);
+				}
+				else if (RightActor == MiddleHit.GetActor())
+				{
+					RightNormal = MiddleNormal;
+					RightLocation = GetEndLocation(MiddleHit);
+				}
+				else
+				{
+					MiddleActors.Insert(MiddleHit.GetActor(), 0);
+				}
+			}
 		}
+		HitsToInsertCorners.Insert(MiddleHit, CurrentHitId + 1);
+		
+		if (!bCorner)
+		{
+			auto PrecisedLeftHit = FHitResult();
+			auto PrecisedRightHit = FHitResult();
+
+			auto LeftDirection = LeftLocation - StartLocation;
+			auto RightDirection = RightLocation - StartLocation;
+			LeftDirection.Normalize();
+			RightDirection.Normalize();
+
+			LaunchTrace(StartLocation, LeftDirection * TraceDistance + StartLocation, PrecisedLeftHit,
+			            EDrawDebugTrace::ForOneFrame, FColor::Orange);
+			LaunchTrace(StartLocation, RightDirection * TraceDistance + StartLocation, PrecisedRightHit,
+			            EDrawDebugTrace::ForOneFrame, FColor::Orange);
+
+			if (!PrecisedLeftHit.bBlockingHit || !PrecisedRightHit.bBlockingHit)
+			{
+				MiddleHit.bBlockingHit = false;
+			}
+			else if (PrecisedLeftHit.Distance > PrecisedRightHit.Distance)
+			{
+				MiddleHit.bBlockingHit = true;
+				MiddleHit.Location = PrecisedLeftHit.Location;
+			} else
+			{
+				MiddleHit.bBlockingHit = true;
+				MiddleHit.Location = PrecisedRightHit.Location;
+			}
+		}
+
+		PrecisedHits.Add(MiddleHit);
+
+
+		if (MiddleActors.Num() <= 0) { return; }
+
+		LeftActor = MiddleActors[0];
+		MiddleActors.RemoveAt(0);
+
+		LeftNormal = RightNormal;
+		LeftLocation = RightLocation;
 	}
-	if (bCorner)
-	{
-		Move(Corner, &MiddleHit);
-	}
+	while (true);
 }
 
 FVector_NetQuantize UGLibVisionFieldComponent::GetEndLocation(const FHitResult& LeftHit)

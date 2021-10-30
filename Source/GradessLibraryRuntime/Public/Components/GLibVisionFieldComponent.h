@@ -295,6 +295,7 @@ protected:
 		const FHitResult& LeftHit,
 		const FHitResult& RightHit,
 		TArray<FHitResult>& PrecisedHits,
-		FHitResult*& Corner
+		TArray<FHitResult>& HitsToInsertCorners,
+		const int32 CurrentHitId
 	);
 };

@@ -146,8 +146,8 @@ void UGLibVisionFieldComponent::Execute(TArray<FHitResult>& OutHits)
 			auto& FirstHit = PrecisedHits[Id];
 			auto& SecondHit = PrecisedHits[Id + 1];
 
-			auto LeftPoint = FirstHit.bBlockingHit ? FirstHit.Location : FirstHit.TraceEnd;
-			auto RightPoint = SecondHit.bBlockingHit ? SecondHit.Location : SecondHit.TraceEnd;
+			auto LeftPoint = GetEndLocation(FirstHit);
+			auto RightPoint = GetEndLocation(SecondHit);
 
 			DebugMesh->CreateMeshSection(
 				Id,
@@ -232,14 +232,24 @@ void UGLibVisionFieldComponent::PreciseObjectBorders(
 
 	const auto StartPoint = GetOwner()->GetActorLocation();
 
+	auto bCornerNext = false;
 	for (int32 Id = 0; Id < Hits.Num() - 1 && Id < 100; Id++)
 	{
 		auto& LeftHit = Hits[Id];
 		auto& RightHit = Hits[Id + 1];
+
+		if (!bCornerNext)
+		{
+			PrecisedHits.Add(LeftHit);
+		} else
+		{
+			bCornerNext = false;
+		}
 		
 		if (!LeftHit.Normal.Equals(RightHit.Normal) || LeftHit.GetActor() != RightHit.GetActor())
 		{
 			TArray<FHitResult> NewHits;
+			auto CachedSize = Hits.Num();
 			ExecuteBisectionMethodAdvanced(
 				StartPoint,
 				LeftHit,
@@ -249,11 +259,12 @@ void UGLibVisionFieldComponent::PreciseObjectBorders(
 				Id
 			);
 
-			PrecisedHits.Add(LeftHit);
+			if (CachedSize != Hits.Num())
+			{
+				bCornerNext = true;
+			}
+
 			PrecisedHits.Append(NewHits);
-		} else
-		{
-			PrecisedHits.Add(LeftHit);
 		}
 	}
 
@@ -359,6 +370,44 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethod(
 	while (MidActors.Num() > 0);
 }
 
+void UGLibVisionFieldComponent::GetClosestCornerHit(const FVector& StartLocation, FVector_NetQuantize LeftLocation, FVector_NetQuantize RightLocation, FHitResult& CornerHit)
+{
+	auto PrecisedLeftHit = FHitResult();
+	auto PrecisedRightHit = FHitResult();
+
+	auto LeftDirection = LeftLocation - StartLocation;
+	auto RightDirection = RightLocation - StartLocation;
+	LeftDirection.Normalize();
+	RightDirection.Normalize();
+
+	LaunchTrace(StartLocation, LeftDirection * TraceDistance + StartLocation, PrecisedLeftHit
+	            /*, EDrawDebugTrace::ForOneFrame, FColor::Orange*/);
+	LaunchTrace(StartLocation, RightDirection * TraceDistance + StartLocation, PrecisedRightHit
+	            /*, EDrawDebugTrace::ForOneFrame, FColor::Orange*/);
+
+	if (PrecisedLeftHit.bBlockingHit && !PrecisedRightHit.bBlockingHit)
+	{
+		CornerHit.bBlockingHit = true;
+		CornerHit.Location = PrecisedLeftHit.Location;
+	} else if (!PrecisedLeftHit.bBlockingHit && PrecisedRightHit.bBlockingHit)
+	{
+		CornerHit.bBlockingHit = true;
+		CornerHit.Location = PrecisedRightHit.Location;
+					
+	} else if (PrecisedLeftHit.bBlockingHit && PrecisedRightHit.bBlockingHit)
+	{
+		if (PrecisedLeftHit.Distance < PrecisedRightHit.Distance)
+		{
+			CornerHit.bBlockingHit = true;
+			CornerHit.Location = PrecisedLeftHit.Location;
+		} else
+		{
+			CornerHit.bBlockingHit = true;
+			CornerHit.Location = PrecisedRightHit.Location;
+		}
+	}
+}
+
 void UGLibVisionFieldComponent::ExecuteBisectionMethodAdvanced(
 	const FVector& StartLocation,
 	const FHitResult& LeftHit,
@@ -448,40 +497,107 @@ void UGLibVisionFieldComponent::ExecuteBisectionMethodAdvanced(
 				}
 			}
 		}
-		HitsToInsertCorners.Insert(MiddleHit, CurrentHitId + 1);
+
+		FHitResult Temp;
+		LaunchTrace(MiddleHit.TraceStart, GetEndLocation(MiddleHit) , Temp, EDrawDebugTrace::ForOneFrame, FColor::Magenta);
 		
-		if (!bCorner)
+		if (bCorner)
 		{
-			auto PrecisedLeftHit = FHitResult();
-			auto PrecisedRightHit = FHitResult();
-
-			auto LeftDirection = LeftLocation - StartLocation;
-			auto RightDirection = RightLocation - StartLocation;
-			LeftDirection.Normalize();
-			RightDirection.Normalize();
-
-			LaunchTrace(StartLocation, LeftDirection * TraceDistance + StartLocation, PrecisedLeftHit,
-			            EDrawDebugTrace::ForOneFrame, FColor::Orange);
-			LaunchTrace(StartLocation, RightDirection * TraceDistance + StartLocation, PrecisedRightHit,
-			            EDrawDebugTrace::ForOneFrame, FColor::Orange);
-
-			if (!PrecisedLeftHit.bBlockingHit || !PrecisedRightHit.bBlockingHit)
+			HitsToInsertCorners.Insert(MiddleHit, CurrentHitId + 1);
+			PrecisedHits.Add(MiddleHit);
+		}
+		else
+		{
+			if (!MiddleHit.bBlockingHit)
 			{
-				MiddleHit.bBlockingHit = false;
-			}
-			else if (PrecisedLeftHit.Distance > PrecisedRightHit.Distance)
-			{
-				MiddleHit.bBlockingHit = true;
-				MiddleHit.Location = PrecisedLeftHit.Location;
+				auto CornerHit = MiddleHit;
+				// GetClosestCornerHit(StartLocation, LeftLocation, RightLocation, CornerHit);
+
+				auto PrecisedLeftHit = FHitResult();
+				auto PrecisedRightHit = FHitResult();
+
+				auto LeftDirection = LeftLocation - StartLocation;
+				auto RightDirection = RightLocation - StartLocation;
+				LeftDirection.Normalize();
+				RightDirection.Normalize();
+
+				LaunchTrace(StartLocation, LeftDirection * TraceDistance + StartLocation, PrecisedLeftHit
+							/*, EDrawDebugTrace::ForOneFrame, FColor::Orange*/);
+				LaunchTrace(StartLocation, RightDirection * TraceDistance + StartLocation, PrecisedRightHit
+							/*, EDrawDebugTrace::ForOneFrame, FColor::Orange*/);
+
+				if (PrecisedLeftHit.bBlockingHit && !PrecisedRightHit.bBlockingHit)
+				{
+					CornerHit = PrecisedLeftHit;
+					PrecisedHits.Add(CornerHit);
+					PrecisedHits.Add(MiddleHit);
+				} else if (!PrecisedLeftHit.bBlockingHit && PrecisedRightHit.bBlockingHit)
+				{
+					CornerHit = PrecisedRightHit;
+					PrecisedHits.Add(MiddleHit);
+					PrecisedHits.Add(CornerHit);
+				} else if (PrecisedLeftHit.bBlockingHit && PrecisedRightHit.bBlockingHit)
+				{
+					if (PrecisedLeftHit.Distance < PrecisedRightHit.Distance)
+					{
+						CornerHit = PrecisedLeftHit;
+						PrecisedHits.Add(CornerHit);
+						PrecisedHits.Add(MiddleHit);
+					} else
+					{
+						CornerHit = PrecisedRightHit;
+						PrecisedHits.Add(MiddleHit);
+						PrecisedHits.Add(CornerHit);
+					}
+				}
+				
+				HitsToInsertCorners.Insert(MiddleHit, CurrentHitId + 1);
 			} else
 			{
-				MiddleHit.bBlockingHit = true;
-				MiddleHit.Location = PrecisedRightHit.Location;
+				auto CornerHit = MiddleHit;
+
+				auto PrecisedLeftHit = FHitResult();
+				auto PrecisedRightHit = FHitResult();
+
+				auto LeftDirection = LeftLocation - StartLocation;
+				auto RightDirection = RightLocation - StartLocation;
+				LeftDirection.Normalize();
+				RightDirection.Normalize();
+
+				LaunchTrace(StartLocation, LeftDirection * TraceDistance + StartLocation, PrecisedLeftHit
+							/*, EDrawDebugTrace::ForOneFrame, FColor::Orange*/);
+				LaunchTrace(StartLocation, RightDirection * TraceDistance + StartLocation, PrecisedRightHit
+							/*, EDrawDebugTrace::ForOneFrame, FColor::Orange*/);
+
+				if (!PrecisedLeftHit.bBlockingHit && PrecisedRightHit.bBlockingHit)
+				{
+					MiddleHit = PrecisedLeftHit;
+					PrecisedHits.Add(MiddleHit);
+					PrecisedHits.Add(CornerHit);
+				} else if (PrecisedLeftHit.bBlockingHit && !PrecisedRightHit.bBlockingHit)
+				{
+					MiddleHit = PrecisedRightHit;
+					PrecisedHits.Add(CornerHit);
+					PrecisedHits.Add(MiddleHit);
+				} else if (PrecisedLeftHit.bBlockingHit && PrecisedRightHit.bBlockingHit)
+				{
+					if (PrecisedLeftHit.Distance > PrecisedRightHit.Distance)
+					{
+						MiddleHit = PrecisedLeftHit;
+						PrecisedHits.Add(MiddleHit);
+						PrecisedHits.Add(CornerHit);
+					} else
+					{
+						MiddleHit = PrecisedRightHit;
+						PrecisedHits.Add(CornerHit);
+						PrecisedHits.Add(MiddleHit);
+					}
+				}
+				
+				HitsToInsertCorners.Insert(CornerHit, CurrentHitId + 1);
 			}
+
 		}
-
-		PrecisedHits.Add(MiddleHit);
-
 
 		if (MiddleActors.Num() <= 0) { return; }
 
@@ -517,6 +633,7 @@ void UGLibVisionFieldComponent::LaunchTrace(
 		false,
 		TArray<AActor*>(),
 		DebugType,
+		// EDrawDebugTrace::None,
 		Hit,
 		true,
 		CustomTraceColor,

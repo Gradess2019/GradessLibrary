@@ -288,6 +288,8 @@ protected:
 		const AActor* RightActor,
 		TArray<FHitResult>& PrecisedHits
 	);
+	void GetClosestCornerHit(const FVector& StartLocation, FVector_NetQuantize LeftLocation,
+	                            FVector_NetQuantize RightLocation, FHitResult& CornerHit);
 	FVector_NetQuantize GetEndLocation(const FHitResult& LeftHit);
 
 	void ExecuteBisectionMethodAdvanced(

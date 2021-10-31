@@ -7,30 +7,32 @@ public class GradessLibraryRuntime : ModuleRules
 	public GradessLibraryRuntime(ReadOnlyTargetRules Target) : base(Target)
 	{
 		// PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
+
 		PublicIncludePaths.AddRange(
-			new string[] {
+			new string[]
+			{
 				// ... add public include paths required here ...
 			}
-			);
-				
-		
+		);
+
+
 		PrivateIncludePaths.AddRange(
-			new string[] {
+			new string[]
+			{
 				"GradessLibraryRuntime/Private"
 			}
-			);
-			
-		
+		);
+
+
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
 			}
-			);
-			
-		
+		);
+
+
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
@@ -41,14 +43,24 @@ public class GradessLibraryRuntime : ModuleRules
 				"InputCore"
 				// ... add private dependencies that you statically link with here ...	
 			}
-			);
-		
-		
+		);
+
+
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{
 				// ... add any modules that your module loads dynamically here ...
 			}
-			);
+		);
+		
+		if (Target.bBuildDeveloperTools || Target.Configuration != UnrealTargetConfiguration.Shipping && Target.Configuration != UnrealTargetConfiguration.Test)
+		{
+			PublicDependencyModuleNames.Add("GameplayDebugger");
+			PublicDefinitions.Add("WITH_GAMEPLAY_DEBUGGER=1");
+		}
+		else
+		{
+			PublicDefinitions.Add("WITH_GAMEPLAY_DEBUGGER=0");
+		}
 	}
 }

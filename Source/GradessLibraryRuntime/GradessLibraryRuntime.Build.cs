@@ -38,7 +38,8 @@ public class GradessLibraryRuntime : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"InputCore"
+				"InputCore",
+				"ProceduralMeshComponent"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

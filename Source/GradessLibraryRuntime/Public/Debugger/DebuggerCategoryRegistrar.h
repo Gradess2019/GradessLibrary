@@ -27,5 +27,11 @@ public:
 		const int32 Key,
 		EGameplayDebuggerCategoryState State = EGameplayDebuggerCategoryState::EnabledInGameAndSimulate
 	);
+
+	/**
+	 * @brief Unregisters category by name
+	 * @param Name Category to unregister
+	 */
+	FORCEINLINE static void UnregisterCategory(const FName& Name);
 };
 #endif

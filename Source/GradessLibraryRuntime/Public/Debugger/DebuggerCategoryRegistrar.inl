@@ -18,4 +18,10 @@ void FDebuggerCategoryRegistrar::RegisterCategory(
 	GameplayDebugger.RegisterCategory(Name, CreationDelegate, State, Key);
 	GameplayDebugger.NotifyCategoriesChanged();
 }
+
+FORCEINLINE void FDebuggerCategoryRegistrar::UnregisterCategory(const FName& Name)
+{
+	auto& GameplayDebugger = IGameplayDebugger::Get();
+	GameplayDebugger.UnregisterCategory(Name);
+}
 #endif

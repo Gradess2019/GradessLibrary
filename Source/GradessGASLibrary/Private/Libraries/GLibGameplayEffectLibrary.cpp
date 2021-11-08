@@ -20,6 +20,28 @@ int32 UGLibGameplayEffectLibrary::GetGameplayEffectLevelBySpec(const FGameplayEf
 	return Spec.GetLevel();
 }
 
+void UGLibGameplayEffectLibrary::SetGameplayEffectLevelByHandle(
+	FActiveGameplayEffectHandle& Handle,
+	const int32 NewLevel
+	)
+{
+	const auto AbilitySystem = Handle.GetOwningAbilitySystemComponent();
+	AbilitySystem->SetActiveGameplayEffectLevel(Handle, NewLevel);
+}
+
+void UGLibGameplayEffectLibrary::SetGameplayEffectLevelByTags(
+	UAbilitySystemComponent*& AbilitySystem,
+	const FGameplayTagContainer& Tags,
+	const int32 NewLevel
+)
+{
+	auto Effects = AbilitySystem->GetActiveEffectsWithAllTags(Tags);
+	for (auto& Effect : Effects)
+	{
+		SetGameplayEffectLevelByHandle(Effect, NewLevel);
+	}
+}
+
 void UGLibGameplayEffectLibrary::AddGameplayEffectLevelByHandle(
 	FActiveGameplayEffectHandle& Handle,
 	const int32 Delta

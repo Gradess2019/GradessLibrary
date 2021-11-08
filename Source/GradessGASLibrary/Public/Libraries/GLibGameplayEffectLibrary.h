@@ -40,6 +40,41 @@ public:
 	static int32 GetGameplayEffectLevelBySpec(const FGameplayEffectSpec& Spec);
 
 	/**
+	* @brief Sets gameplay effect level
+	* @param Handle effect handle to use
+	* @param NewLevel New level of gameplay effect
+	*/
+	UFUNCTION(
+		BlueprintCallable,
+		BlueprintAuthorityOnly,
+		Category = "GLib|GameplayEffectLibrary"
+	)
+	static void SetGameplayEffectLevelByHandle(
+		UPARAM(ref) FActiveGameplayEffectHandle& Handle,
+		const int32 NewLevel = 0
+	);
+
+	/**
+	 * @brief Sets new effect to all gameplay effects with Tags
+	 * @param AbilitySystem Owner ability system component
+	 * @param Tags Gameplay effect tags
+	 * @param NewLevel New level of gameplay effect
+	 */
+	UFUNCTION(
+		BlueprintCallable,
+		BlueprintAuthorityOnly,
+		Category = "GLib|GameplayEffectLibrary",
+		meta = (
+			AutoCreateRefTerm = "Tags"
+		)
+	)
+	static void SetGameplayEffectLevelByTags(
+		UPARAM(ref) UAbilitySystemComponent*& AbilitySystem,
+		const FGameplayTagContainer& Tags,
+		const int32 NewLevel = 0
+	);
+
+	/**
 	 * @brief Increases gameplay effect level by delta
 	 * @param Handle effect handle to use
 	 * @param Delta delta level, usually it is 1

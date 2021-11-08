@@ -35,6 +35,11 @@
 		{
 			"Name": "GameplayAbilities",
 			"Enabled": true
+		},
+		{
+			"Name": "ALSV4_CPP",
+			"Enabled": true,
+			"MarketplaceURL": "https://github.com/dyanikoglu/ALS-Community/tree/main"
 		}
 	]
 }

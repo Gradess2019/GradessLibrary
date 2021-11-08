@@ -71,6 +71,7 @@ void UGLibAsyncActionAttributeChanged::EndTask()
 		}
 	}
 
+	RemoveFromRoot();
 	SetReadyToDestroy();
 	MarkPendingKill();
 }

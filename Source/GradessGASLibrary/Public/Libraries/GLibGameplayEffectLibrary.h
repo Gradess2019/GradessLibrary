@@ -16,18 +16,33 @@ class GRADESSGASLIBRARY_API UGLibGameplayEffectLibrary : public UBlueprintFuncti
 	GENERATED_BODY()
 
 public:
+	/**
+	 * @brief Returns duration by effect spec
+	 * @param Spec effect spec to use
+	 * @return duration of the effect
+	 */
 	UFUNCTION(
 		BlueprintPure,
 		Category = "GLib|GameplayEffectLibrary"
 	)
 	static float GetDurationFromSpec(const FGameplayEffectSpec& Spec);
-
+	
+	/**
+	 * @brief Returns chance to apply to target by effect spec
+	 * @param Spec effect spec to use
+	 * @return chance to apply to target of the effect
+	 */
 	UFUNCTION(
 		BlueprintPure,
 		Category = "GLib|GameplayEffectLibrary"
 	)
 	static float GetChanceToApplyToTargetFromSpec(const FGameplayEffectSpec& Spec);
 
+	/**
+	 * @brief Returns effect stack count by effect spec
+	 * @param Spec effect spec to use
+	 * @return stack count of the effect
+	 */
 	UFUNCTION(
 		BlueprintPure,
 		Category = "GLib|GameplayEffectLibrary"

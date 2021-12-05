@@ -20,7 +20,7 @@ public:
 		BlueprintPure,
 		Category = "GLib|GameplayEffectLibrary"
 	)
-	static const UGameplayEffect* GetGameplayEffectFromSpec(const FGameplayEffectSpec& Spec);
+	static UGameplayEffect* GetGameplayEffectFromSpec(const FGameplayEffectSpec& Spec) const;
 
 	UFUNCTION(
 		BlueprintPure,

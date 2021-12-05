@@ -6,19 +6,19 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
 
-const UGameplayEffect* UGLibGameplayEffectLibrary::GetGameplayEffectFromSpec(const FGameplayEffectSpec& Spec)
+UGameplayEffect* UGLibGameplayEffectLibrary::GetGameplayEffectFromSpec(const FGameplayEffectSpec& Spec) const
 {
-	return Spec.Def;
+	return nullptr;
 }
 
 float UGLibGameplayEffectLibrary::GetDurationFromSpec(const FGameplayEffectSpec& Spec)
 {
-	return Spec.Duration;
+	return Spec.GetDuration();
 }
 
 float UGLibGameplayEffectLibrary::GetChanceToApplyToTargetFromSpec(const FGameplayEffectSpec& Spec)
 {
-	return Spec.ChanceToApplyToTarget;
+	return Spec.GetChanceToApplyToTarget();
 }
 
 int32 UGLibGameplayEffectLibrary::GetStackCountFromSpec(const FGameplayEffectSpec& Spec)

@@ -6,11 +6,6 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
 
-UGameplayEffect* UGLibGameplayEffectLibrary::GetGameplayEffectFromSpec(const FGameplayEffectSpec& Spec) const
-{
-	return nullptr;
-}
-
 float UGLibGameplayEffectLibrary::GetDurationFromSpec(const FGameplayEffectSpec& Spec)
 {
 	return Spec.GetDuration();

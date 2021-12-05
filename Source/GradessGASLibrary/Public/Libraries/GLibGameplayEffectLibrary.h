@@ -20,12 +20,6 @@ public:
 		BlueprintPure,
 		Category = "GLib|GameplayEffectLibrary"
 	)
-	static UGameplayEffect* GetGameplayEffectFromSpec(const FGameplayEffectSpec& Spec) const;
-
-	UFUNCTION(
-		BlueprintPure,
-		Category = "GLib|GameplayEffectLibrary"
-	)
 	static float GetDurationFromSpec(const FGameplayEffectSpec& Spec);
 
 	UFUNCTION(

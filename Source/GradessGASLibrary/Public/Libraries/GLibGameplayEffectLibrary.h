@@ -6,6 +6,7 @@
 #include "GameplayEffectTypes.h"
 #include "GLibGameplayEffectLibrary.generated.h"
 
+class UGameplayEffect;
 /**
  * @brief Library that is providing function for working with gameplay effects
  */
@@ -15,6 +16,30 @@ class GRADESSGASLIBRARY_API UGLibGameplayEffectLibrary : public UBlueprintFuncti
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(
+		BlueprintPure,
+		Category = "GLib|GameplayEffectLibrary"
+	)
+	static const UGameplayEffect* GetGameplayEffectFromSpec(const FGameplayEffectSpec& Spec);
+
+	UFUNCTION(
+		BlueprintPure,
+		Category = "GLib|GameplayEffectLibrary"
+	)
+	static float GetDurationFromSpec(const FGameplayEffectSpec& Spec);
+
+	UFUNCTION(
+		BlueprintPure,
+		Category = "GLib|GameplayEffectLibrary"
+	)
+	static float GetChanceToApplyToTargetFromSpec(const FGameplayEffectSpec& Spec);
+
+	UFUNCTION(
+		BlueprintPure,
+		Category = "GLib|GameplayEffectLibrary"
+	)
+	static int32 GetStackCountFromSpec(const FGameplayEffectSpec& Spec);
+	
 	/**
 	 * @brief Returns current effect level by effect handle
 	 * @param Handle effect handle to use

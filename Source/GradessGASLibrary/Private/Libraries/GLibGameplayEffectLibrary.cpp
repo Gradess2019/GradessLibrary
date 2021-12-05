@@ -6,6 +6,26 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
 
+const UGameplayEffect* UGLibGameplayEffectLibrary::GetGameplayEffectFromSpec(const FGameplayEffectSpec& Spec)
+{
+	return Spec.Def;
+}
+
+float UGLibGameplayEffectLibrary::GetDurationFromSpec(const FGameplayEffectSpec& Spec)
+{
+	return Spec.Duration;
+}
+
+float UGLibGameplayEffectLibrary::GetChanceToApplyToTargetFromSpec(const FGameplayEffectSpec& Spec)
+{
+	return Spec.ChanceToApplyToTarget;
+}
+
+int32 UGLibGameplayEffectLibrary::GetStackCountFromSpec(const FGameplayEffectSpec& Spec)
+{
+	return Spec.StackCount;
+}
+
 int32 UGLibGameplayEffectLibrary::GetGameplayEffectLevelByHandle(const FActiveGameplayEffectHandle& Handle)
 {
 	const auto AbilitySystem = Handle.GetOwningAbilitySystemComponent();

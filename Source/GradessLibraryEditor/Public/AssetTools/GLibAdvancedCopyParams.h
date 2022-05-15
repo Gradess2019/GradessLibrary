@@ -25,18 +25,26 @@ struct GRADESSLIBRARYEDITOR_API FGLibAdvancedCopyParams
 	) :
 		bShouldForceSave(ShouldForceSave),
 		bCopyOverAllDestinationOverlaps(CopyOverAllDestinationOverlaps),
+#if ENGINE_MAJOR_VERSION < 5
 		bGenerateUniqueNames(GenerateUniqueNames),
+#endif
 		bShouldSuppressUI(ShouldSuppressUI),
-		bShouldCheckForDependencies(ShouldCheckForDependencies) {}
+		bShouldCheckForDependencies(ShouldCheckForDependencies)
+	{
+	}
 
 	FGLibAdvancedCopyParams(
 		const FAdvancedCopyParams& Params
 	) :
 		bShouldForceSave(Params.bShouldForceSave),
 		bCopyOverAllDestinationOverlaps(Params.bCopyOverAllDestinationOverlaps),
+#if ENGINE_MAJOR_VERSION < 5
 		bGenerateUniqueNames(Params.bGenerateUniqueNames),
+#endif
 		bShouldSuppressUI(Params.bShouldSuppressUI),
-		bShouldCheckForDependencies(Params.bShouldCheckForDependencies) {}
+		bShouldCheckForDependencies(Params.bShouldCheckForDependencies)
+	{
+	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="GLib")
 	bool bShouldForceSave;
@@ -44,6 +52,7 @@ struct GRADESSLIBRARYEDITOR_API FGLibAdvancedCopyParams
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="GLib")
 	bool bCopyOverAllDestinationOverlaps;
 
+	UE_DEPRECATED(5.0, "This property is deprecated and will not work in UE 5")
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="GLib")
 	bool bGenerateUniqueNames;
 
@@ -57,7 +66,7 @@ struct GRADESSLIBRARYEDITOR_API FGLibAdvancedCopyParams
 	{
 		FAdvancedCopyParams Params;
 		CopyToNative(Params);
-		
+
 		return Params;
 	}
 
@@ -65,7 +74,9 @@ struct GRADESSLIBRARYEDITOR_API FGLibAdvancedCopyParams
 	{
 		Params.bShouldForceSave = bShouldForceSave;
 		Params.bCopyOverAllDestinationOverlaps = bCopyOverAllDestinationOverlaps;
+#if ENGINE_MAJOR_VERSION < 5
 		Params.bGenerateUniqueNames = bGenerateUniqueNames;
+#endif
 		Params.bShouldSuppressUI = bShouldSuppressUI;
 		Params.bShouldCheckForDependencies = bShouldCheckForDependencies;
 	}

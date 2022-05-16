@@ -11,7 +11,7 @@ from glib_core.glib_log import log, warn, error
 
 class GLibLoaderBaseRules:
     def __init__(self):
-        self.blacklist = [os.path.basename(__file__), "init_unreal.py", "__init__.py"]
+        self.blacklist = [os.path.basename(__file__), "init_unreal.py", "__init__.py", "glib_load.py"]
 
     def is_valid_file(self, file_path):
         python_file = file_path.endswith(".py")

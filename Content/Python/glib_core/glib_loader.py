@@ -11,7 +11,7 @@ from glib_core.glib_log import log, warn, error
 
 class GLibLoaderBaseRules:
     def __init__(self):
-        self.blacklist = [os.path.basename(__file__), "init_unreal.py", "__init__.py", "glib_load.py"]
+        self.blacklist = [os.path.basename(__file__), "init_unreal.py", "__init__.py", "glib_load.py", "glib_module_dependency_parser.py"]
 
     def is_valid_file(self, file_path):
         python_file = file_path.endswith(".py")
@@ -35,6 +35,12 @@ class GLibLoader:
             return
 
         module_order_file = unreal.Paths.combine([root, "glib_module_order.json"])
+
+        from glib_core.glib_module_dependency_parser import GLibModuleDependencyParser
+
+        log("Generating module dependencies json file...")
+        GLibModuleDependencyParser.create_module_priorities_json(root, module_order_file)
+
         if not os.path.exists(module_order_file):
             error(f"glib_module_order.json not found in Python folder: {module_order_file}")
             return
@@ -116,8 +122,12 @@ class GLibLoader:
     @classmethod
     def add_packages_to_environment(cls, root: str):
         init_files = cls.collect_init_files(root)
+
+        packages = set()
         for init_file in init_files:
-            cls.add_package_to_environment(init_file)
+            packages.add(cls.add_package_to_environment(init_file))
+
+        return packages
 
     @classmethod
     def add_file_to_environment(cls, file_path: str):
@@ -144,8 +154,12 @@ class GLibLoader:
     @classmethod
     def add_files_to_environment(cls, root: str):
         files = cls.collect_python_files(root)
+
+        modules = set()
         for file in files:
-            cls.add_file_to_environment(file)
+            modules.add(cls.add_file_to_environment(file))
+
+        return modules
 
     @classmethod
     def get_module_name(cls, path: str, root="Python"):
@@ -162,6 +176,11 @@ class GLibLoader:
         module_name = re.sub(r"[/\\]", ".", module_path)
 
         return module_name
+
+    @classmethod
+    def get_python_root(cls, path: str, root_pattern=r".+Content[\\\/]+Python"):
+        match = re.search(root_pattern, unreal.Paths.normalize_filename(path))
+        return match.group(0) if match else None
 
     @classmethod
     def get_ordered_modules(cls, module_order_path: str):

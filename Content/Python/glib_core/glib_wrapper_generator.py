@@ -68,6 +68,20 @@ class GLibStructParser(GLibBaseParser):
         return result
 
 
+class GLibEnumParser():
+    @classmethod
+    def parse(cls, data):
+        result = data["doxygen"] + "\n" if data.get("doxygen") else ""
+        result += "UENUM(BlueprintType)\n"
+        result += "enum " + ("class " if data["isclass"] else "") + data["name"] + " : uint8" + "\n"
+        result += "{\n"
+
+        result += GLibEnumValueParser.parse_values(data)
+
+        result += "};\n"
+        return result
+
+
 class GLibMemberParser:
     @classmethod
     def get_doxygen(cls, data):
@@ -108,6 +122,28 @@ class GLibFunctionParser(GLibMemberParser):
         return result
 
 
+class GLibEnumValueParser(GLibMemberParser):
+    @classmethod
+    def parse(cls, data):
+        result = cls.get_doxygen(data)
+        result += "\t" + data["name"] + " = " + str(data["value"])
+
+        return result
+
+    @classmethod
+    def parse_values(cls, data):
+        result = ""
+        for index, value in enumerate(data["values"]):
+            result += GLibEnumValueParser.parse(value)
+
+            if not data.get("isclass"):
+                result += " UMETA(DisplayName = \"" + value["name"] + "\")"
+
+            result += ",\n" if index < len(data["values"]) - 1 else "\n"
+
+        return result
+
+
 class GLibWrapperGenerator:
     @classmethod
     def parse(cls, path: str):
@@ -121,6 +157,10 @@ class GLibWrapperGenerator:
             elif content["declaration_method"] == "struct":
                 generated_data += GLibStructParser.parse(content)
 
+            generated_data += "\n"
+
+        for enum in header.enums:
+            generated_data += GLibEnumParser.parse(enum)
             generated_data += "\n"
 
         with open("../Data/generated.h", "w+", encoding="utf-8") as f:

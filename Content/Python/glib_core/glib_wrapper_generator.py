@@ -147,7 +147,15 @@ class GLibEnumValueParser(GLibMemberParser):
 class GLibWrapperGenerator:
     @classmethod
     def parse(cls, path: str):
-        header = CppHeaderParser.CppHeader(path)
+        if not os.path.exists(path):
+            raise Exception("Path does not exist")
+
+        with open(path, "r") as file:
+            data = file.read()
+
+        data = re.sub(r"(?:UCLASS|UENUM|UFUNCTION|UPROPERTY|USTRUCT|GENERATED.*BODY|UE_DEPRECATED|UMETA)(?:\([\s\S]*?\)(?:,[\s\S]*?\))*)(?:\)*)", "", data)
+
+        header = CppHeaderParser.CppHeader(data, argType="string", encoding="utf-8")
 
         generated_data = ""
 
@@ -163,13 +171,12 @@ class GLibWrapperGenerator:
             generated_data += GLibEnumParser.parse(enum)
             generated_data += "\n"
 
-        with open("../Data/generated.h", "w+", encoding="utf-8") as f:
-            f.write(generated_data)
+        with open("../Data/generated.h", "w+", encoding="utf-8") as file:
+            file.write(generated_data)
 
-#
-# result = CppHeaderParser.CppHeader(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h").toJSON()
-# with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
-#     f.write(result)
+        with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
+            f.write(header.toJSON())
+
 
 GLibWrapperGenerator.parse(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h")
 

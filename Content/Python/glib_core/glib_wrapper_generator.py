@@ -137,14 +137,16 @@ class GLibFunctionParser(GLibMemberParser):
     @classmethod
     def parse(cls, data):
         result = cls.get_doxygen(data)
-        result += "\tUFUNCTION({callable_type}, Category = \"{category}\")\n".format_map({
-            "callable_type": "BlueprintPure" if data["rtnType"] != "void" and data["const"] else "BlueprintCallable",
-            "category": data["category"] if data.get("category") else "GLib"
-        })
+
+        if not data["constructor"]:
+            result += "\tUFUNCTION({callable_type}, Category = \"{category}\")\n".format_map({
+                "callable_type": "BlueprintPure" if data["rtnType"] != "void" and data["const"] else "BlueprintCallable",
+                "category": data["category"] if data.get("category") else "GLib"
+            })
 
         declaration = data["debug"]
         declaration = re.sub(cls.DECLARATION_EXTRA_SPACES, "", declaration)
-        declaration = re.sub(r"\s*{.*$", ";", declaration)
+        declaration = re.sub(r"\s*(?:{|:).*$", ";", declaration)
         result += "\t" + declaration + "\n"
 
         return result
@@ -209,8 +211,8 @@ class GLibWrapperGenerator:
         with open("../Data/generated.h", "w+", encoding="utf-8") as file:
             file.write(generated_data)
 
-        with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
-            f.write(header.toJSON())
+        # with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
+        #     f.write(header.toJSON())
 
 
 GLibWrapperGenerator.parse(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h")

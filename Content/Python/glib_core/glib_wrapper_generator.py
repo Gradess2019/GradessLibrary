@@ -155,8 +155,10 @@ class GLibWrapperGenerator:
             data = file.read()
 
         data = re.sub(r"(?:UCLASS|UENUM|UFUNCTION|UPROPERTY|USTRUCT|GENERATED.*BODY|UE_DEPRECATED|UMETA)(?:\([\s\S]*?\)(?:,[\s\S]*?\))*)(?:\)*)", "", data)
+        data = re.sub(r"(?:PRAGMA_ENABLE_DEPRECATION_WARNINGS|PRAGMA_DISABLE_DEPRECATION_WARNINGS).*", "", data)
         data = re.sub(r"DECLARE_.*", "", data)
         data = re.sub(r"(?:(?<=\(|,).*?)(\s*(?:\bclass\b|\bstruct\b|\benum\b)\s*)(?=.*\))", "", data)
+        data = re.sub(r"\w*_API", "", data)
 
         header = CppHeaderParser.CppHeader(data, argType="string", encoding="utf-8")
 
@@ -177,8 +179,8 @@ class GLibWrapperGenerator:
         with open("../Data/generated.h", "w+", encoding="utf-8") as file:
             file.write(generated_data)
 
-        with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
-            f.write(header.toJSON())
+        # with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
+        #     f.write(header.toJSON())
 
 
 GLibWrapperGenerator.parse(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h")

@@ -1,6 +1,33 @@
 from CppHeaderParser import *
 
 
+class GLibCppHeaderParser(CppHeader):
+    def remove_circular_refs(self, data, seen=None):
+        if seen is None:
+            seen = set()
+
+        if id(data) in seen:
+            # circular reference, remove it.
+            return None
+
+        seen.add(id(data))
+
+        result = data
+
+        if isinstance(data, dict):
+            result = {self.remove_circular_refs(k, seen): self.remove_circular_refs(v, seen) for k, v in data.items()}
+        elif isinstance(data, (list, tuple, set, frozenset)):
+            result = type(data)(self.remove_circular_refs(v, seen) for v in data)
+
+        # remove id again; only *nested* references count
+        seen.remove(id(data))
+        return result
+
+    def toJSON(self, indent=4, separators=None):
+        self.__dict__ = self.remove_circular_refs(self.__dict__)
+        return super().toJSON(indent=indent, separators=separators)
+
+
 class GLibBaseParser:
     @classmethod
     def parse(cls, data):
@@ -156,11 +183,14 @@ class GLibWrapperGenerator:
 
         data = re.sub(r"(?:UCLASS|UENUM|UFUNCTION|UPROPERTY|USTRUCT|GENERATED.*BODY|UE_DEPRECATED|UMETA)(?:\([\s\S]*?\)(?:,[\s\S]*?\))*)(?:\)*)", "", data)
         data = re.sub(r"(?:PRAGMA_ENABLE_DEPRECATION_WARNINGS|PRAGMA_DISABLE_DEPRECATION_WARNINGS).*", "", data)
-        data = re.sub(r"DECLARE_.*", "", data)
+        data = re.sub(r".*DECLARE_.*", "", data)
         data = re.sub(r"(?:(?<=\(|,).*?)(\s*(?:\bclass\b|\bstruct\b|\benum\b)\s*)(?=.*\))", "", data)
-        data = re.sub(r"\w*_API", "", data)
+        data = re.sub(r"\w*_API\s*", "", data)
 
-        header = CppHeaderParser.CppHeader(data, argType="string", encoding="utf-8")
+        with open("../Data/test_subtracted.h", "w") as file:
+            file.write(data)
+
+        header = GLibCppHeaderParser(data, argType="string", encoding="utf-8")
 
         generated_data = ""
 
@@ -179,8 +209,8 @@ class GLibWrapperGenerator:
         with open("../Data/generated.h", "w+", encoding="utf-8") as file:
             file.write(generated_data)
 
-        # with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
-        #     f.write(header.toJSON())
+        with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
+            f.write(header.toJSON())
 
 
 GLibWrapperGenerator.parse(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h")

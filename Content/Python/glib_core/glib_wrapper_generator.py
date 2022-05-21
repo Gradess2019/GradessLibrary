@@ -195,7 +195,26 @@ class GLibWrapperGenerator:
         header = GLibCppHeaderParser(data, argType="string", encoding="utf-8")
 
         generated_data = ""
+        generated_data = cls.parse_includes(generated_data, header)
+        generated_data += "\n"
+        generated_data = cls.parse_classes(generated_data, header)
+        generated_data = cls.parse_enums(generated_data, header)
 
+        with open("../Data/generated.h", "w+", encoding="utf-8") as file:
+            file.write(generated_data)
+
+        # with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
+        #     f.write(header.toJSON())
+
+    @classmethod
+    def parse_enums(cls, generated_data, header):
+        for enum in header.enums:
+            generated_data += GLibEnumParser.parse(enum)
+            generated_data += "\n"
+        return generated_data
+
+    @classmethod
+    def parse_classes(cls, generated_data, header):
         for parsed_class, content in header.classes.items():
             if content["declaration_method"] == "class":
                 generated_data += GLibClassParser.parse(content)
@@ -203,16 +222,13 @@ class GLibWrapperGenerator:
                 generated_data += GLibStructParser.parse(content)
 
             generated_data += "\n"
+        return generated_data
 
-        for enum in header.enums:
-            generated_data += GLibEnumParser.parse(enum)
-            generated_data += "\n"
-
-        with open("../Data/generated.h", "w+", encoding="utf-8") as file:
-            file.write(generated_data)
-
-        # with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
-        #     f.write(header.toJSON())
+    @classmethod
+    def parse_includes(cls, generated_data, header):
+        for include in header.includes:
+            generated_data += "#include " + include + "\n"
+        return generated_data
 
 
 GLibWrapperGenerator.parse(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h")

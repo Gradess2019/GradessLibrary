@@ -111,7 +111,7 @@ class GLibFunctionParser(GLibMemberParser):
     def parse(cls, data):
         result = cls.get_doxygen(data)
         result += "\tUFUNCTION({callable_type}, Category = \"{category}\")\n".format_map({
-            "callable_type": "BlueprintCallable" if data["rtnType"] == "void" else "BlueprintPure",
+            "callable_type": "BlueprintPure" if data["rtnType"] != "void" and data["const"] else "BlueprintCallable",
             "category": data["category"] if data.get("category") else "GLib"
         })
 

@@ -117,6 +117,7 @@ class GLibFunctionParser(GLibMemberParser):
 
         declaration = data["debug"]
         declaration = re.sub(cls.DECLARATION_EXTRA_SPACES, "", declaration)
+        declaration = re.sub(r"\s*{.*$", ";", declaration)
         result += "\t" + declaration + "\n"
 
         return result
@@ -154,6 +155,8 @@ class GLibWrapperGenerator:
             data = file.read()
 
         data = re.sub(r"(?:UCLASS|UENUM|UFUNCTION|UPROPERTY|USTRUCT|GENERATED.*BODY|UE_DEPRECATED|UMETA)(?:\([\s\S]*?\)(?:,[\s\S]*?\))*)(?:\)*)", "", data)
+        data = re.sub(r"DECLARE_.*", "", data)
+        data = re.sub(r"(?:(?<=\(|,).*?)(\s*(?:\bclass\b|\bstruct\b|\benum\b)\s*)(?=.*\))", "", data)
 
         header = CppHeaderParser.CppHeader(data, argType="string", encoding="utf-8")
 

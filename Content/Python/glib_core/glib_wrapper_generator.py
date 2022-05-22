@@ -126,7 +126,7 @@ class GLibPropertyParser(GLibMemberParser):
             category += f"|{data.get('property_of_class')}"
             
         result = result.format_map({"category": category})
-        result += "\t" + data["type"] + " " + data["name"] + ";\n"
+        result += "\t" + data["type"].replace(" ", "") + " " + data["name"] + ";\n"
 
         return result
 

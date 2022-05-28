@@ -1,7 +1,13 @@
+import re
+
 from CppHeaderParser import *
 
 
 class GLibCppHeaderParser(CppHeader):
+    def __init__(self, headerFileName, argType="file", encoding=None, delegates=None, **kwargs):
+        self.delegates = delegates
+        super().__init__(headerFileName, argType=argType, encoding=encoding, **kwargs)
+
     def remove_circular_refs(self, data, seen=None):
         if seen is None:
             seen = set()
@@ -26,6 +32,18 @@ class GLibCppHeaderParser(CppHeader):
     def toJSON(self, indent=4, separators=None):
         self.__dict__ = self.remove_circular_refs(self.__dict__)
         return super().toJSON(indent=indent, separators=separators)
+
+    def _evaluate_property_stack(self, clearStack=True, addToVar=None):
+        current_class = self.classes[self.curClass]
+        properties = current_class["properties"][self.curAccessSpecifier]
+        before_count = len(properties)
+        super()._evaluate_property_stack(clearStack=clearStack, addToVar=addToVar)
+
+        if len(properties) == 0 or len(properties) == before_count:
+            return
+
+        new_property = properties[-1]
+        new_property["delegate"] = new_property["type"] in self.delegates
 
 
 class GLibBaseParser:
@@ -119,7 +137,12 @@ class GLibPropertyParser(GLibMemberParser):
     @classmethod
     def parse(cls, data):
         result = cls.get_doxygen(data)
-        result += "\t" + "UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = \"{category}\")" + "\n"
+
+        if data["delegate"]:
+            result += "\tUPROPERTY(BlueprintAssignable, Category = \"{category}\")" + "\n"
+        else:
+            result += "\t" + "UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = \"{category}\")" + "\n"
+
         category = data["category"] if data.get("category") else "GLib"
 
         if data.get("property_of_class"):
@@ -174,6 +197,61 @@ class GLibEnumValueParser(GLibMemberParser):
         return result
 
 
+class GLibDelegateParser:
+    VOID_DELEGATE = r"DECLARE.*DELEGATE(?!.*RetVal).*"
+    SPARSE_DELEGATE = r"DECLARE.*SPARSE.*DELEGATE.*"
+    SPARSE_DELEGATE_PARAMS = r"(?:(?<=\().*?,.*?,.*?,)(.*(?=\)))"
+    DELEGATE_NAME = r"(?<=\()\w*"
+    DELEGATE_PARAMS = r"(?<=,).*(?=\))"
+    DELEGATE_PARAMS_NUMBER = r"(?<=_)[a-zA-Z]+(?=\()"
+
+    @classmethod
+    def parse(cls, raw_data):
+        delegates = re.findall(cls.VOID_DELEGATE, raw_data)
+
+        parsed_delegates = cls.parse_delegates(delegates)
+        parsed_delegates = cls.parse_params(parsed_delegates)
+
+        return parsed_delegates
+
+    @classmethod
+    def parse_delegates(cls, delegates):
+        parsed_delegates = dict()
+        for delegate in delegates:
+            delegate_name = re.search(cls.DELEGATE_NAME, delegate.replace(" ", "")).group(0)
+            parsed_delegates[delegate_name] = dict()
+            parsed_delegates[delegate_name]["delegate"] = delegate
+            parsed_delegates[delegate_name]["sparse"] = re.search(cls.SPARSE_DELEGATE, delegate) is not None
+        return parsed_delegates
+
+    @classmethod
+    def parse_params(cls, parsed_delegates):
+        for delegate_name, data in parsed_delegates.items():
+            if data["sparse"]:
+                delegate_params_match = re.search(cls.SPARSE_DELEGATE_PARAMS, data["delegate"])
+                params = delegate_params_match.group(1) if delegate_params_match else ""
+            else:
+                delegate_params_match = re.search(cls.DELEGATE_PARAMS, data["delegate"])
+                params = delegate_params_match.group(0) if delegate_params_match else ""
+
+            data["params"] = params.strip()
+
+        return parsed_delegates
+
+    @classmethod
+    def crete_multicast_delegates(cls, parsed_delegates):
+        result = ""
+        for delegate_name, data in parsed_delegates.items():
+            new_delegate = "DECLARE_DYNAMIC_MULTICAST_DELEGATE"
+            if data["params"] != "":
+                params_number = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
+                new_delegate += f"_{params_number}"
+
+            new_delegate += f"({delegate_name}" + (", " + data["params"] if data["params"] != "" else "") + ");\n"
+            result += new_delegate
+        return result
+
+
 class GLibWrapperGenerator:
     @classmethod
     def parse(cls, path: str):
@@ -183,7 +261,9 @@ class GLibWrapperGenerator:
         with open(path, "r") as file:
             data = file.read()
 
-        data = re.sub(r"(?:UCLASS|UENUM|UFUNCTION|UPROPERTY|USTRUCT|GENERATED.*BODY|UE_DEPRECATED|UMETA)(?:\([\s\S]*?\)(?:,[\s\S]*?\))*)(?:\)*)", "", data)
+        parsed_delegates = GLibDelegateParser.parse(data)
+
+        data = re.sub(r"\n.*(?:UCLASS|UENUM|UFUNCTION|UPROPERTY|USTRUCT|GENERATED.*BODY|UE_DEPRECATED|UMETA)(?:\([\s\S]*?\)(?:,[\s\S]*?\))*)(?:\)*)", "", data)
         data = re.sub(r"(?:PRAGMA_ENABLE_DEPRECATION_WARNINGS|PRAGMA_DISABLE_DEPRECATION_WARNINGS).*", "", data)
         data = re.sub(r".*DECLARE_.*", "", data)
         data = re.sub(r"(?:(?<=\(|,).*?)(\s*(?:\bclass\b|\bstruct\b|\benum\b)\s*)(?=.*\))", "", data)
@@ -192,13 +272,15 @@ class GLibWrapperGenerator:
         with open("../Data/test_subtracted.h", "w") as file:
             file.write(data)
 
-        header = GLibCppHeaderParser(data, argType="string", encoding="utf-8")
+        header = GLibCppHeaderParser(data, argType="string", encoding="utf-8", delegates=parsed_delegates)
 
         generated_data = "\n"
         generated_data = cls.parse_pragmas(generated_data, header)
         generated_data += "\n"
         generated_data = cls.parse_includes(generated_data, header)
         generated_data += "\n\n"
+        generated_data += GLibDelegateParser.crete_multicast_delegates(parsed_delegates)
+        generated_data += "\n"
         generated_data = cls.parse_classes(generated_data, header)
         generated_data = cls.parse_enums(generated_data, header)
 

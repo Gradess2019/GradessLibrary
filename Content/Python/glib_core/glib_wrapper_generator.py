@@ -4,12 +4,19 @@ from CppHeaderParser import *
 
 
 class GLibParserHelper:
+    PREFIX_PATTERN = r"(^[A-Z](?=[A-Z].*$))*(.*)"
+
+    @classmethod
+    def get_name_without_prefix(cls, name):
+        class_name_match = re.search(cls.PREFIX_PATTERN, name)
+        return class_name_match.group(2) if class_name_match else name
+
     @classmethod
     def add_prefix(cls, name: str, settings: dict):
         if not settings or not settings.get("prefix_override"):
             return name
 
-        class_name_match = re.search(r"(^[A-Z](?=[A-Z].*$))*(.*)", name)
+        class_name_match = re.search(cls.PREFIX_PATTERN, name)
 
         if class_name_match:
             prefix_letter = class_name_match.group(1)
@@ -51,7 +58,15 @@ class GLibCppHeaderParser(CppHeader):
     def toJSON(self, indent=4, separators=None):
         self.__dict__ = self.remove_circular_refs(self.__dict__)
         return super().toJSON(indent=indent, separators=separators)
-    
+
+    def finalize_vars(self):
+        super(GLibCppHeaderParser, self).finalize_vars()
+
+        for var in CppVariable.Vars:
+            var["category"] = self.__get_category__(var.get("parent").get("name"))
+            if var.get("typedef"):
+                var["type"] = var["typedef"]
+
     def _evaluate_class_stack(self):
         super(GLibCppHeaderParser, self)._evaluate_class_stack()
         if not self.settings:
@@ -64,21 +79,31 @@ class GLibCppHeaderParser(CppHeader):
         current_class["name_override"] = GLibParserHelper.add_prefix(current_class["name"], self.settings)
 
     def _evaluate_property_stack(self, clearStack=True, addToVar=None):
-        current_class = self.classes[self.curClass]
-        properties = current_class["properties"][self.curAccessSpecifier]
-        before_count = len(properties)
         super()._evaluate_property_stack(clearStack=clearStack, addToVar=addToVar)
 
-        if len(properties) == 0 or len(properties) == before_count:
-            return
-
-        new_property = properties[-1]
-
-        if new_property["type"] in self.delegates:
+        new_property = parseHistory[-1]["item"]
+        if new_property.get("type") in self.delegates:
             new_property["delegate"] = True
 
             if self.settings and self.settings.get("prefix_override"):
                 new_property["type"] = self.delegates[new_property["type"]]["name_override"]
+
+    def _evaluate_method_stack(self):
+        super(GLibCppHeaderParser, self)._evaluate_method_stack()
+
+        last_method = parseHistory[-1]["item"]
+        last_method["category"] = self.__get_category__(self.curClass)
+
+    def __get_category__(self, owner):
+        parent_category = self.settings.get("parent_category")
+
+        if owner:
+            category_prefix = (parent_category + "|") if parent_category else ""
+            return category_prefix + GLibParserHelper.get_name_without_prefix(owner)
+        elif parent_category:
+            return parent_category
+
+        return None
 
 
 class GLibBaseParser:
@@ -184,9 +209,6 @@ class GLibPropertyParser(GLibMemberParser):
             result += "\t" + "UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = \"{category}\")" + "\n"
 
         category = data["category"] if data.get("category") else "GLib"
-
-        if data.get("property_of_class"):
-            category += f"|{data.get('property_of_class')}"
             
         result = result.format_map({"category": category})
         result += "\t" + data["type"].replace(" ", "") + " " + cls.__get_name__(data) + ";\n"
@@ -363,5 +385,12 @@ class GLibWrapperGenerator:
         return generated_data
 
 
-GLibWrapperGenerator.parse(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h", settings={"prefix_override": "GLib"})
+GLibWrapperGenerator.parse(
+    r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h",
+    settings=
+    {
+        "prefix_override": "GLib",
+        "parent_category": "GLib"
+    }
+)
 

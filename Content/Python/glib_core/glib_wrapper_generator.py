@@ -3,9 +3,28 @@ import re
 from CppHeaderParser import *
 
 
+class GLibParserHelper:
+    @classmethod
+    def add_prefix(cls, name: str, settings: dict):
+        if not settings or not settings.get("prefix_override"):
+            return name
+
+        class_name_match = re.search(r"(^[A-Z](?=[A-Z].*$))*(.*)", name)
+
+        if class_name_match:
+            prefix_letter = class_name_match.group(1)
+            actual_class_name = class_name_match.group(2)
+            new_name = prefix_letter + settings["prefix_override"] + actual_class_name
+        else:
+            new_name = settings["prefix_override"] + name
+
+        return new_name
+
+
 class GLibCppHeaderParser(CppHeader):
-    def __init__(self, headerFileName, argType="file", encoding=None, delegates=None, **kwargs):
+    def __init__(self, headerFileName, argType="file", encoding=None, delegates=None, settings: dict = None, **kwargs):
         self.delegates = delegates
+        self.settings = settings
         super().__init__(headerFileName, argType=argType, encoding=encoding, **kwargs)
 
     def remove_circular_refs(self, data, seen=None):
@@ -32,6 +51,17 @@ class GLibCppHeaderParser(CppHeader):
     def toJSON(self, indent=4, separators=None):
         self.__dict__ = self.remove_circular_refs(self.__dict__)
         return super().toJSON(indent=indent, separators=separators)
+    
+    def _evaluate_class_stack(self):
+        super(GLibCppHeaderParser, self)._evaluate_class_stack()
+        if not self.settings:
+            return
+
+        current_class = self.classes.get(self.curClass)
+        if not current_class:
+            return
+
+        current_class["name_override"] = GLibParserHelper.add_prefix(current_class["name"], self.settings)
 
     def _evaluate_property_stack(self, clearStack=True, addToVar=None):
         current_class = self.classes[self.curClass]
@@ -43,10 +73,21 @@ class GLibCppHeaderParser(CppHeader):
             return
 
         new_property = properties[-1]
-        new_property["delegate"] = new_property["type"] in self.delegates
+
+        if new_property["type"] in self.delegates:
+            new_property["delegate"] = True
+
+            if self.settings and self.settings.get("prefix_override"):
+                new_property["type"] = self.delegates[new_property["type"]]["name_override"]
 
 
 class GLibBaseParser:
+    @classmethod
+    def __get_name__(cls, data):
+        return data["name_override"] if data.get("name_override") else data["name"]
+
+
+class GLibContainerParser(GLibBaseParser):
     @classmethod
     def parse(cls, data):
         result = cls.parse_properties(data)
@@ -82,13 +123,12 @@ class GLibBaseParser:
 
         return result
 
-
-class GLibClassParser(GLibBaseParser):
+class GLibClassParser(GLibContainerParser):
     @classmethod
     def parse(cls, data):
         result = data["doxygen"] + "\n" if data.get("doxygen") else ""
         result += "UCLASS(BlueprintType, Blueprintable)\n"
-        result += "class " + data["name"] + " : public UObject\n"
+        result += "class " + cls.__get_name__(data) + " : public UObject\n"
         result += "{\n"
         result += "\tGENERATED_BODY()\n"
         result += "\n"
@@ -98,12 +138,12 @@ class GLibClassParser(GLibBaseParser):
         return result
 
 
-class GLibStructParser(GLibBaseParser):
+class GLibStructParser(GLibContainerParser):
     @classmethod
     def parse(cls, data):
         result = data["doxygen"] + "\n" if data.get("doxygen") else ""
         result += "USTRUCT(BlueprintType, Blueprintable)\n"
-        result += "struct " + data["name"] + "\n"
+        result += "struct " + cls.__get_name__(data) + "\n"
         result += "{\n"
         result += "\tGENERATED_BODY()\n"
         result += "\n"
@@ -113,12 +153,12 @@ class GLibStructParser(GLibBaseParser):
         return result
 
 
-class GLibEnumParser():
+class GLibEnumParser(GLibBaseParser):
     @classmethod
     def parse(cls, data):
         result = data["doxygen"] + "\n" if data.get("doxygen") else ""
         result += "UENUM(BlueprintType)\n"
-        result += "enum " + ("class " if data["isclass"] else "") + data["name"] + " : uint8" + "\n"
+        result += "enum " + ("class " if data["isclass"] else "") + cls.__get_name__(data) + " : uint8" + "\n"
         result += "{\n"
 
         result += GLibEnumValueParser.parse_values(data)
@@ -127,7 +167,7 @@ class GLibEnumParser():
         return result
 
 
-class GLibMemberParser:
+class GLibMemberParser(GLibBaseParser):
     @classmethod
     def get_doxygen(cls, data):
         return "\t" + data["doxygen"].replace("\n", "\n\t") + "\n" if data.get("doxygen") else ""
@@ -138,7 +178,7 @@ class GLibPropertyParser(GLibMemberParser):
     def parse(cls, data):
         result = cls.get_doxygen(data)
 
-        if data["delegate"]:
+        if data.get("delegate"):
             result += "\tUPROPERTY(BlueprintAssignable, Category = \"{category}\")" + "\n"
         else:
             result += "\t" + "UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = \"{category}\")" + "\n"
@@ -149,7 +189,7 @@ class GLibPropertyParser(GLibMemberParser):
             category += f"|{data.get('property_of_class')}"
             
         result = result.format_map({"category": category})
-        result += "\t" + data["type"].replace(" ", "") + " " + data["name"] + ";\n"
+        result += "\t" + data["type"].replace(" ", "") + " " + cls.__get_name__(data) + ";\n"
 
         return result
 
@@ -179,7 +219,7 @@ class GLibEnumValueParser(GLibMemberParser):
     @classmethod
     def parse(cls, data):
         result = cls.get_doxygen(data)
-        result += "\t" + data["name"] + " = " + str(data["value"])
+        result += "\t" + cls.__get_name__(data) + " = " + str(data["value"])
 
         return result
 
@@ -190,14 +230,14 @@ class GLibEnumValueParser(GLibMemberParser):
             result += GLibEnumValueParser.parse(value)
 
             if not data.get("isclass"):
-                result += " UMETA(DisplayName = \"" + value["name"] + "\")"
+                result += " UMETA(DisplayName = \"" + cls.__get_name__(data) + "\")"
 
             result += ",\n" if index < len(data["values"]) - 1 else "\n"
 
         return result
 
 
-class GLibDelegateParser:
+class GLibDelegateParser(GLibBaseParser):
     VOID_DELEGATE = r"DECLARE.*DELEGATE(?!.*RetVal).*"
     SPARSE_DELEGATE = r"DECLARE.*SPARSE.*DELEGATE.*"
     SPARSE_DELEGATE_PARAMS = r"(?:(?<=\().*?,.*?,.*?,)(.*(?=\)))"
@@ -206,20 +246,22 @@ class GLibDelegateParser:
     DELEGATE_PARAMS_NUMBER = r"(?<=_)[a-zA-Z]+(?=\()"
 
     @classmethod
-    def parse(cls, raw_data):
+    def parse(cls, raw_data, settings: dict = None):
         delegates = re.findall(cls.VOID_DELEGATE, raw_data)
 
-        parsed_delegates = cls.parse_delegates(delegates)
+        parsed_delegates = cls.parse_delegates(delegates, settings)
         parsed_delegates = cls.parse_params(parsed_delegates)
 
         return parsed_delegates
 
     @classmethod
-    def parse_delegates(cls, delegates):
+    def parse_delegates(cls, delegates, settings: dict = None):
         parsed_delegates = dict()
         for delegate in delegates:
             delegate_name = re.search(cls.DELEGATE_NAME, delegate.replace(" ", "")).group(0)
             parsed_delegates[delegate_name] = dict()
+            parsed_delegates[delegate_name]["name"] = delegate_name
+            parsed_delegates[delegate_name]["name_override"] = GLibParserHelper.add_prefix(delegate_name, settings)
             parsed_delegates[delegate_name]["delegate"] = delegate
             parsed_delegates[delegate_name]["sparse"] = re.search(cls.SPARSE_DELEGATE, delegate) is not None
         return parsed_delegates
@@ -247,21 +289,21 @@ class GLibDelegateParser:
                 params_number = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
                 new_delegate += f"_{params_number}"
 
-            new_delegate += f"({delegate_name}" + (", " + data["params"] if data["params"] != "" else "") + ");\n"
+            new_delegate += f"({cls.__get_name__(data)}" + (", " + data["params"] if data["params"] != "" else "") + ");\n"
             result += new_delegate
         return result
 
 
 class GLibWrapperGenerator:
     @classmethod
-    def parse(cls, path: str):
+    def parse(cls, path: str, settings: dict = None):
         if not os.path.exists(path):
             raise Exception("Path does not exist")
 
         with open(path, "r") as file:
             data = file.read()
 
-        parsed_delegates = GLibDelegateParser.parse(data)
+        parsed_delegates = GLibDelegateParser.parse(data, settings)
 
         data = re.sub(r"\n.*(?:UCLASS|UENUM|UFUNCTION|UPROPERTY|USTRUCT|GENERATED.*BODY|UE_DEPRECATED|UMETA)(?:\([\s\S]*?\)(?:,[\s\S]*?\))*)(?:\)*)", "", data)
         data = re.sub(r"(?:PRAGMA_ENABLE_DEPRECATION_WARNINGS|PRAGMA_DISABLE_DEPRECATION_WARNINGS).*", "", data)
@@ -272,7 +314,7 @@ class GLibWrapperGenerator:
         with open("../Data/test_subtracted.h", "w") as file:
             file.write(data)
 
-        header = GLibCppHeaderParser(data, argType="string", encoding="utf-8", delegates=parsed_delegates)
+        header = GLibCppHeaderParser(data, argType="string", encoding="utf-8", delegates=parsed_delegates, settings=settings)
 
         generated_data = "\n"
         generated_data = cls.parse_pragmas(generated_data, header)
@@ -321,5 +363,5 @@ class GLibWrapperGenerator:
         return generated_data
 
 
-GLibWrapperGenerator.parse(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h")
+GLibWrapperGenerator.parse(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h", settings={"prefix_override": "GLib"})
 

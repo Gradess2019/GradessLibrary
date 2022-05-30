@@ -219,7 +219,7 @@ class GLibPropertyParser(GLibMemberParser):
 
 
 class GLibFunctionParser(GLibMemberParser):
-    DECLARATION_EXTRA_SPACES = r"(?:(?<=\()\s+)|(?:\s+((?=&|;|,|\)|\())+)"
+    DECLARATION_EXTRA_SPACES = r"(?:(?<=\()\s+)|(?:\s+((?=&|;|,|\)|\())+)|\d\s*\..*?f"
 
     @classmethod
     def parse(cls, data):
@@ -232,9 +232,9 @@ class GLibFunctionParser(GLibMemberParser):
             })
 
         declaration = data["debug"]
+        declaration = re.search(r".*\(.*\)(?:(?:\s*{.*})*)", declaration).group(0)
         declaration = re.sub(cls.DECLARATION_EXTRA_SPACES, "", declaration)
-        declaration = re.sub(r"\s*(?:{|:).*$", ";", declaration)
-        result += "\t" + declaration + "\n"
+        result += "\t" + declaration + ";\n"
 
         return result
 

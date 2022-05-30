@@ -211,7 +211,9 @@ class GLibPropertyParser(GLibMemberParser):
         category = data["category"] if data.get("category") else "GLib"
             
         result = result.format_map({"category": category})
-        result += "\t" + data["type"].replace(" ", "") + " " + cls.__get_name__(data) + ";\n"
+        variable_type = re.sub(r"static|enum|class|struct|const|\s", "", data["type"])
+        static = "static " if data.get("static") else ""
+        result += "\t" + static + variable_type + " " + cls.__get_name__(data) + ";\n"
 
         return result
 
@@ -327,7 +329,7 @@ class GLibWrapperGenerator:
 
         parsed_delegates = GLibDelegateParser.parse(data, settings)
 
-        data = re.sub(r"\n.*(?:UCLASS|UENUM|UFUNCTION|UPROPERTY|USTRUCT|GENERATED.*BODY|UE_DEPRECATED|UMETA)(?:\([\s\S]*?\)(?:,[\s\S]*?\))*)(?:\)*)", "", data)
+        data = re.sub(r"\n*\s*(?:UCLASS|UENUM|UFUNCTION|UPROPERTY|USTRUCT|GENERATED.*BODY|UE_DEPRECATED|UMETA)\(.*\)", "", data)
         data = re.sub(r"(?:PRAGMA_ENABLE_DEPRECATION_WARNINGS|PRAGMA_DISABLE_DEPRECATION_WARNINGS).*", "", data)
         data = re.sub(r".*DECLARE_.*", "", data)
         data = re.sub(r"(?:(?<=\(|,).*?)(\s*(?:\bclass\b|\bstruct\b|\benum\b)\s*)(?=.*\))", "", data)

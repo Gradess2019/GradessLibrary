@@ -107,7 +107,9 @@ class GLibCppHeaderParser(CppHeader):
         super(GLibCppHeaderParser, self)._evaluate_method_stack()
 
         last_method = parseHistory[-1]["item"]
-        last_method["category"] = self.__get_category__(self.curClass)
+        current_class = self.classes.get(self.curClass)
+        if current_class:
+            last_method["category"] = self.__get_category__(current_class.get("name"))
 
     def _install_enum(self, new_enum: CppEnum, instance_data):
         super(GLibCppHeaderParser, self)._install_enum(new_enum, instance_data)

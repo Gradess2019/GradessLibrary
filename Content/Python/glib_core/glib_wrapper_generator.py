@@ -360,7 +360,9 @@ class GLibWrapperGenerator:
         generated_data = cls.parse_pragmas(generated_data, header)
         generated_data += "\n"
         generated_data = cls.parse_includes(generated_data, header)
-        generated_data += "\n\n"
+        generated_data += "\n" * 2
+        generated_data = cls.parse_forward_declarations(generated_data, data)
+        generated_data += "\n" * 2
         generated_data += GLibDelegateParser.crete_multicast_delegates(parsed_delegates)
         generated_data += "\n"
         generated_data = cls.parse_classes(generated_data, header)
@@ -379,6 +381,16 @@ class GLibWrapperGenerator:
     def parse_pragmas(cls, generated_data: str, header: GLibCppHeaderParser):
         for pragma in header.pragmas:
             generated_data += "#pragma " + pragma + "\n"
+        return generated_data
+
+    @classmethod
+    def parse_forward_declarations(cls, generated_data: str, data: str):
+        forward_declarations = re.findall(r"^\s*(?:class|struct|enum)\s\w+;", data, re.MULTILINE)
+        print(forward_declarations)
+
+        for forward_declaration in forward_declarations:
+            generated_data += forward_declaration.strip().replace("\n", "") + "\n"
+
         return generated_data
 
     @classmethod

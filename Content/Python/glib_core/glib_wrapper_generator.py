@@ -166,18 +166,25 @@ class GLibContainerParser(GLibBaseParser):
     @classmethod
     def parse_methods(cls, data):
         result = ""
+        number_methods = dict()
         for access_modifier, methods in data["methods"].items():
             if len(methods) == 0:
                 continue
 
             result += access_modifier + ":\n"
             for class_method in methods:
-                parsed_function = GLibFunctionParser.parse(class_method)
+                method_name = class_method["name"]
+                if method_name in number_methods:
+                    number_methods[method_name] += 1
+                    parsed_function = GLibFunctionParser.parse(class_method, number_methods[method_name])
+                else:
+                    parsed_function = GLibFunctionParser.parse(class_method)
 
                 if not parsed_function:
                     continue
 
                 result += parsed_function + "\n"
+                number_methods[method_name] = 1
 
         return result
 
@@ -256,10 +263,10 @@ class GLibPropertyParser(GLibMemberParser):
 
 
 class GLibFunctionParser(GLibMemberParser):
-    DECLARATION_EXTRA_SPACES = r"(?:(?<=\()\s+)|(?:\s+((?=&|;|,|\)|\())+)|\d\s*\..*?f"
+    DECLARATION_EXTRA_SPACES = r"(?:(?<=\()\s+)|(?:\s+((?=&|;|,|\)|\())+)|(?<=\d)\s*(?=\.)|(?<=\.)\s*(?=f)"
 
     @classmethod
-    def parse(cls, data):
+    def parse(cls, data, index: int = None):
         if data.get("template"):
             return None
 
@@ -274,6 +281,11 @@ class GLibFunctionParser(GLibMemberParser):
         declaration = data["debug"]
         declaration = re.search(r".*\(.*\)(?:(?:\s*{.*})*)", declaration).group(0)
         declaration = re.sub(cls.DECLARATION_EXTRA_SPACES, "", declaration)
+
+        if index and not data["constructor"]:
+            parenthesis_index = declaration.find("(")
+            declaration = declaration[:parenthesis_index] + str(index) + declaration[parenthesis_index:]
+
         result += "\t" + declaration + ";\n"
 
         return result
@@ -446,6 +458,14 @@ class GLibWrapperGenerator:
         for enum in header.enums:
             generated_data += GLibEnumParser.parse(enum)
             generated_data += "\n"
+
+        for parsed_class, content in header.classes.items():
+            enums = content.get("enums")
+            for access_specifier, enums in enums.items():
+                for enum in enums:
+                    generated_data += GLibEnumParser.parse(enum)
+                    generated_data += "\n"
+
         return generated_data
 
 

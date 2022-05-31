@@ -16,22 +16,29 @@ class GLibParserHelper:
         if not settings or not settings.get("prefix_override"):
             return name
 
-        class_name_match = re.search(cls.PREFIX_PATTERN, name)
+        name_match = re.search(cls.PREFIX_PATTERN, name)
 
-        if class_name_match:
-            prefix_letter = class_name_match.group(1)
-            actual_class_name = class_name_match.group(2)
+        if name_match:
+            prefix_letter = name_match.group(1)
+            actual_class_name = name_match.group(2)
+
             new_name = prefix_letter + settings["prefix_override"] + actual_class_name
         else:
             new_name = settings["prefix_override"] + name
 
         return new_name
 
+    @classmethod
+    def get_valid_prefix_letter(cls, class_data: dict):
+        prefix_letter = "F" if class_data.get("declaration_method") == "struct" else "U"
+        return prefix_letter + class_data["name"][1:]
+
 
 class GLibCppHeaderParser(CppHeader):
     def __init__(self, headerFileName, argType="file", encoding=None, delegates=None, settings: dict = None, **kwargs):
         self.delegates = delegates
         self.settings = settings
+        self.name_overrides = dict()
         super().__init__(headerFileName, argType=argType, encoding=encoding, **kwargs)
 
     def remove_circular_refs(self, data, seen=None):
@@ -67,6 +74,12 @@ class GLibCppHeaderParser(CppHeader):
             if var.get("typedef"):
                 var["type"] = var["typedef"]
 
+    def fixup_names(self, generated_data: str):
+        for name, override in self.name_overrides.items():
+            generated_data = generated_data.replace(name, override)
+
+        return generated_data
+
     def _evaluate_class_stack(self):
         super(GLibCppHeaderParser, self)._evaluate_class_stack()
         if not self.settings:
@@ -76,7 +89,9 @@ class GLibCppHeaderParser(CppHeader):
         if not current_class:
             return
 
-        current_class["name_override"] = GLibParserHelper.add_prefix(current_class["name"], self.settings)
+        current_class["name_override"] = GLibParserHelper.get_valid_prefix_letter(current_class)
+        current_class["name_override"] = GLibParserHelper.add_prefix(current_class["name_override"], self.settings)
+        self.name_overrides[current_class["name"]] = current_class["name_override"]
 
     def _evaluate_property_stack(self, clearStack=True, addToVar=None):
         super()._evaluate_property_stack(clearStack=clearStack, addToVar=addToVar)
@@ -147,6 +162,7 @@ class GLibContainerParser(GLibBaseParser):
                 result += GLibFunctionParser.parse(class_method) + "\n"
 
         return result
+
 
 class GLibClassParser(GLibContainerParser):
     @classmethod
@@ -349,6 +365,9 @@ class GLibWrapperGenerator:
         generated_data += "\n"
         generated_data = cls.parse_classes(generated_data, header)
         generated_data = cls.parse_enums(generated_data, header)
+
+        generated_data = header.fixup_names(generated_data)
+
 
         with open("../Data/generated.h", "w+", encoding="utf-8") as file:
             file.write(generated_data)

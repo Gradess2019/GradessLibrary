@@ -388,8 +388,8 @@ class GLibWrapperGenerator:
         generated_data += "\n" * 2
         generated_data += GLibDelegateParser.crete_multicast_delegates(parsed_delegates)
         generated_data += "\n"
-        generated_data = cls.parse_classes(generated_data, header)
         generated_data = cls.parse_enums(generated_data, header)
+        generated_data = cls.parse_classes(generated_data, header)
 
         generated_data = header.fixup_names(generated_data)
 
@@ -424,12 +424,19 @@ class GLibWrapperGenerator:
     @classmethod
     def parse_classes(cls, generated_data: str, header: GLibCppHeaderParser):
         for parsed_class, content in header.classes.items():
-            if content["declaration_method"] == "class":
-                generated_data += GLibClassParser.parse(content)
-            elif content["declaration_method"] == "struct":
-                generated_data += GLibStructParser.parse(content)
+            if not content["declaration_method"] == "struct":
+                continue
 
+            generated_data += GLibStructParser.parse(content)
             generated_data += "\n"
+
+        for parsed_class, content in header.classes.items():
+            if not content["declaration_method"] == "class":
+                continue
+
+            generated_data += GLibClassParser.parse(content)
+            generated_data += "\n"
+
         return generated_data
 
     @classmethod

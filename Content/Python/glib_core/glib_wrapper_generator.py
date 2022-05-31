@@ -356,6 +356,7 @@ class GLibWrapperGenerator:
         data = re.sub(r".*DECLARE_.*", "", data)
         data = re.sub(r"(?:(?<=\(|,).*?)(\s*(?:\bclass\b|\bstruct\b|\benum\b)\s*)(?=.*\))", "", data)
         data = re.sub(r"\w*_API\s*", "", data)
+        data = re.sub(r"friend.*;", "", data)
 
         with open("../Data/test_subtracted.h", "w") as file:
             file.write(data)

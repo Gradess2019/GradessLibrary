@@ -109,6 +109,12 @@ class GLibCppHeaderParser(CppHeader):
         last_method = parseHistory[-1]["item"]
         last_method["category"] = self.__get_category__(self.curClass)
 
+    def _install_enum(self, new_enum: CppEnum, instance_data):
+        super(GLibCppHeaderParser, self)._install_enum(new_enum, instance_data)
+
+        new_enum["name_override"] = GLibParserHelper.add_prefix(new_enum["name"], self.settings)
+        self.name_overrides[new_enum["name"]] = new_enum["name_override"]
+
     def __get_category__(self, owner):
         parent_category = self.settings.get("parent_category")
 
@@ -386,7 +392,6 @@ class GLibWrapperGenerator:
     @classmethod
     def parse_forward_declarations(cls, generated_data: str, data: str):
         forward_declarations = re.findall(r"^\s*(?:class|struct|enum)\s\w+;", data, re.MULTILINE)
-        print(forward_declarations)
 
         for forward_declaration in forward_declarations:
             generated_data += forward_declaration.strip().replace("\n", "") + "\n"

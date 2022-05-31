@@ -170,7 +170,12 @@ class GLibContainerParser(GLibBaseParser):
 
             result += access_modifier + ":\n"
             for class_method in methods:
-                result += GLibFunctionParser.parse(class_method) + "\n"
+                parsed_function = GLibFunctionParser.parse(class_method)
+
+                if not parsed_function:
+                    continue
+
+                result += parsed_function + "\n"
 
         return result
 
@@ -253,6 +258,9 @@ class GLibFunctionParser(GLibMemberParser):
 
     @classmethod
     def parse(cls, data):
+        if data.get("template"):
+            return None
+
         result = cls.get_doxygen(data)
 
         if not data["constructor"]:

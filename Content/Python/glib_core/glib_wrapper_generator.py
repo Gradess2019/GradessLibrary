@@ -152,7 +152,12 @@ class GLibContainerParser(GLibBaseParser):
 
             result += access_modifier + ":\n"
             for class_property in properties:
-                result += GLibPropertyParser.parse(class_property) + "\n"
+                parsed_property = GLibPropertyParser.parse(class_property)
+
+                if not parsed_property:
+                    continue
+
+                result += parsed_property + "\n"
 
         return result
 
@@ -223,6 +228,9 @@ class GLibMemberParser(GLibBaseParser):
 class GLibPropertyParser(GLibMemberParser):
     @classmethod
     def parse(cls, data):
+        if data.get("mutable") or data.get("static"):
+            return None
+
         result = cls.get_doxygen(data)
 
         if data.get("delegate"):

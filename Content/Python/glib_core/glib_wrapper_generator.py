@@ -319,7 +319,10 @@ class GLibDelegateParser(GLibBaseParser):
     SPARSE_DELEGATE_PARAMS = r"(?:(?<=\().*?,.*?,.*?,)(.*(?=\)))"
     DELEGATE_NAME = r"(?<=\()\w*"
     DELEGATE_PARAMS = r"(?<=,).*(?=\))"
-    DELEGATE_PARAMS_NUMBER = r"(?<=_)[a-zA-Z]+(?=\()"
+    DELEGATE_PARAMS_NUMBER = r"(?<=DELEGATE_).*?(?=Param[s]*\()"
+
+    PARAMS_NUMBER_CONVERSION_DICT = dict({"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9})
+
 
     @classmethod
     def parse(cls, raw_data, settings: dict = None):
@@ -347,10 +350,24 @@ class GLibDelegateParser(GLibBaseParser):
         for delegate_name, data in parsed_delegates.items():
             if data["sparse"]:
                 delegate_params_match = re.search(cls.SPARSE_DELEGATE_PARAMS, data["delegate"])
-                params = delegate_params_match.group(1) if delegate_params_match else ""
+                params = delegate_params_match.group(1) if delegate_params_match else None
             else:
                 delegate_params_match = re.search(cls.DELEGATE_PARAMS, data["delegate"])
-                params = delegate_params_match.group(0) if delegate_params_match else ""
+                params = delegate_params_match.group(0) if delegate_params_match else None
+
+            if not params:
+                return
+
+            params_number = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
+            params_number = cls.PARAMS_NUMBER_CONVERSION_DICT.get(params_number.lower())
+            params_list = params.split(",")
+
+            if len(params_list) != params_number * 2:
+                params = ""
+                for index, param in enumerate(params_list):
+                    params += param + ", Param" + str(index + 1)
+                    if len(params_list) - 1 != index:
+                        params += ", "
 
             data["params"] = params.strip()
 
@@ -361,11 +378,15 @@ class GLibDelegateParser(GLibBaseParser):
         result = ""
         for delegate_name, data in parsed_delegates.items():
             new_delegate = "DECLARE_DYNAMIC_MULTICAST_DELEGATE"
-            if data["params"] != "":
-                params_number = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
-                new_delegate += f"_{params_number}"
 
-            new_delegate += f"({cls.__get_name__(data)}" + (", " + data["params"] if data["params"] != "" else "") + ");\n"
+            params = data.get("params")
+
+            if params:
+                params_number = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
+                params_count = params.split(",")
+                new_delegate += f"_{params_number}" + ("Param" if len(params_count) == 2 else "Params")
+
+            new_delegate += f"({cls.__get_name__(data)}" + (", " + params if params else "") + ");\n"
             result += new_delegate
         return result
 

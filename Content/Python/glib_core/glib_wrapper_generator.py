@@ -93,6 +93,9 @@ class GLibCppHeaderParser(CppHeader):
         current_class["name_override"] = GLibParserHelper.add_prefix(current_class["name_override"], self.settings)
         self.name_overrides[current_class["name"]] = current_class["name_override"]
 
+        if self.settings.get("api"):
+            current_class["api"] = self.settings.get("api")
+
     def _evaluate_property_stack(self, clearStack=True, addToVar=None):
         super()._evaluate_property_stack(clearStack=clearStack, addToVar=addToVar)
 
@@ -117,6 +120,9 @@ class GLibCppHeaderParser(CppHeader):
         new_enum["name_override"] = GLibParserHelper.add_prefix(new_enum["name"], self.settings)
         self.name_overrides[new_enum["name"]] = new_enum["name_override"]
 
+        if self.settings.get("api"):
+            new_enum["api"] = self.settings.get("api")
+
     def __get_category__(self, owner):
         parent_category = self.settings.get("parent_category")
 
@@ -133,6 +139,10 @@ class GLibBaseParser:
     @classmethod
     def __get_name__(cls, data):
         return data["name_override"] if data.get("name_override") else data["name"]
+
+    @classmethod
+    def __get_api__(cls, data):
+        return data["api"] + " " if data.get("api") else ""
 
 
 class GLibContainerParser(GLibBaseParser):
@@ -194,7 +204,7 @@ class GLibClassParser(GLibContainerParser):
     def parse(cls, data):
         result = data["doxygen"] + "\n" if data.get("doxygen") else ""
         result += "UCLASS(BlueprintType, Blueprintable)\n"
-        result += "class " + cls.__get_name__(data) + " : public UObject\n"
+        result += "class " + cls.__get_api__(data) + cls.__get_name__(data) + " : public UObject\n"
         result += "{\n"
         result += "\tGENERATED_BODY()\n"
         result += "\n"
@@ -209,7 +219,7 @@ class GLibStructParser(GLibContainerParser):
     def parse(cls, data):
         result = data["doxygen"] + "\n" if data.get("doxygen") else ""
         result += "USTRUCT(BlueprintType, Blueprintable)\n"
-        result += "struct " + cls.__get_name__(data) + "\n"
+        result += "struct " + cls.__get_api__(data) + cls.__get_name__(data) + "\n"
         result += "{\n"
         result += "\tGENERATED_BODY()\n"
         result += "\n"
@@ -224,7 +234,7 @@ class GLibEnumParser(GLibBaseParser):
     def parse(cls, data):
         result = data["doxygen"] + "\n" if data.get("doxygen") else ""
         result += "UENUM(BlueprintType)\n"
-        result += "enum " + ("class " if data["isclass"] else "") + cls.__get_name__(data) + " : uint8" + "\n"
+        result += "enum " + ("class " if data["isclass"] else "") + cls.__get_api__(data) + cls.__get_name__(data) + " : uint8" + "\n"
         result += "{\n"
 
         result += GLibEnumValueParser.parse_values(data)
@@ -436,9 +446,6 @@ class GLibWrapperGenerator:
         data = re.sub(r"\w*_API\s*", "", data)
         data = re.sub(r"friend.*;", "", data)
 
-        with open("../Data/test_subtracted.h", "w") as file:
-            file.write(data)
-
         header = GLibCppHeaderParser(data, argType="string", encoding="utf-8", delegates=parsed_delegates, settings=settings)
 
         generated_data = "\n"
@@ -455,11 +462,9 @@ class GLibWrapperGenerator:
 
         generated_data = header.fixup_names(generated_data)
 
-        with open("../Data/generated.h", "w+", encoding="utf-8") as file:
+        destination = path.replace(".", "_generated.", 1)
+        with open(destination, "w+", encoding="utf-8") as file:
             file.write(generated_data)
-
-        # with open(r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.json", "w+", encoding="utf-8") as f:
-        #     f.write(header.toJSON())
 
     @classmethod
     def parse_pragmas(cls, generated_data: str, header: GLibCppHeaderParser):

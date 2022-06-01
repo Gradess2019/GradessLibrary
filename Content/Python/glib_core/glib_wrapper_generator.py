@@ -253,7 +253,7 @@ class GLibPropertyParser(GLibMemberParser):
             result += "\t" + "UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = \"{category}\")" + "\n"
 
         category = data["category"] if data.get("category") else "GLib"
-            
+
         result = result.format_map({"category": category})
         variable_type = re.sub(r"static|enum|class|struct|const|\s", "", data["type"])
         static = "static " if data.get("static") else ""
@@ -455,7 +455,6 @@ class GLibWrapperGenerator:
 
         generated_data = header.fixup_names(generated_data)
 
-
         with open("../Data/generated.h", "w+", encoding="utf-8") as file:
             file.write(generated_data)
 
@@ -515,15 +514,3 @@ class GLibWrapperGenerator:
                     generated_data += "\n"
 
         return generated_data
-
-
-GLibWrapperGenerator.parse(
-    r"D:\Projects\UE\5\Spacegod\Plugins\GradessLibrary\Content\Python\Data\test.h",
-    settings=
-    {
-        "prefix_override": "GLib",
-        "parent_category": "GLib",
-        "sort_delegates": True,
-    }
-)
-

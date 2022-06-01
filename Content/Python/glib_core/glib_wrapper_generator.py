@@ -356,10 +356,15 @@ class GLibDelegateParser(GLibBaseParser):
                 params = delegate_params_match.group(0) if delegate_params_match else None
 
             if not params:
+                data["params_number"] = 0
                 return
 
-            params_number = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
-            params_number = cls.PARAMS_NUMBER_CONVERSION_DICT.get(params_number.lower())
+            params_number_word = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
+            data["params_number_word"] = params_number_word
+
+            params_number = cls.PARAMS_NUMBER_CONVERSION_DICT.get(params_number_word.lower())
+            data["params_number"] = params_number
+
             params_list = params.split(",")
 
             if len(params_list) != params_number * 2:
@@ -374,21 +379,43 @@ class GLibDelegateParser(GLibBaseParser):
         return parsed_delegates
 
     @classmethod
-    def crete_multicast_delegates(cls, parsed_delegates):
+    def crete_multicast_delegates(cls, parsed_delegates, settings: dict = None):
         result = ""
-        for delegate_name, data in parsed_delegates.items():
-            new_delegate = "DECLARE_DYNAMIC_MULTICAST_DELEGATE"
 
-            params = data.get("params")
+        if settings and settings.get("sort_delegates"):
+            delegates = dict()
+            for delegate_name, data in parsed_delegates.items():
+                new_delegate = cls.__create_multicast_delegate__(data)
 
-            if params:
-                params_number = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
-                params_count = params.split(",")
-                new_delegate += f"_{params_number}" + ("Param" if len(params_count) == 2 else "Params")
+                params_number = str(data["params_number"])
+                if not delegates.get(params_number):
+                    delegates[params_number] = list()
 
-            new_delegate += f"({cls.__get_name__(data)}" + (", " + params if params else "") + ");\n"
-            result += new_delegate
+                delegates[params_number].append(new_delegate)
+
+            for delegates_id, delegates in sorted(delegates.items()):
+                for delegate in delegates:
+                    result += delegate
+        else:
+            for delegate_name, data in parsed_delegates.items():
+                new_delegate = cls.__create_multicast_delegate__(data)
+                result += new_delegate
+
         return result
+
+    @classmethod
+    def __create_multicast_delegate__(cls, data: dict):
+        new_delegate = "DECLARE_DYNAMIC_MULTICAST_DELEGATE"
+
+        params = data.get("params")
+
+        if params:
+            params_number = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
+            params_count = params.split(",")
+            new_delegate += f"_{params_number}" + ("Param" if len(params_count) == 2 else "Params")
+
+        new_delegate += f"({cls.__get_name__(data)}" + (", " + params if params else "") + ");\n"
+        return new_delegate
 
 
 class GLibWrapperGenerator:
@@ -421,7 +448,7 @@ class GLibWrapperGenerator:
         generated_data += "\n" * 2
         generated_data = cls.parse_forward_declarations(generated_data, data)
         generated_data += "\n" * 2
-        generated_data += GLibDelegateParser.crete_multicast_delegates(parsed_delegates)
+        generated_data += GLibDelegateParser.crete_multicast_delegates(parsed_delegates, settings)
         generated_data += "\n"
         generated_data = cls.parse_enums(generated_data, header)
         generated_data = cls.parse_classes(generated_data, header)
@@ -495,7 +522,8 @@ GLibWrapperGenerator.parse(
     settings=
     {
         "prefix_override": "GLib",
-        "parent_category": "GLib"
+        "parent_category": "GLib",
+        "sort_delegates": True,
     }
 )
 

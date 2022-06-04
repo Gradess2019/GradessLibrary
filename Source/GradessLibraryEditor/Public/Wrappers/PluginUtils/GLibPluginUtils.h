@@ -214,7 +214,7 @@ public:
 	* @note Will fail if the plugin already exists
 	*/
 	UFUNCTION(BlueprintCallable, Category = "GLib|PluginUtils")
-	static UGLibPlugin* CreateAndLoadNewPlugin(const FString& PluginName, const FString& PluginLocation, const FGLibNewPluginParams& CreationParams, FGLibLoadPluginParams& LoadParams);
+	static UGLibPlugin* CreateAndLoadNewPlugin(const FString& PluginName, const FString& PluginLocation, const FGLibNewPluginParams& CreationParams, UPARAM(ref) FGLibLoadPluginParams& LoadParams);
 
 	/**
 	* Helper to create and load a new plugin
@@ -227,7 +227,7 @@ public:
 	* @note Will fail if the plugin already exists
 	*/
 	UFUNCTION(BlueprintCallable, Category = "GLib|PluginUtils")
-	static UGLibPlugin* CreateAndLoadNewPluginWithDescriptor(const FString& PluginName, const FString& PluginLocation, const FGLibNewPluginParamsWithDescriptor& CreationParams, FGLibLoadPluginParams& LoadParams);
+	static UGLibPlugin* CreateAndLoadNewPluginWithDescriptor(const FString& PluginName, const FString& PluginLocation, const FGLibNewPluginParamsWithDescriptor& CreationParams, UPARAM(ref) FGLibLoadPluginParams& LoadParams);
 
 	/**
 	* Load/mount the specified plugin
@@ -237,7 +237,7 @@ public:
 	* @return The loaded plugin or null on failure
 	*/
 	UFUNCTION(BlueprintCallable, Category = "GLib|PluginUtils")
-	static UGLibPlugin* LoadPluginByNameWithParams(const FString& PluginName, const FString& PluginLocation, FGLibLoadPluginParams& LoadParams);
+	static UGLibPlugin* LoadPluginByNameWithParams(const FString& PluginName, const FString& PluginLocation, UPARAM(ref) FGLibLoadPluginParams& LoadParams);
 
 	/**
 	* Load/mount the specified plugin
@@ -255,7 +255,7 @@ public:
 	* @return The loaded plugin or null on failure
 	*/
 	UFUNCTION(BlueprintCallable, Category = "GLib|PluginUtils")
-	static UGLibPlugin* LoadPluginByPathWithParams(const FString& PluginFileName, FGLibLoadPluginParams& LoadParams);
+	static UGLibPlugin* LoadPluginByPathWithParams(const FString& PluginFileName, UPARAM(ref) FGLibLoadPluginParams& LoadParams);
 
 	/**
 	* Load/mount the specified plugin

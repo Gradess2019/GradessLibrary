@@ -324,12 +324,15 @@ class GLibEnumValueParser(GLibMemberParser):
 
 
 class GLibDelegateParser(GLibBaseParser):
-    VOID_DELEGATE = r"DECLARE.*DELEGATE(?!.*RetVal).*"
+    VOID_DELEGATE = r"DECLARE.*(?:EVENT|DELEGATE)(?!.*RetVal).*"
     SPARSE_DELEGATE = r"DECLARE.*SPARSE.*DELEGATE.*"
     SPARSE_DELEGATE_PARAMS = r"(?:(?<=\().*?,.*?,.*?,)(.*(?=\)))"
     DELEGATE_NAME = r"(?<=\()\w*"
     DELEGATE_PARAMS = r"(?<=,).*(?=\))"
-    DELEGATE_PARAMS_NUMBER = r"(?<=DELEGATE_).*?(?=Param[s]*\()"
+    DELEGATE_PARAMS_NUMBER = r"((?<=DELEGATE_)|(?<=EVENT_)).*?(?=Param[s]*\()"
+    EVENT = r"_EVENT"
+    EVENT_NAME = r"_EVENT"
+    USELESS_PADDING_SPACES = r"(?<=\()\s*|\s*(?=\))"
 
     PARAMS_NUMBER_CONVERSION_DICT = dict({"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9})
 
@@ -347,7 +350,13 @@ class GLibDelegateParser(GLibBaseParser):
     def parse_delegates(cls, delegates, settings: dict = None):
         parsed_delegates = dict()
         for delegate in delegates:
-            delegate_name = re.search(cls.DELEGATE_NAME, delegate.replace(" ", "")).group(0)
+            delegate = re.sub(cls.USELESS_PADDING_SPACES, "", delegate)
+
+            if re.search(cls.EVENT, delegate):
+                delegate = re.sub(cls.DELEGATE_NAME + "\s*?,\s*", "", delegate)
+
+            delegate_name = re.search(cls.DELEGATE_NAME, delegate).group(0)
+
             parsed_delegates[delegate_name] = dict()
             parsed_delegates[delegate_name]["name"] = delegate_name
             parsed_delegates[delegate_name]["name_override"] = GLibParserHelper.add_prefix(delegate_name, settings)
@@ -367,7 +376,7 @@ class GLibDelegateParser(GLibBaseParser):
 
             if not params:
                 data["params_number"] = 0
-                return
+                continue
 
             params_number_word = re.search(cls.DELEGATE_PARAMS_NUMBER, data["delegate"]).group(0)
             data["params_number_word"] = params_number_word

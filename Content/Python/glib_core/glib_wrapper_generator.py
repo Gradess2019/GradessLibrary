@@ -194,7 +194,8 @@ class GLibContainerParser(GLibBaseParser):
                     continue
 
                 result += parsed_function + "\n"
-                number_methods[method_name] = 1
+                if not number_methods.get(method_name):
+                    number_methods[method_name] = 1
 
         return result
 

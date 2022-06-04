@@ -225,16 +225,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GLib|PluginManager")
 	virtual bool RequiresTempTargetForCodePlugin(const FGLibProjectDescriptor& ProjectDescriptor, const FString& Platform, EGLibBuildConfiguration Configuration, EGLibBuildTargetType TargetType, FText& OutReason);
 
+	UFUNCTION()
+	virtual bool IsValidManager();
+	
 	/**
 	* Static: Access singleton instance.
 	*
 	* @return	Reference to the singleton object.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "GLib|PluginManager")
+	UFUNCTION(BlueprintCallable, Category = "GLib|PluginManager", meta = (DisplayName = "Get Plugin Manager"))
 	static UGLibPluginManager* Get();
 
 protected:
-	TSharedPtr<IPluginManager> PluginManager;
-	static TSharedPtr<UGLibPluginManager> Instance;
+	IPluginManager* PluginManager;
+	static UGLibPluginManager* Instance;
 	
 };

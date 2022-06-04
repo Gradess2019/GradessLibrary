@@ -28,6 +28,7 @@ public class GradessLibraryRuntime : ModuleRules
 			new string[]
 			{
 				"Core",
+				"Projects"
 				// ... add other public dependencies that you statically link with here ...
 			}
 		);

@@ -3,25 +3,19 @@
 
 #include "Wrappers/Core/GLibPlugin.h"
 #include "UObject/UObjectGlobals.h"
-
 #include "Wrappers/GLibConversions.h"
 #include "Wrappers/Projects/GLibPluginDescriptor.h"
 
-UGLibPlugin* UGLibPlugin::CreateWrapper(IPlugin* InPlugin)
+UGLibPlugin* UGLibPlugin::CreateWrapper(const TSharedPtr<IPlugin>& InPlugin)
+{
+	return CreateWrapper(InPlugin.ToSharedRef());
+}
+
+UGLibPlugin* UGLibPlugin::CreateWrapper(const TSharedRef<IPlugin>& InPlugin)
 {
 	const auto PluginWrapper = NewObject<UGLibPlugin>();
 	PluginWrapper->SetPlugin(InPlugin);
 	return PluginWrapper;
-}
-
-UGLibPlugin* UGLibPlugin::CreateWrapper(TSharedRef<IPlugin> InPlugin)
-{
-	return CreateWrapper(&InPlugin.Get());
-}
-
-UGLibPlugin* UGLibPlugin::CreateWrapper(TSharedPtr<IPlugin> InPlugin)
-{
-	return CreateWrapper(InPlugin.Get());
 }
 
 bool UGLibPlugin::IsValid()
@@ -31,70 +25,70 @@ bool UGLibPlugin::IsValid()
 
 FString UGLibPlugin::GetName()
 {
-	return Plugin.IsValid() ? Plugin->GetName() : FString();
+	return IsValid() ? Plugin->GetName() : FString();
 }
 
 FString UGLibPlugin::GetFriendlyName()
 {
-	return Plugin.IsValid() ? Plugin->GetFriendlyName() : FString();
+	return IsValid() ? Plugin->GetFriendlyName() : FString();
 }
 
 FString UGLibPlugin::GetDescriptorFileName()
 {
-	return Plugin.IsValid() ? Plugin->GetDescriptorFileName() : FString();
+	return IsValid() ? Plugin->GetDescriptorFileName() : FString();
 }
 
 FString UGLibPlugin::GetBaseDir()
 {
-	return Plugin.IsValid() ? Plugin->GetBaseDir() : FString();
+	return IsValid() ? Plugin->GetBaseDir() : FString();
 }
 
 FString UGLibPlugin::GetContentDir()
 {
-	return Plugin.IsValid() ? Plugin->GetContentDir() : FString();
+	return IsValid() ? Plugin->GetContentDir() : FString();
 }
 
 FString UGLibPlugin::GetMountedAssetPath()
 {
-	return Plugin.IsValid() ? Plugin->GetMountedAssetPath() : FString();
+	return IsValid() ? Plugin->GetMountedAssetPath() : FString();
 }
 
 bool UGLibPlugin::IsEnabled()
 {
-	return Plugin.IsValid() ? Plugin->IsEnabled() : false;
+	return IsValid() ? Plugin->IsEnabled() : false;
 }
 
 bool UGLibPlugin::IsEnabledByDefault(bool bAllowEnginePluginsEnabledByDefault)
 {
-	return Plugin.IsValid() ? Plugin->IsEnabledByDefault(bAllowEnginePluginsEnabledByDefault) : false;
+	return IsValid() ? Plugin->IsEnabledByDefault(bAllowEnginePluginsEnabledByDefault) : false;
 }
 
 bool UGLibPlugin::IsHidden()
 {
-	return Plugin.IsValid() ? Plugin->IsHidden() : false;
+	return IsValid() ? Plugin->IsHidden() : false;
 }
 
 bool UGLibPlugin::CanContainContent()
 {
-	return Plugin.IsValid() ? Plugin->CanContainContent() : false;
+	return IsValid() ? Plugin->CanContainContent() : false;
 }
 
 bool UGLibPlugin::CanContainVerse()
 {
-	return Plugin.IsValid() ? Plugin->CanContainVerse() : false;
+	return IsValid() ? Plugin->CanContainVerse() : false;
 }
 
 EGLibPluginLoadedFrom UGLibPlugin::GetLoadedFrom()
 {
-	return Plugin.IsValid() ? GLibConversions::ToBlueprintable<EGLibPluginLoadedFrom>(Plugin->GetLoadedFrom()) : EGLibPluginLoadedFrom::Engine;
+	return IsValid() ? GLibConversions::ToBlueprintable<EGLibPluginLoadedFrom>(Plugin->GetLoadedFrom()) : EGLibPluginLoadedFrom::Engine;
 }
 
 FGLibPluginDescriptor UGLibPlugin::GetDescriptor()
 {
-	return Plugin.IsValid() ? Plugin->GetDescriptor() : FGLibPluginDescriptor();
+	return IsValid() ? Plugin->GetDescriptor() : FGLibPluginDescriptor();
 }
 
 bool UGLibPlugin::UpdateDescriptor(const FGLibPluginDescriptor& NewDescriptor, FText& OutFailReason)
 {
-	return Plugin.IsValid() ? Plugin->UpdateDescriptor(NewDescriptor, OutFailReason) : false;
+	return IsValid() ? Plugin->UpdateDescriptor(NewDescriptor, OutFailReason) : false;
 }

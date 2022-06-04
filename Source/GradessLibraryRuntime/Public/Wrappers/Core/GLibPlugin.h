@@ -19,19 +19,16 @@ class GRADESSLIBRARYRUNTIME_API UGLibPlugin : public UObject
 	GENERATED_BODY()
 
 public:
-	static UGLibPlugin* CreateWrapper(IPlugin* InPlugin);
-	static UGLibPlugin* CreateWrapper(TSharedRef<IPlugin> InPlugin);
-	static UGLibPlugin* CreateWrapper(TSharedPtr<IPlugin> InPlugin);
+	static UGLibPlugin* CreateWrapper(const TSharedPtr<IPlugin>& InPlugin);
+	static UGLibPlugin* CreateWrapper(const TSharedRef<IPlugin>& InPlugin);
 
-	virtual void SetPlugin(IPlugin* InPlugin) { Plugin = MakeShareable(InPlugin); }
-	virtual void SetPlugin(const TSharedPtr<IPlugin> InPlugin) { Plugin = InPlugin; }
-	virtual void SetPlugin(const TSharedRef<IPlugin> InPlugin) { Plugin = InPlugin; }
+	virtual void SetPlugin(const TSharedPtr<IPlugin>& InPlugin) { Plugin = InPlugin; }
+	virtual void SetPlugin(const TSharedRef<IPlugin>& InPlugin) { Plugin = InPlugin; }
 	
 	virtual TSharedPtr<IPlugin> GetPlugin() { return Plugin; }
 
 	operator TSharedPtr<IPlugin>() const { return Plugin; }
 	operator TSharedRef<IPlugin>() const { return Plugin.ToSharedRef(); }
-	operator IPlugin*() const { return Plugin.Get(); }
 
 	UFUNCTION(BlueprintPure, Category = "GLib|Plugin")
 	virtual bool IsValid();

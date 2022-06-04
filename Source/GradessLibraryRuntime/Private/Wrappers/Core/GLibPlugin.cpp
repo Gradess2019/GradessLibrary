@@ -4,6 +4,9 @@
 #include "Wrappers/Core/GLibPlugin.h"
 #include "UObject/UObjectGlobals.h"
 
+#include "Wrappers/GLibConversions.h"
+#include "Wrappers/Projects/GLibPluginDescriptor.h"
+
 UGLibPlugin* UGLibPlugin::CreateWrapper(TSharedPtr<IPlugin> InPlugin)
 {
 	const auto PluginWrapper = NewObject<UGLibPlugin>();
@@ -69,4 +72,19 @@ bool UGLibPlugin::CanContainContent()
 bool UGLibPlugin::CanContainVerse()
 {
 	return Plugin.IsValid() ? Plugin->CanContainVerse() : false;
+}
+
+EGLibPluginLoadedFrom UGLibPlugin::GetLoadedFrom()
+{
+	return Plugin.IsValid() ? GLibConversions::ToBlueprintable<EGLibPluginLoadedFrom>(Plugin->GetLoadedFrom()) : EGLibPluginLoadedFrom::Engine;
+}
+
+FGLibPluginDescriptor UGLibPlugin::GetDescriptor()
+{
+	return Plugin.IsValid() ? Plugin->GetDescriptor() : FGLibPluginDescriptor();
+}
+
+bool UGLibPlugin::UpdateDescriptor(const FGLibPluginDescriptor& NewDescriptor, FText& OutFailReason)
+{
+	return Plugin.IsValid() ? Plugin->UpdateDescriptor(NewDescriptor, OutFailReason) : false;
 }

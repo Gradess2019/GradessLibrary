@@ -23,3 +23,15 @@ enum class EGLibModuleLoadResult : uint8
 	/** Module initialization failed. */
 	FailedToInitialize = 4
 };
+
+/**
+* Enum for where a plugin is loaded from
+*/
+UENUM(BlueprintType)
+enum class EGLibPluginLoadedFrom : uint8
+{
+	/** Plugin is built-in to the engine */
+	Engine = 0,
+	/** Project-specific plugin, stored within a game project directory */
+	Project = 1
+};

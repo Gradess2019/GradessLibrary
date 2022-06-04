@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Interfaces/IPluginManager.h"
+#include "Modules/GLibModuleManager.h"
 #include "UObject/Object.h"
+#include "Wrappers/Projects/GLibPluginDescriptor.h"
 #include "GLibPlugin.generated.h"
+
 
 /**
 * Information about an enabled plugin.
@@ -17,6 +20,12 @@ class GRADESSLIBRARYRUNTIME_API UGLibPlugin : public UObject
 
 public:
 	static UGLibPlugin* CreateWrapper(TSharedPtr<IPlugin> InPlugin);
+
+	virtual void SetPlugin(const TSharedPtr<IPlugin> InPlugin) { Plugin = InPlugin; }
+	virtual TSharedPtr<IPlugin> GetPlugin() { return Plugin; }
+
+	operator TSharedPtr<IPlugin>() const { return Plugin; }
+	operator TSharedRef<IPlugin>() const { return Plugin.ToSharedRef(); }
 
 	UFUNCTION(BlueprintPure, Category = "GLib|Plugin")
 	virtual bool IsValid();
@@ -120,16 +129,16 @@ public:
 	*
 	* @return Where the plugin was loaded from
 	*/
-	// UFUNCTION(BlueprintPure, Category = "GLib|Plugin")
-	// virtual EPluginLoadedFrom GetLoadedFrom();
+	UFUNCTION(BlueprintPure, Category = "GLib|Plugin")
+	virtual EGLibPluginLoadedFrom GetLoadedFrom();
 
 	/**
 	* Gets the plugin's descriptor
 	*
 	* @return Reference to the plugin's descriptor
 	*/
-	// UFUNCTION(BlueprintPure, Category = "GLib|Plugin")
-	// virtual const FPluginDescriptor& GetDescriptor();
+	UFUNCTION(BlueprintPure, Category = "GLib|Plugin")
+	virtual FGLibPluginDescriptor GetDescriptor();
 
 	/**
 	* Updates the plugin's descriptor
@@ -138,9 +147,10 @@ public:
 	* @param OutFailReason The error message if the plugin's descriptor could not be updated
 	* @return True if the descriptor was updated, false otherwise.
 	*/
-	// UFUNCTION(BlueprintCallable, Category = "GLib|Plugin")
-	// virtual bool UpdateDescriptor(const FPluginDescriptor& NewDescriptor, FText& OutFailReason);
+	UFUNCTION(BlueprintCallable, Category = "GLib|Plugin")
+	virtual bool UpdateDescriptor(const FGLibPluginDescriptor& NewDescriptor, FText& OutFailReason);
 
+	// TODO
 	/**
 	* Gets the cached plugin descriptor json
 	*
@@ -149,12 +159,6 @@ public:
 	// UFUNCTION(BlueprintCallable, Category = "GLib|Plugin")
 	// virtual const TSharedPtr<FJsonObject>& GetDescriptorJson();
 	
-	virtual void SetPlugin(const TSharedPtr<IPlugin> InPlugin) { Plugin = InPlugin; }
-	virtual TSharedPtr<IPlugin> GetPlugin() { return Plugin; }
-
-	operator TSharedPtr<IPlugin>() const { return Plugin; }
-	operator TSharedRef<IPlugin>() const { return Plugin.ToSharedRef(); }
-
 protected:
 	TSharedPtr<IPlugin> Plugin;
 };

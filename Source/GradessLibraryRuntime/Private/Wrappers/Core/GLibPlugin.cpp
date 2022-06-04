@@ -7,11 +7,21 @@
 #include "Wrappers/GLibConversions.h"
 #include "Wrappers/Projects/GLibPluginDescriptor.h"
 
-UGLibPlugin* UGLibPlugin::CreateWrapper(TSharedPtr<IPlugin> InPlugin)
+UGLibPlugin* UGLibPlugin::CreateWrapper(IPlugin* InPlugin)
 {
 	const auto PluginWrapper = NewObject<UGLibPlugin>();
 	PluginWrapper->SetPlugin(InPlugin);
 	return PluginWrapper;
+}
+
+UGLibPlugin* UGLibPlugin::CreateWrapper(TSharedRef<IPlugin> InPlugin)
+{
+	return CreateWrapper(&InPlugin.Get());
+}
+
+UGLibPlugin* UGLibPlugin::CreateWrapper(TSharedPtr<IPlugin> InPlugin)
+{
+	return CreateWrapper(InPlugin.Get());
 }
 
 bool UGLibPlugin::IsValid()

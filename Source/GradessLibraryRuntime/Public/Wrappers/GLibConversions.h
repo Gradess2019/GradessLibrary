@@ -9,7 +9,6 @@
 
 namespace GLibConversions
 {
-
 	template<typename Native, typename Blueprintable>
 	std::enable_if_t<std::is_enum_v<Native> && std::is_enum_v<Blueprintable>, Native> ToNative(const Blueprintable Value) { return static_cast<Native>(Value); }
 
@@ -31,15 +30,16 @@ namespace GLibConversions
 	template<typename Blueprintable, typename Native>
 	std::enable_if_t<std::is_enum_v<Native> && std::is_enum_v<Blueprintable>, TArray<Blueprintable>> ToBlueprintable(const TArray<Native> Values)
 	{
-		TArray<Blueprintable> NativeValues;
-		NativeValues.Reserve(Values.Num());
+		TArray<Blueprintable> BlueprintableValues;
+		BlueprintableValues.Reserve(Values.Num());
 		for (const Native& Value : Values)
 		{
-			NativeValues.Add(ToBlueprintable<Blueprintable>(Value));
+			BlueprintableValues.Add(ToBlueprintable<Blueprintable>(Value));
 		}
-		return NativeValues;
+		return BlueprintableValues;
 	}
 
+	// TODO add OutArray param instead of returning array
 	template<typename Native, typename Blueprintable>
 	std::enable_if_t<std::is_convertible_v<Blueprintable, Native>, TArray<Native>> ToNative(const TArray<Blueprintable> Values)
 	{
@@ -55,16 +55,68 @@ namespace GLibConversions
 	template<typename Blueprintable, typename Native>
 	std::enable_if_t<std::is_convertible_v<Native, Blueprintable>, TArray<Blueprintable>> ToBlueprintable(const TArray<Native> Values)
 	{
-		TArray<Blueprintable> NativeValues;
-		NativeValues.Reserve(Values.Num());
+		TArray<Blueprintable> BlueprintableValues;
+		BlueprintableValues.Reserve(Values.Num());
 		for (const Native& Value : Values)
 		{
-			NativeValues.Add(Value);
+			BlueprintableValues.Add(Value);
 		}
-		return NativeValues;
+		return BlueprintableValues;
+	}
+	
+	template<typename Native, typename Blueprintable>
+	Native* ToNative(Blueprintable* Value) { return Value; }
+
+	template<typename Blueprintable, typename Native>
+	Blueprintable* ToBlueprintable(Native* Value) { return Blueprintable::CreateWrapper(Value); }
+
+	template<typename Blueprintable, typename Native>
+	Blueprintable* ToBlueprintable(TSharedPtr<Native> Value) { return Blueprintable::CreateWrapper(Value); }
+	
+	template<typename Blueprintable, typename Native>
+	Blueprintable* ToBlueprintable(TSharedRef<Native> Value) { return Blueprintable::CreateWrapper(Value); }
+
+	template<typename Blueprintable, typename Native>
+	void ToNative(const TArray<Blueprintable>& Blueprintables, TArray<Native>& Natives)
+	{
+		Natives.Reset(Blueprintables.Num());
+		for (auto Value : Blueprintables)
+		{
+			Natives.Add(ToNative<Native>(Value));
+		}
+	}
+	
+	template<typename Blueprintable, typename Native>
+	void ToBlueprintable(const TArray<Native*>& Natives, TArray<Blueprintable*>& Blueprintables)
+	{
+		Blueprintables.Reset(Natives.Num());
+		for (auto Value : Natives)
+		{
+			Blueprintables.Add(ToBlueprintable<Blueprintable>(Value));
+		}
+	}
+	
+	template<typename Blueprintable, typename Native>
+	void ToBlueprintable(const TArray<TSharedPtr<Native>>& Natives, TArray<Blueprintable*>& Blueprintables)
+	{
+		Blueprintables.Reset(Natives.Num());
+		for (auto Value : Natives)
+		{
+			Blueprintables.Add(ToBlueprintable<Blueprintable>(Value));
+		}
 	}
 
+	template<typename Blueprintable, typename Native>
+	void ToBlueprintable(const TArray<TSharedRef<Native>>& Natives, TArray<Blueprintable*>& Blueprintables)
+	{
+		Blueprintables.Reset(Natives.Num());
+		for (auto Value : Natives)
+		{
+			Blueprintables.Add(ToBlueprintable<Blueprintable>(Value));
+		}
+	}
 	
+
 	/** ----------------------- EHostType begin ----------------------- */
 
 	/**

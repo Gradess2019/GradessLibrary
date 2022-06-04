@@ -73,7 +73,7 @@ void UGLibAsyncActionAttributeChanged::EndTask()
 
 	RemoveFromRoot();
 	SetReadyToDestroy();
-	MarkPendingKill();
+	MarkAsGarbage();
 }
 
 void UGLibAsyncActionAttributeChanged::BeginDestroy()

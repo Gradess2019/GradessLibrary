@@ -141,7 +141,7 @@ UGLibPlugin* UGLibPluginUtils::CreateAndLoadNewPlugin(const FString& PluginName,
 	FPluginUtils::FLoadPluginParams NativeLoadParams = LoadParams;
 	const auto Plugin = FPluginUtils::CreateAndLoadNewPlugin(PluginName, PluginLocation, CreationParams, NativeLoadParams);
 
-	return UGLibPlugin::CreateWrapper(Plugin);
+	return GLibConversions::ToBlueprintable<UGLibPlugin>(Plugin);
 }
 
 UGLibPlugin* UGLibPluginUtils::CreateAndLoadNewPluginWithDescriptor(const FString& PluginName, const FString& PluginLocation, const FGLibNewPluginParamsWithDescriptor& CreationParams, FGLibLoadPluginParams& LoadParams)
@@ -149,7 +149,7 @@ UGLibPlugin* UGLibPluginUtils::CreateAndLoadNewPluginWithDescriptor(const FStrin
 	FPluginUtils::FLoadPluginParams NativeLoadParams = LoadParams;
 	const auto Plugin = FPluginUtils::CreateAndLoadNewPlugin(PluginName, PluginLocation, CreationParams, NativeLoadParams);
 
-	return UGLibPlugin::CreateWrapper(Plugin);
+	return GLibConversions::ToBlueprintable<UGLibPlugin>(Plugin);
 }
 
 UGLibPlugin* UGLibPluginUtils::LoadPluginByNameWithParams(const FString& PluginName, const FString& PluginLocation, FGLibLoadPluginParams& LoadParams)
@@ -157,14 +157,14 @@ UGLibPlugin* UGLibPluginUtils::LoadPluginByNameWithParams(const FString& PluginN
 	FPluginUtils::FLoadPluginParams NativeLoadParams = LoadParams;
 	const auto Plugin = FPluginUtils::LoadPlugin(PluginName, PluginLocation, NativeLoadParams);
 	
-	return UGLibPlugin::CreateWrapper(Plugin);
+	return GLibConversions::ToBlueprintable<UGLibPlugin>(Plugin);
 }
 
 UGLibPlugin* UGLibPluginUtils::LoadPluginByName(const FString& PluginName, const FString& PluginLocation)
 {
 	const auto Plugin = FPluginUtils::LoadPlugin(PluginName, PluginLocation);
 
-	return UGLibPlugin::CreateWrapper(Plugin);
+	return GLibConversions::ToBlueprintable<UGLibPlugin>(Plugin);
 }
 
 UGLibPlugin* UGLibPluginUtils::LoadPluginByPathWithParams(const FString& PluginFileName, FGLibLoadPluginParams& LoadParams)
@@ -172,26 +172,26 @@ UGLibPlugin* UGLibPluginUtils::LoadPluginByPathWithParams(const FString& PluginF
 	FPluginUtils::FLoadPluginParams NativeLoadParams = LoadParams;
 	const auto Plugin = FPluginUtils::LoadPlugin(PluginFileName, NativeLoadParams);
 
-	return UGLibPlugin::CreateWrapper(Plugin);
+	return GLibConversions::ToBlueprintable<UGLibPlugin>(Plugin);
 }
 
 UGLibPlugin* UGLibPluginUtils::LoadPluginByPath(const FString& PluginFileName)
 {
 	const auto Plugin = FPluginUtils::LoadPlugin(PluginFileName);
 
-	return UGLibPlugin::CreateWrapper(Plugin);
+	return GLibConversions::ToBlueprintable<UGLibPlugin>(Plugin);
 }
 
 UGLibPlugin* UGLibPluginUtils::FindLoadedPlugin(const FString& PluginDescriptorFileName)
 {
 	const auto Plugin = FPluginUtils::FindLoadedPlugin(PluginDescriptorFileName);
 
-	return UGLibPlugin::CreateWrapper(Plugin);
+	return GLibConversions::ToBlueprintable<UGLibPlugin>(Plugin);
 }
 
 bool UGLibPluginUtils::UnloadPlugin(UGLibPlugin* Plugin, FText& OutFailReason)
 {
-	if (!IsValid(Plugin))
+	if (!IsValid(Plugin) || !Plugin->IsValid())
 	{
 		OutFailReason = NSLOCTEXT("GLibPluginUtils", "PluginNotFound", "Plugin not found");
 		return false;

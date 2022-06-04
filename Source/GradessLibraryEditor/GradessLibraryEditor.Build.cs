@@ -29,6 +29,8 @@ public class GradessLibraryEditor : ModuleRules
 				"UMG",
 				"UMGEditor",
 				"ContentBrowser",
+				"Projects",
+				"PluginUtils",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -45,7 +47,7 @@ public class GradessLibraryEditor : ModuleRules
 				"AssetTools",
 				"Blutility",
 				"GradessLibraryRuntime",
-				"PropertyEditor"
+				"PropertyEditor",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

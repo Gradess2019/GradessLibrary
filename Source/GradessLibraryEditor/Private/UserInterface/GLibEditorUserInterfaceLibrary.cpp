@@ -125,7 +125,7 @@ bool UGLibEditorUserInterfaceLibrary::SpawnWidget(
 	UEditorUtilitySubsystem* EditorSubsystem
 )
 {
-	const FStringAssetReference AssetReference(WidgetPath);
+	const FSoftObjectPath AssetReference(WidgetPath);
 	const auto LoadedAsset = AssetReference.TryLoad();
 	if (!LoadedAsset) { return false; }
 	const auto WidgetBlueprint = CastChecked<UEditorUtilityWidgetBlueprint>(LoadedAsset);
@@ -146,7 +146,7 @@ FName UGLibEditorUserInterfaceLibrary::GetWidgetTabIdByAssetName(FString AssetNa
 UEditorUtilityWidgetBlueprint* UGLibEditorUserInterfaceLibrary::GetWidgetBlueprint(const UEditorUtilityWidget* Widget)
 {
 	const auto AssetReference = Widget->GetClass()->GetPathName().LeftChop(2);
-	const FStringAssetReference Asset(AssetReference);
+	const FSoftObjectPath Asset(AssetReference);
 	if (!Asset.IsValid() || GIsSavingPackage || GIsGarbageCollecting) { return nullptr; }
 
 	const auto WidgetBlueprint = Asset.TryLoad();

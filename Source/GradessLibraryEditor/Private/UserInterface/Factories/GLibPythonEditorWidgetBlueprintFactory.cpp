@@ -81,9 +81,8 @@ bool UGLibPythonEditorWidgetBlueprintFactory::ConfigureProperties()
 		Options.ExtraPickerCommonClasses.Add(UGridPanel::StaticClass());
 		Options.ExtraPickerCommonClasses.Add(UCanvasPanel::StaticClass());
 
-		TSharedPtr<FEditorUtilityWidgetBlueprintFactoryFilter> Filter = MakeShareable(
-			new FEditorUtilityWidgetBlueprintFactoryFilter);
-		Options.ClassFilter = Filter;
+		const auto Filter = MakeShared<FEditorUtilityWidgetBlueprintFactoryFilter>();
+		Options.ClassFilters.Add(Filter);
 
 		Filter->DisallowedClassFlags = CLASS_Abstract | CLASS_Deprecated | CLASS_NewerVersionExists;
 		Filter->AllowedChildrenOfClasses.Add(UPanelWidget::StaticClass());

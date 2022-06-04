@@ -22,12 +22,13 @@ FGLibPluginReferenceDescriptor::FGLibPluginReferenceDescriptor(const FPluginRefe
 	MarketplaceURL = InDescriptor.MarketplaceURL;
 	PlatformAllowList = InDescriptor.PlatformAllowList;
 	PlatformDenyList = InDescriptor.PlatformDenyList;
-	TargetConfigurationAllowList = GLibConversions::ToBlueprintable<EGLibBuildConfiguration>(InDescriptor.TargetConfigurationAllowList);
-	TargetConfigurationDenyList = GLibConversions::ToBlueprintable<EGLibBuildConfiguration>(InDescriptor.TargetConfigurationDenyList);
-	TargetAllowList = GLibConversions::ToBlueprintable<EGLibBuildTargetType>(InDescriptor.TargetAllowList);
-	TargetDenyList = GLibConversions::ToBlueprintable<EGLibBuildTargetType>(InDescriptor.TargetDenyList);
 	SupportedTargetPlatforms = InDescriptor.SupportedTargetPlatforms;
 	bHasExplicitPlatforms = InDescriptor.bHasExplicitPlatforms;
+	
+	GLibConversions::ToBlueprintable<EGLibBuildConfiguration>(InDescriptor.TargetConfigurationAllowList, TargetConfigurationAllowList);
+	GLibConversions::ToBlueprintable<EGLibBuildConfiguration>(InDescriptor.TargetConfigurationDenyList, TargetConfigurationDenyList);
+	GLibConversions::ToBlueprintable<EGLibBuildTargetType>(InDescriptor.TargetAllowList, TargetAllowList);
+	GLibConversions::ToBlueprintable<EGLibBuildTargetType>(InDescriptor.TargetDenyList, TargetDenyList);
 }
 
 FGLibPluginReferenceDescriptor::operator FPluginReferenceDescriptor() const
@@ -40,12 +41,13 @@ FGLibPluginReferenceDescriptor::operator FPluginReferenceDescriptor() const
 	Descriptor.MarketplaceURL = MarketplaceURL;
 	Descriptor.PlatformAllowList = PlatformAllowList;
 	Descriptor.PlatformDenyList = PlatformDenyList;
-	Descriptor.TargetConfigurationAllowList = GLibConversions::ToNative<EBuildConfiguration>(TargetConfigurationAllowList);
-	Descriptor.TargetConfigurationDenyList = GLibConversions::ToNative<EBuildConfiguration>(TargetConfigurationDenyList);
-	Descriptor.TargetAllowList = GLibConversions::ToNative<EBuildTargetType>(TargetAllowList);
-	Descriptor.TargetDenyList = GLibConversions::ToNative<EBuildTargetType>(TargetDenyList);
 	Descriptor.SupportedTargetPlatforms = SupportedTargetPlatforms;
 	Descriptor.bHasExplicitPlatforms = bHasExplicitPlatforms;
 
+	GLibConversions::ToNative<EBuildConfiguration>(TargetConfigurationAllowList, Descriptor.TargetConfigurationAllowList);
+	GLibConversions::ToNative<EBuildConfiguration>(TargetConfigurationDenyList, Descriptor.TargetConfigurationDenyList);
+	GLibConversions::ToNative<EBuildTargetType>(TargetAllowList, Descriptor.TargetAllowList);
+	GLibConversions::ToNative<EBuildTargetType>(TargetDenyList, Descriptor.TargetDenyList);
+	
 	return Descriptor;
 }

@@ -22,14 +22,15 @@ FGLibModuleDescriptor::FGLibModuleDescriptor(const FModuleDescriptor& InDescript
 	LoadingPhase = GLibConversions::ToBlueprintable<EGLibLoadingPhase>(InDescriptor.LoadingPhase);
 	PlatformAllowList = InDescriptor.PlatformAllowList;
 	PlatformDenyList = InDescriptor.PlatformDenyList;
-	TargetAllowList = GLibConversions::ToBlueprintable<EGLibBuildTargetType>(InDescriptor.TargetAllowList);
-	TargetDenyList = GLibConversions::ToBlueprintable<EGLibBuildTargetType>(InDescriptor.TargetDenyList);
-	TargetConfigurationAllowList = GLibConversions::ToBlueprintable<EGLibBuildConfiguration>(InDescriptor.TargetConfigurationAllowList);
-	TargetConfigurationDenyList = GLibConversions::ToBlueprintable<EGLibBuildConfiguration>(InDescriptor.TargetConfigurationDenyList);
 	ProgramAllowList = InDescriptor.ProgramAllowList;
 	ProgramDenyList = InDescriptor.ProgramDenyList;
 	AdditionalDependencies = InDescriptor.AdditionalDependencies;
 	bHasExplicitPlatforms = InDescriptor.bHasExplicitPlatforms;
+
+	GLibConversions::ToBlueprintable<EGLibBuildTargetType>(InDescriptor.TargetAllowList, TargetAllowList);
+	GLibConversions::ToBlueprintable<EGLibBuildTargetType>(InDescriptor.TargetDenyList, TargetDenyList);
+	GLibConversions::ToBlueprintable<EGLibBuildConfiguration>(InDescriptor.TargetConfigurationAllowList, TargetConfigurationAllowList);
+	GLibConversions::ToBlueprintable<EGLibBuildConfiguration>(InDescriptor.TargetConfigurationDenyList, TargetConfigurationDenyList);
 }
 
 FGLibModuleDescriptor::operator FModuleDescriptor() const
@@ -40,14 +41,15 @@ FGLibModuleDescriptor::operator FModuleDescriptor() const
 	ModuleDescriptor.LoadingPhase = GLibConversions::ToNative<ELoadingPhase::Type>(LoadingPhase);
 	ModuleDescriptor.PlatformAllowList = PlatformAllowList;
 	ModuleDescriptor.PlatformDenyList = PlatformDenyList;
-	ModuleDescriptor.TargetAllowList = GLibConversions::ToNative<EBuildTargetType>(TargetAllowList);
-	ModuleDescriptor.TargetDenyList = GLibConversions::ToNative<EBuildTargetType>(TargetDenyList);
-	ModuleDescriptor.TargetConfigurationAllowList = GLibConversions::ToNative<EBuildConfiguration>(TargetConfigurationAllowList);
-	ModuleDescriptor.TargetConfigurationDenyList = GLibConversions::ToNative<EBuildConfiguration>(TargetConfigurationDenyList);
 	ModuleDescriptor.ProgramAllowList = ProgramAllowList;
 	ModuleDescriptor.ProgramDenyList = ProgramDenyList;
 	ModuleDescriptor.AdditionalDependencies = AdditionalDependencies;
 	ModuleDescriptor.bHasExplicitPlatforms = bHasExplicitPlatforms;
+
+	GLibConversions::ToNative<EBuildTargetType>(TargetAllowList, ModuleDescriptor.TargetAllowList);
+	GLibConversions::ToNative<EBuildTargetType>(TargetDenyList, ModuleDescriptor.TargetDenyList);
+	GLibConversions::ToNative<EBuildConfiguration>(TargetConfigurationAllowList, ModuleDescriptor.TargetConfigurationAllowList);
+	GLibConversions::ToNative<EBuildConfiguration>(TargetConfigurationDenyList, ModuleDescriptor.TargetConfigurationDenyList);
 
 	return ModuleDescriptor;
 }

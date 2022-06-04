@@ -39,7 +39,6 @@ FGLibPluginDescriptor::FGLibPluginDescriptor(const FPluginDescriptor& InDescript
 	SupportedTargetPlatforms = InDescriptor.SupportedTargetPlatforms;
 	SupportedPrograms = InDescriptor.SupportedPrograms;
 	ParentPluginName = InDescriptor.ParentPluginName;
-	Modules = GLibConversions::ToBlueprintable<FGLibModuleDescriptor>(InDescriptor.Modules);
 	EnabledByDefault = GLibConversions::ToBlueprintable<EGLibPluginEnabledByDefault>(InDescriptor.EnabledByDefault);
 	bCanContainContent = InDescriptor.bCanContainContent;
 	bCanContainVerse = InDescriptor.bCanContainVerse;
@@ -51,6 +50,8 @@ FGLibPluginDescriptor::FGLibPluginDescriptor(const FPluginDescriptor& InDescript
 	bExplicitlyLoaded = InDescriptor.bExplicitlyLoaded;
 	bHasExplicitPlatforms = InDescriptor.bHasExplicitPlatforms;
 	bIsPluginExtension = InDescriptor.bIsPluginExtension;
+
+	GLibConversions::ToBlueprintable<FGLibModuleDescriptor>(InDescriptor.Modules, Modules);
 }
 
 FGLibPluginDescriptor::operator FPluginDescriptor() const
@@ -71,7 +72,6 @@ FGLibPluginDescriptor::operator FPluginDescriptor() const
 	Descriptor.SupportedTargetPlatforms = SupportedTargetPlatforms;
 	Descriptor.SupportedPrograms = SupportedPrograms;
 	Descriptor.ParentPluginName = ParentPluginName;
-	Descriptor.Modules = GLibConversions::ToNative<FModuleDescriptor>(Modules);
 	Descriptor.EnabledByDefault = GLibConversions::ToNative<EPluginEnabledByDefault>(EnabledByDefault);
 	Descriptor.bCanContainContent = bCanContainContent;
 	Descriptor.bCanContainVerse = bCanContainVerse;
@@ -83,6 +83,8 @@ FGLibPluginDescriptor::operator FPluginDescriptor() const
 	Descriptor.bExplicitlyLoaded = bExplicitlyLoaded;
 	Descriptor.bHasExplicitPlatforms = bHasExplicitPlatforms;
 	Descriptor.bIsPluginExtension = bIsPluginExtension;
+
+	GLibConversions::ToNative<FModuleDescriptor>(Modules, Descriptor.Modules);
 
 	return Descriptor;
 }

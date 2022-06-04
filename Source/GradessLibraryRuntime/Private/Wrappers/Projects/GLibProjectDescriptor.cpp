@@ -20,8 +20,6 @@ FGLibProjectDescriptor::FGLibProjectDescriptor(const FProjectDescriptor& InDescr
 	EngineAssociation = InDescriptor.EngineAssociation;
 	Category = InDescriptor.Category;
 	Description = InDescriptor.Description;
-	Modules = GLibConversions::ToBlueprintable<FGLibModuleDescriptor>(InDescriptor.Modules);
-	Plugins = GLibConversions::ToBlueprintable<FGLibPluginReferenceDescriptor>(InDescriptor.Plugins);
 	TargetPlatforms = InDescriptor.TargetPlatforms;
 	EpicSampleNameHash = InDescriptor.EpicSampleNameHash;
 	PreBuildSteps = InDescriptor.PreBuildSteps;
@@ -30,6 +28,9 @@ FGLibProjectDescriptor::FGLibProjectDescriptor(const FProjectDescriptor& InDescr
 	bDisableEnginePluginsByDefault = InDescriptor.bDisableEnginePluginsByDefault;
 	AdditionalPluginDirectories = InDescriptor.GetAdditionalPluginDirectories();
 	AdditionalRootDirectories = InDescriptor.GetAdditionalRootDirectories();
+
+	GLibConversions::ToBlueprintable<FGLibModuleDescriptor>(InDescriptor.Modules, Modules);
+	GLibConversions::ToBlueprintable<FGLibPluginReferenceDescriptor>(InDescriptor.Plugins, Plugins);
 }
 
 FGLibProjectDescriptor::operator FProjectDescriptor() const
@@ -39,14 +40,15 @@ FGLibProjectDescriptor::operator FProjectDescriptor() const
 	Descriptor.EngineAssociation = EngineAssociation;
 	Descriptor.Category = Category;
 	Descriptor.Description = Description;
-	Descriptor.Modules = GLibConversions::ToNative<FModuleDescriptor>(Modules);
-	Descriptor.Plugins = GLibConversions::ToNative<FPluginReferenceDescriptor>(Plugins);
 	Descriptor.TargetPlatforms = TargetPlatforms;
 	Descriptor.EpicSampleNameHash = EpicSampleNameHash;
 	Descriptor.PreBuildSteps = PreBuildSteps;
 	Descriptor.PostBuildSteps = PostBuildSteps;
 	Descriptor.bIsEnterpriseProject = bIsEnterpriseProject;
 	Descriptor.bDisableEnginePluginsByDefault = bDisableEnginePluginsByDefault;
+
+	GLibConversions::ToNative<FModuleDescriptor>(Modules, Descriptor.Modules);
+	GLibConversions::ToNative<FPluginReferenceDescriptor>(Plugins, Descriptor.Plugins);
 
 	return Descriptor;
 }

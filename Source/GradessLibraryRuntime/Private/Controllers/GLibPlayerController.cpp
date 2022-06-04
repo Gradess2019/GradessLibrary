@@ -7,7 +7,8 @@
 
 bool AGLibPlayerController::InputKey(FKey Key, EInputEvent Event, float AmountDepressed, bool bGamepad)
 {
-	const auto Result = Super::InputKey(Key, Event, AmountDepressed, bGamepad);
+	const auto KeyParams = FInputKeyParams(Key, Event, static_cast<double>(AmountDepressed), bGamepad);
+	const auto Result = Super::InputKey(KeyParams);
 	if (Event == IE_Pressed)
 	{
 		OnKeyPressed.Broadcast(Key);

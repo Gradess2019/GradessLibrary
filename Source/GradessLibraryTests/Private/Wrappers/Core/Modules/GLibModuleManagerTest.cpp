@@ -8,8 +8,8 @@
 
 #include "Wrappers/Core/Modules/GLibModuleManager.h"
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FGLibModuleLoadResultTest, "GLib.Wrappers.Core.Modules.GLibModuleManager", EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::HighPriority)
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FGLibPluginLoadedFrom, "GLib.Wrappers.Core.Modules.GLibPluginLoadedFrom", EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::HighPriority)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FGLibModuleLoadResultTest, "GLib.Wrappers.Core.Modules.GLibModuleManager.EGLibModuleLoadResult", EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::HighPriority)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FGLibPluginLoadedFrom, "GLib.Wrappers.Core.Modules.GLibModuleManager.EGLibPluginLoadedFrom", EAutomationTestFlags::SmokeFilter | EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::HighPriority)
 
 
 bool FGLibModuleLoadResultTest::RunTest(const FString& Parameters)

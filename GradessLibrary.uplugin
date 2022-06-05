@@ -29,6 +29,11 @@
 			"Name": "GradessGASLibrary",
 			"Type": "Runtime",
 			"LoadingPhase": "PostDefault"
+		},
+		{
+			"Name": "GradessLibraryTests",
+			"Type": "Editor",
+			"LoadingPhase": "PostDefault"
 		}
 	],
 	"Plugins": [
@@ -43,6 +48,10 @@
 		},
 		{
 			"Name": "PluginUtils",
+			"Enabled": true
+		},
+		{
+			"Name": "FunctionalTestingEditor",
 			"Enabled": true
 		}
 	]

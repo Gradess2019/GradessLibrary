@@ -42,6 +42,7 @@ public class GradessLibraryTests : ModuleRules
 				"Slate",
 				"SlateCore",
 				"InputCore",
+				"Projects",
 				"GradessLibraryEditor",
 				"GradessLibraryRuntime"
 				// ... add private dependencies that you statically link with here ...	

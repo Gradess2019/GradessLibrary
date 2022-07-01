@@ -18,7 +18,7 @@
 
 #define LOCTEXT_NAMESPACE "UGLibPythonEditorWidgetBlueprintFactory"
 
-class FEditorUtilityWidgetBlueprintFactoryFilter : public IClassViewerFilter
+class GRADESSLIBRARYEDITOR_API FEditorUtilityWidgetBlueprintFactoryFilter : public IClassViewerFilter
 {
 public:
 	

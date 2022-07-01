@@ -53,6 +53,11 @@ FString UGLibPlugin::GetMountedAssetPath()
 	return IsValid() ? Plugin->GetMountedAssetPath() : FString();
 }
 
+EGLibPluginType UGLibPlugin::GetType()
+{
+	return IsValid() ? GLibConversions::ToBlueprintable<EGLibPluginType>(Plugin->GetType()) : EGLibPluginType::None;
+}
+
 bool UGLibPlugin::IsEnabled()
 {
 	return IsValid() ? Plugin->IsEnabled() : false;

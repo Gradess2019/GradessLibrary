@@ -171,7 +171,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "GLib|PluginDescriptor")
 	TArray<FGLibPluginReferenceDescriptor> Plugins;
 
-	// TODO
+	// TODO: GLIB-14
 	// /** Additional fields to write */
 	// UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "GLib|PluginDescriptor")
 	// TMap<FString,TSharedPtr<FJsonValue>> AdditionalFieldsToWrite;

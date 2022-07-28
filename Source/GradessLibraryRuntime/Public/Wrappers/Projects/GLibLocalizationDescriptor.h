@@ -53,7 +53,7 @@ public:
 	
 	operator FLocalizationTargetDescriptor() const;
 
-	// TODO
+	// TODO: GLIB-14
 	// /** Reads a descriptor from the given JSON object */
 	// UFUNCTION(BlueprintCallable, Category = "GLib|LocalizationTargetDescriptor")
 	// bool Read(const FJsonObject& InObject, FText * OutFailReason = nullptr);

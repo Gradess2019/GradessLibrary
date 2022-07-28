@@ -80,9 +80,7 @@ public:
 	*/
 	UFUNCTION(BlueprintPure, Category = "GLib|Plugin")
 	virtual FString GetMountedAssetPath();
-
-
-	// TODO GLIB-16
+	
 	/**
 	* Gets the type of a plugin
 	*
@@ -157,7 +155,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GLib|Plugin")
 	virtual bool UpdateDescriptor(const FGLibPluginDescriptor& NewDescriptor, FText& OutFailReason);
 
-	// TODO
+	// TODO: GLIB-14
 	/**
 	* Gets the cached plugin descriptor json
 	*

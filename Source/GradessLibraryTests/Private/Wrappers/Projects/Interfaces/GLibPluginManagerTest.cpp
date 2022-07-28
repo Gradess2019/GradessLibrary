@@ -86,7 +86,8 @@ bool FNewPluginSearchPathShouldBeAdded::RunTest(const FString& Parameters)
 	const auto PluginManager = UGLibPluginManager::Get();
 
 	const auto SearchPath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("PluginTestPath")));
-	const auto bAdded = PluginManager->AddPluginSearchPath(SearchPath);
+	const auto bRefresh = false;
+	const auto bAdded = PluginManager->AddPluginSearchPath(SearchPath, bRefresh);
 	
 	UTEST_TRUE("GetAdditionalPluginSearchPaths", bAdded || PluginManager->GetAdditionalPluginSearchPaths().Contains(SearchPath));
 	

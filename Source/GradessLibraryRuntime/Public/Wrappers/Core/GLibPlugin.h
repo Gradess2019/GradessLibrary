@@ -7,6 +7,8 @@
 #include "Modules/GLibModuleManager.h"
 #include "UObject/Object.h"
 #include "Wrappers/Projects/GLibPluginDescriptor.h"
+#include "Wrappers/Projects/Interfaces/GLibPluginManager.h"
+
 #include "GLibPlugin.generated.h"
 
 
@@ -86,8 +88,8 @@ public:
 	*
 	* @return The plugin type
 	*/
-	// UFUNCTION(BlueprintPure, Category = "GLib|Plugin")
-	// virtual EPluginType GetType();
+	UFUNCTION(BlueprintPure, Category = "GLib|Plugin")
+	virtual EGLibPluginType GetType();
 
 	/**
 	* Determines if the plugin is enabled.

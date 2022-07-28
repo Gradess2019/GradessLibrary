@@ -28,6 +28,30 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGLibUpdatePackageLocalizationCacheDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGLibNewPluginMountedEvent, UGLibPlugin*, Plugin);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGLibRegisterMountPointDelegate, const FString&, RootContentPath,  const FString&, DirectoryName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGLibOnLoadingPhaseComplete, EGLibLoadingPhase, LoadingPhase, bool, bSuccess);
+
+
+/**
+* Enum for the type of a plugin
+*/
+UENUM(BlueprintType)
+enum class EGLibPluginType : uint8
+{
+	/** Plugin is built-in to the engine */
+	Engine = 0,
+	/** Standard enterprise plugin */
+	Enterprise = 1,
+	/** Project-specific plugin, stored within a game project directory */
+	Project = 2,
+	/** Plugin found in an external directory (found in an AdditionalPluginDirectory listed in the project file, or referenced on the command line) */
+	External = 3,
+	/** Project-specific mod plugin */
+	Mod = 4,
+	
+	None = UINT8_MAX - 1,
+	Max = UINT8_MAX,
+};
+
+
 /**
 * PluginManager manages available code and content extensions (both loaded and not loaded).
 */

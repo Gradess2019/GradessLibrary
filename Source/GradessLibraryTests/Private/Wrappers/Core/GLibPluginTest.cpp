@@ -4,7 +4,8 @@
 #include "Misc/Paths.h"
 
 #include "Modules/ModuleManager.h"
-#include "Wrappers/Core/GLibGenericPlatformMisc.h"
+
+#include "Wrappers/GLibConversions.h"
 #include "Wrappers/Core/GLibPlugin.h"
 #include "Wrappers/Projects/Interfaces/GLibPluginManager.h"
 
@@ -37,6 +38,7 @@ bool FGLibPlugin::RunTest(const FString& Parameters)
 	TestEqual("GetBaseDir()", WrappedPlugin->GetBaseDir(), FPaths::ProjectPluginsDir() / "GradessLibrary");
 	TestEqual("GetContentDir()", WrappedPlugin->GetContentDir(), FPaths::ProjectPluginsDir() / "GradessLibrary" / "Content");
 	TestEqual("GetMountedAssetPath()", WrappedPlugin->GetMountedAssetPath(), "/GradessLibrary/");
+	TestEqual("GetType()", GLibConversions::ToNative<EPluginType>(WrappedPlugin->GetType()), Plugin->GetType());
 	TestEqual("GetLoadedFrom()", WrappedPlugin->GetLoadedFrom(), EGLibPluginLoadedFrom::Project);
 	TestTrue("IsValid()", WrappedPlugin->IsValid());
 	TestTrue("IsEnabled()", WrappedPlugin->IsEnabled());

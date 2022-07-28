@@ -124,7 +124,7 @@ public:
 	
 	operator FModuleDescriptor() const;
 
-	// TODO
+	// TODO: GLIB-14
 	/** Reads a descriptor from the given JSON object */
 	// UFUNCTION(BlueprintCallable, Category = "GLib|ModuleDescriptor")
 	// bool Read(const FJsonObject& Object, FText * OutFailReason = nullptr);

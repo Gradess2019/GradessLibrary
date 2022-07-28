@@ -79,7 +79,7 @@ public:
 
 	operator FPluginReferenceDescriptor() const;
 
-	// TODO
+	// TODO: GLIB-14
 	// /** Determines whether the plugin is enabled for the given platform */
 	// UFUNCTION(BlueprintPure, Category = "GLib|PluginReferenceDescriptor")
 	// bool IsEnabledForPlatform(const FString& Platform);

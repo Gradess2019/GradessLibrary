@@ -136,7 +136,7 @@ public:
 	TArray<FString> AdditionalRootDirectories;
 
 public:
-	// TODO
+	// TODO: GLIB-14
 	// /** Signs the project given for the given filename */
 	// UFUNCTION(BlueprintCallable, Category = "GLib|ProjectDescriptor")
 	// void Sign(const FString& FilePath);

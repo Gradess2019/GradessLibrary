@@ -38,7 +38,7 @@ public:
 	TMap<FString, FGLibHostPlatformCommands> HostPlatformToCommands;
 
 public:
-	// TODO
+	// TODO: GLIB-14
 	// /** Whether this object is empty */
 	// UFUNCTION(BlueprintPure, Category = "GLib|CustomBuildSteps")
 	// bool IsEmpty();

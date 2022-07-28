@@ -8,7 +8,7 @@
 
 
 USTRUCT(BlueprintType)
-struct FGLibHostPlatformCommands
+struct GRADESSLIBRARYRUNTIME_API FGLibHostPlatformCommands
 {
 	GENERATED_BODY()
 

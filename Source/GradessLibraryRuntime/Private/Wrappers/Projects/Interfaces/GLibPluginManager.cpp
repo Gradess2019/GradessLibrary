@@ -7,8 +7,6 @@
 #include "Wrappers/GLibConversions.h"
 #include "Wrappers/Core/GLibPlugin.h"
 
-UGLibPluginManager* UGLibPluginManager::Instance = nullptr;
-
 UGLibPluginManager::UGLibPluginManager()
 {
 	PluginManager = &IPluginManager::Get();
@@ -179,13 +177,5 @@ bool UGLibPluginManager::IsValidManager()
 
 UGLibPluginManager* UGLibPluginManager::Get()
 {
-	if (IsValid(Instance))
-	{
-		return Instance;
-	}
-
-	Instance = NewObject<UGLibPluginManager>();
-	Instance->AddToRoot();
-	
-	return Instance;
+	return GetMutableDefault<UGLibPluginManager>();
 }

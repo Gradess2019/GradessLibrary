@@ -191,6 +191,7 @@ public:
 	* Stores the specified path, utilizing it in future search passes when
 	* searching for available plugins. Optionally refreshes the manager after
 	* the new path has been added.
+	* @note User refresh carefully because it can cause editor crash.
 	*
 	* @param  ExtraDiscoveryPath	The path you want searched for additional plugins.
 	* @param  bRefresh				Signals the function to refresh the plugin database after the new path has been added
@@ -262,6 +263,5 @@ public:
 
 protected:
 	IPluginManager* PluginManager;
-	static UGLibPluginManager* Instance;
 	
 };
